@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bonc.dpi.dao.mapper.DimIaSensiWordLtbMapper">
+  	<resultMap id="SensiResultMap" type="com.bonc.dpi.dao.entity.DimIaSensiWordLtb">
+    	<result column="ID" jdbcType="VARCHAR" property="id" />
+    	<result column="SENSI_WORD" jdbcType="VARCHAR" property="sensiWord" />
+    	<result column="AUTHOR" jdbcType="VARCHAR" property="author" />
+    	<result column="OP_TIME" jdbcType="DATE" property="opTime" />
+    </resultMap>
+	  
+  	<select id="selectDataNum" parameterType="com.bonc.dpi.dao.entity.DimIaSensiWordLtb"
+		resultType="int">
+		SELECT count(*) 
+		FROM dim_ia_sensi_word_lib t 
+		where 1=1 
+		 <if test="sensiWord != null and sensiWord != ''">
+			and t.SENSI_WORD like concat('%',concat(#{sensiWord},'%'))
+		</if>
+		<if test="author != null and author != ''">
+		    and author like #{author} 
+		</if>
+		<if test="startTime != null and startTime != ''">
+		    and OP_TIME &gt;= #{startTime} 
+		</if>
+		<if test="endTime != null and endTime != ''">
+		    and OP_TIME &lt;= #{endTime} 
+		</if>
+	</select>
+  
+  	<select id="selectList" parameterType="com.bonc.dpi.dao.entity.DimIaSensiWordLtb"
+		resultMap="SensiResultMap">
+		SELECT 
+		t.ID as id,
+		t.SENSI_WORD as sensiWord,
+		t.AUTHOR as author,
+		t.OP_TIME as opTime
+		FROM dim_ia_sensi_word_lib t 
+		where 1=1
+		 <if test="sensiWord != null and sensiWord != ''">
+			and t.SENSI_WORD like concat('%',concat(#{sensiWord},'%'))
+		</if>
+		<if test="author != null and author != ''">
+		    and author like #{author} 
+		</if>
+		<if test="startTime != null and startTime != ''">
+		    and OP_TIME &gt;= #{startTime} 
+		</if>
+		<if test="endTime != null and endTime != ''">
+		    and OP_TIME &lt;= #{endTime} 
+		</if>
+		order by OP_TIME DESC,t.ID DESC
+	</select>
+		
+	<delete id="delete" parameterType="com.bonc.dpi.dao.entity.DimIaSensiWordLtb">
+   		 delete from dim_ia_sensi_word_lib where ID = #{id,jdbcType=VARCHAR} 
+  	</delete>
+	
+	
+	<select id="selectSensiById"  parameterType="com.bonc.dpi.dao.entity.DimIaSensiWordLtb"
+    	resultType="com.bonc.dpi.dao.entity.DimIaSensiWordLtb">
+    	select *
+      	from dim_ia_sensi_word_lib
+     	where ID = #{id,jdbcType=VARCHAR} 
+  	</select>
+	
+  	<insert id="insertSensi" parameterType="com.bonc.dpi.dao.entity.DimIaSensiWordLtb">
+    	insert into dim_ia_sensi_word_lib (SENSI_WORD, AUTHOR, OP_TIME ,  ID)
+    	values (#{sensiWord,jdbcType=VARCHAR}, #{author,jdbcType=VARCHAR}, #{opTime,jdbcType=VARCHAR}, #{id,jdbcType=VARCHAR})
+  	</insert>
+  
+  	<update id="updateSensi" parameterType="com.bonc.dpi.dao.entity.DimIaSensiWordLtb">
+    	update dim_ia_sensi_word_lib 
+    	set SENSI_WORD = #{sensiWord,jdbcType=VARCHAR},AUTHOR = #{author,jdbcType=VARCHAR},
+    		OP_TIME = #{opTime,jdbcType=VARCHAR}		 	
+    	where ID = #{id,jdbcType=VARCHAR}
+  	</update>
+
+  	<select id="check" parameterType="com.bonc.dpi.dao.entity.DimIaSensiWordLtb"
+    	resultType="int">
+    	select count(*) from dim_ia_sensi_word_lib where 1=1
+    	<if test="id != null and id != ''">
+		    and ID!=#{id}
+		</if> 
+    	<if test="sensiWord != null and sensiWord != ''">
+		    and SENSI_WORD=#{sensiWord}
+		</if>
+
+  	</select>
+  	
+  	<select id="selectVoByPrimaryKey" parameterType="com.bonc.dpi.dao.entity.DimIaSensiWordLtb" resultMap="SensiResultMap">
+    SELECT ID,SENSI_WORD,AUTHOR,OP_TIME 
+		FROM dim_ia_sensi_word_lib 
+		where 1=1 
+		<if test="sensiWord != null and sensiWord != ''">
+		    and SENSI_WORD=#{sensiWord} 
+		</if>
+  </select>
+  
+   <select id="deleteVoByPrimaryKey" parameterType="com.bonc.dpi.dao.entity.DimIaSensiWordLtb" resultMap="SensiResultMap">
+    delete from dim_ia_sensi_word_lib
+     where 1=1
+		<if test="sensiWord != null and sensiWord != ''">
+		    and SENSI_WORD=#{sensiWord} 
+		</if>
+  </select>
+  	
+  	<insert id="batchInsert" >
+    	<if test="database_type=='mysql'">
+	    	insert into dim_ia_sensi_word_lib (SENSI_WORD, AUTHOR, OP_TIME , ID)
+	    	values
+	    	<foreach item="item" index="index" collection="list" open="" close="" separator=",">
+	         	(#{item.sensiWord,jdbcType=VARCHAR}, 
+	         	#{item.author,jdbcType=VARCHAR}, 
+	         	#{item.opTime,jdbcType=VARCHAR},  
+	         	#{item.id,jdbcType=VARCHAR})
+	        </foreach>
+	    </if>
+	    <if test="database_type=='oracle'">
+		    insert all
+	    	<foreach item="item" index="index" collection="list" open="" close="" separator="">
+	            into dim_ia_sensi_word_lib (SENSI_WORD, AUTHOR, OP_TIME , ID)
+	    		values
+	         	(#{item.sensiWord,jdbcType=VARCHAR}, 
+	         	#{item.author,jdbcType=VARCHAR}, 
+	         	#{item.opTime,jdbcType=VARCHAR},  
+	         	#{item.id,jdbcType=VARCHAR})
+	        </foreach>
+	        select 1 from dual
+	    </if>
+  	</insert>
+
+  	
+  	
+</mapper>

@@ -1,0 +1,85 @@
+.view-title{
+    background: #fff;
+    border-bottom:1px solid #ddd;
+    line-height:50px;
+    color:#333;
+    font-weight:bold;
+    font-size:16px;
+    text-align: center;
+}
+.btn-white{
+    margin-right:10px;
+    background: #f7f7f7;
+    border:1px solid #ddd !important;
+    padding:0 20px;
+    height:30px;
+    line-height:30px;
+    margin-top:10px;
+}
+.view-main-content{
+    background: #fff;
+   /*   overflow:auto; */
+   /* overflow:hidden;
+   clear:both; */
+}
+.slide-nav-left{
+    width: 220px;
+    border-right: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    background: #fff;
+}
+.slide-nav-left li{
+    line-height:30px;
+    padding-left:20px;
+    color:#333;
+    font-size:14px;
+    cursor: pointer;
+}
+.slide-nav-left li.active{
+    background: #108dec;
+    color:#fff;
+}
+.detail-content{
+    margin-left:230px;
+    min-height:100%;
+}
+.content-overview{
+    padding-left:10px;
+    overflow: hidden;
+}
+.content-overview li{
+    height:30px;
+    line-height:28px;
+    border-radius:15px;
+    padding:0 15px;
+    color:#fff;
+    cursor: pointer;
+    background: #108dec;
+    margin-right:15px;
+    margin-top:10px;
+}
+.content-overview li span{
+    margin-left:20px;
+    color:#fff;
+}
+.content-list li{
+    line-height:40px;
+    height: 40px;
+}
+.content-list li .main{
+    display: inline-block;
+    width:120px;
+    text-align: right;
+    color:#333;
+    padding-left:1px;
+}
+.content-list li .right-icon{
+    margin:0 15px;
+    color:#333;
+    font-size:16px;
+    font-weight:bold;
+}
+.content-list li div>span{
+    margin-left:15px;
+    color:#999;
+}

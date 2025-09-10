@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bonc.activiti.dao.mapper.ActivitiMapperExtend">
+    <!-- 我审批的 -->
+	<select id="selectAllApproval" resultType="java.util.Map" parameterType="java.util.Map">
+	select t1.proc_def_id_,t1.proc_inst_id_,to_char(t1.create_time_,'yyyy-mm-dd hh24:mi:ss') create_time_,t1.taskId, t1.status,t1.type,t1.assignee_,
+  		t2.deployment_id_ as deploymentId, t1.execution_id_,t1.localId, t1.processDesc, t1.localProcessId, t1.processName,  t1.creatorName, t1.className, t1.classPath, t1.processState, t1.url, t1.commentText
+      from (
+        select * from 
+        ((select t1.id_ as taskId,t1.execution_id_,t1.proc_inst_id_,t1.proc_def_id_,t1.name_,t1.assignee_,t1.create_time_,decode(t3.approval,'1','被回退','审批中') as status,'我的审批' as type,t3.id as localId, t3.processDesc, t3.localProcessId, t3.processName,  t3.creatorName, t3.className, t3.classPath, t3.processState, t3.url, t3.creatorId, t3.commentText from act_ru_task t1,(select PROC_INST_ID_,EXECUTION_ID_,ID,PROCESSDESC,LOCALPROCESSID,CREATORNAME,PROCESSNAME,CREATORID,CLASSNAME,CLASSPATH,PROCESSSTATE,URL,APPROVAL,COMMENTTEXT from ((select PROC_INST_ID_,EXECUTION_ID_, NAME_, TEXT_ from act_ru_variable where name_ in ('id','processDesc','localProcessId','creatorName','processName','creatorId','className','classPath','processState','url','approval','commentText')) pivot (max(TEXT_) for NAME_ in 
+       ('id' AS ID,'processDesc' AS PROCESSDESC,'localProcessId' AS LOCALPROCESSID,'creatorName' AS CREATORNAME,'processName' AS PROCESSNAME,'creatorId' AS CREATORID,'className' AS CLASSNAME,'classPath' AS CLASSPATH,'processState' AS PROCESSSTATE,'url' AS URL,'approval' AS APPROVAL,'commentText' AS COMMENTTEXT)))) t3 where t1.proc_inst_id_ = t3.proc_inst_id_)
+       union all
+        ((select t1.id_ as taskId,t1.execution_id_,t1.proc_inst_id_,t1.proc_def_id_,t1.name_,t1.assignee_,t1.start_time_ as create_time_,decode(t3.approval,'2','被驳回','已完成') as status,'我的审批' as type,t3.id as localId, t3.processDesc, t3.localProcessId, t3.processName,  t3.creatorName, t3.className, t3.classPath, t3.processState, t3.url, t3.creatorId, t3.commentText from act_hi_taskinst t1,
+        (select max(to_number(id_)) as taskId, proc_inst_id_ from act_hi_taskinst group by proc_inst_id_,assignee_) t2,(select PROC_INST_ID_,EXECUTION_ID_,ID,PROCESSDESC,LOCALPROCESSID,CREATORNAME,PROCESSNAME,CREATORID,CLASSNAME,CLASSPATH,PROCESSSTATE,URL,APPROVAL,COMMENTTEXT from ((select PROC_INST_ID_,EXECUTION_ID_, NAME_, TEXT_ from act_hi_varinst where name_ in ('id','processDesc','localProcessId','creatorName','processName','creatorId','className','classPath','processState','url','approval','commentText')) pivot (max(TEXT_) for NAME_ in 
+       ('id' AS ID,'processDesc' AS PROCESSDESC,'localProcessId' AS LOCALPROCESSID,'creatorName' AS CREATORNAME,'processName' AS PROCESSNAME,'creatorId' AS CREATORID,'className' AS CLASSNAME,'classPath' AS CLASSPATH,'processState' AS PROCESSSTATE,'url' AS URL,'approval' AS APPROVAL,'commentText' AS COMMENTTEXT)))) t3 
+        where t1.id_ not in (select distinct id_ from act_ru_task) and t1.id_=t2.taskId and t1.proc_inst_id_=t2.proc_inst_id_ and t1.proc_inst_id_ = t3.proc_inst_id_))
+      )) T1, act_re_procdef t2
+      where t1.proc_def_id_ = t2.id_
+        and to_char(t1.assignee_) =#{userId,jdbcType=VARCHAR}
+		<if test="status!=null and status!=''">
+		    and status=#{status,jdbcType=VARCHAR}
+		</if>
+		<if test="type!=null and type!=''">
+		    and type=#{type,jdbcType=VARCHAR}
+		</if>
+		<if test="applyName!=null and applyName!=''">
+		    and t1.processDesc=#{applyName,jdbcType=VARCHAR}
+		</if>
+		<if test="applyTime!=null and applyTime!=''">
+		    and to_char(create_time_,'yyyy-mm-dd')=#{applyTime,jdbcType=VARCHAR}
+		</if>
+		order by create_time_ desc
+	</select>
+	<!-- 我发起的 -->
+	<select id="selectAllStartBy" resultType="java.util.Map" parameterType="java.util.Map">
+	 select t1.proc_def_id_,t1.proc_inst_id_,to_char(t1.create_time_,'yyyy-mm-dd hh24:mi:ss') create_time_,t1.taskId, t1.status,t1.type,t1.assignee_,
+  		t2.deployment_id_ as deploymentId, t1.execution_id_,t1.localId, t1.processDesc, t1.localProcessId, t1.processName,  t1.creatorName, t1.className, t1.classPath, t1.processState, t1.url, t1.commentText
+      from (
+        select * from 
+        ((select t1.id_ as taskId,t1.execution_id_,t1.proc_inst_id_,t1.proc_def_id_,t1.name_,t1.assignee_,t1.create_time_,decode(t3.approval,'1','被回退','审批中') as status,'我发起的' as type,t3.id as localId, t3.processDesc, t3.localProcessId, t3.processName,  t3.creatorName, t3.className, t3.classPath, t3.processState, t3.url, t3.creatorId, t3.commentText from act_ru_task t1,(select PROC_INST_ID_,EXECUTION_ID_,ID,PROCESSDESC,LOCALPROCESSID,CREATORNAME,PROCESSNAME,CREATORID,CLASSNAME,CLASSPATH,PROCESSSTATE,URL,APPROVAL,COMMENTTEXT from ((select PROC_INST_ID_,EXECUTION_ID_, NAME_, TEXT_ from act_ru_variable where name_ in ('id','processDesc','localProcessId','creatorName','processName','creatorId','className','classPath','processState','url','approval','commentText')) pivot (max(TEXT_) for NAME_ in 
+       ('id' AS ID,'processDesc' AS PROCESSDESC,'localProcessId' AS LOCALPROCESSID,'creatorName' AS CREATORNAME,'processName' AS PROCESSNAME,'creatorId' AS CREATORID,'className' AS CLASSNAME,'classPath' AS CLASSPATH,'processState' AS PROCESSSTATE,'url' AS URL,'approval' AS APPROVAL,'commentText' AS COMMENTTEXT)))) t3 where t1.proc_inst_id_ = t3.proc_inst_id_)
+       union all
+        ((select t1.id_ as taskId,t1.execution_id_,t1.proc_inst_id_,t1.proc_def_id_,t1.name_,t1.assignee_,t1.start_time_ as create_time_,decode(t3.approval,'2','被驳回','已完成') as status,'我发起的' as type,t3.id as localId, t3.processDesc, t3.localProcessId, t3.processName,  t3.creatorName, t3.className, t3.classPath, t3.processState, t3.url, t3.creatorId, t3.commentText from act_hi_taskinst t1,
+        (select max(to_number(id_)) as taskId, proc_inst_id_ from act_hi_taskinst group by proc_inst_id_) t2,(select PROC_INST_ID_,EXECUTION_ID_,ID,PROCESSDESC,LOCALPROCESSID,CREATORNAME,PROCESSNAME,CREATORID,CLASSNAME,CLASSPATH,PROCESSSTATE,URL,APPROVAL,COMMENTTEXT from ((select PROC_INST_ID_,EXECUTION_ID_, NAME_, TEXT_ from act_hi_varinst where name_ in ('id','processDesc','localProcessId','creatorName','processName','creatorId','className','classPath','processState','url','approval','commentText')) pivot (max(TEXT_) for NAME_ in 
+       ('id' AS ID,'processDesc' AS PROCESSDESC,'localProcessId' AS LOCALPROCESSID,'creatorName' AS CREATORNAME,'processName' AS PROCESSNAME,'creatorId' AS CREATORID,'className' AS CLASSNAME,'classPath' AS CLASSPATH,'processState' AS PROCESSSTATE,'url' AS URL,'approval' AS APPROVAL,'commentText' AS COMMENTTEXT)))) t3 
+        where t1.id_ not in (select distinct id_ from act_ru_task) and t1.id_=t2.taskId and t1.proc_inst_id_=t2.proc_inst_id_ and t1.proc_inst_id_ = t3.proc_inst_id_))
+      )) T1, act_re_procdef t2
+      where t1.proc_def_id_ = t2.id_
+        and t1.creatorId =#{userId,jdbcType=VARCHAR}
+		<if test="status!=null and status!=''">
+		    and status=#{status,jdbcType=VARCHAR}
+		</if>
+		<if test="type!=null and type!=''">
+		    and type=#{type,jdbcType=VARCHAR}
+		</if>
+		<if test="applyName!=null and applyName!=''">
+		    and t1.processDesc=#{applyName,jdbcType=VARCHAR}
+		</if>
+		<if test="applyTime!=null and applyTime!=''">
+		    and to_char(create_time_,'yyyy-mm-dd')=#{applyTime,jdbcType=VARCHAR}
+		</if>
+		order by create_time_ desc
+	</select>	
+	<select id="checkTask" resultType="java.util.Map" parameterType="java.util.Map">
+	 select t1.proc_def_id_,to_char(t1.CREATE_TIME_,'yyyy-mm-dd hh24:mi:ss') create_time_,
+         t1.id_ taskId,t3.id_ as deploymentId, t4.proc_inst_id_,
+         t4.execution_id_,t4.id as localId, t4.processDesc,t4.localProcessId,
+         t4.processName,t4.creatorId,t4.creatorName,t4.className,t4.classPath,
+         t4.processState,t4.url, '已完成' status from 
+         act_ru_task T1,act_re_procdef t2,act_re_deployment t3 ,
+         (select PROC_INST_ID_, EXECUTION_ID_, ID,PROCESSDESC, LOCALPROCESSID, 
+         CREATORNAME,PROCESSNAME,CREATORID,CLASSNAME,CLASSPATH,PROCESSSTATE,URL from 
+         ((select PROC_INST_ID_,EXECUTION_ID_, NAME_, TEXT_ from ACT_HI_VARINST where name_ in ('id','processDesc','localProcessId','creatorName','processName','creatorId','className','classPath','processState','url')) 
+         pivot (max(TEXT_) for NAME_ in ('id' AS ID,'processDesc' AS PROCESSDESC,'localProcessId' AS LOCALPROCESSID,'creatorName' AS CREATORNAME,'processName' AS PROCESSNAME,'creatorId' AS CREATORID,'className' AS CLASSNAME,'classPath' AS CLASSPATH,'processState' AS PROCESSSTATE,'url' AS URL)))) t4 
+         where t1.proc_def_id_=t2.id_ 
+         and t2.deployment_id_=t3.id_ 
+         and t1.proc_inst_id_=t4.proc_inst_id_
+         and t1.id_ = #{taskId,jdbcType=VARCHAR}
+         <if test="assignee!=null and assignee!=''">
+             and t1.assignee_=#{assignee,jdbcType=VARCHAR}
+         </if>
+         <if test="creatorId!=null and creatorId!=''">
+             and t4.creatorId=#{creatorId,jdbcType=VARCHAR} 
+         </if>
+     </select>
+</mapper> 

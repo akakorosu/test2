@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bonc.dpi.dao.mapper.UnidentifiedUaMapper">
+ 	<resultMap id="resultMap" type="com.bonc.dpi.dao.entity.UnidentifiedUa">
+		<result column="UA" jdbcType="VARCHAR" property="ua" />
+		<result column="UA_KEY" jdbcType="VARCHAR" property="uaKey" />
+		<result column="usertotal" jdbcType="DECIMAL" property="userTotal" />
+		<result column="usercount" jdbcType="DECIMAL" property="userCount" />
+		<result column="FLOW" jdbcType="DECIMAL" property="flow" />
+		<result column="MONTH_ID" jdbcType="VARCHAR" property="monthId" />
+		<result column="is_check" jdbcType="VARCHAR" property="isCheck" />
+	</resultMap>
+	
+	<!-- <select id="selectList" resultMap="resultMap">
+		SELECT t1.ua_key,t1.useragent ua,t1.user_total usertotal,t1.user_count usercount, t1.flow,t1.is_check
+        FROM dm_d_ia_unidentified_ua t1 
+        left join DIM_IA_USERAGENT_KEY t2 on t1.UA_KEY=t2.UA_KEY 
+        left join DIM_IA_USERAGENT_NOISE t3 on t1.UA_KEY=t3.NOISE_KEY 
+        where t2.UA_KEY is null and t3.NOISE_KEY is null
+		<if test="monthId != null and monthId != ''">
+			and DATE_ID= #{monthId}  
+		</if>
+		<if test="sidx != null and sord!='' and sord != null and sidx != ''">
+             ORDER BY ${sidx} ${sord}
+       </if>
+		order by flow
+	</select> -->
+	<select id="selectList" resultMap="resultMap">
+		SELECT t1.ua_key,t1.useragent ua,t1.user_total usertotal,t1.user_count usercount, t1.flow,t1.is_check 
+        FROM dm_d_ia_unidentified_ua t1 
+        where 1=1
+		<if test="monthId != null and monthId != ''">
+			and DATE_ID= #{monthId}  
+		</if>
+		<if test="isCheck != null and isCheck != ''">
+			and is_check= #{isCheck}  
+		</if>
+		<if test="sidx != null and sord!='' and sord != null and sidx != ''">
+             ORDER BY ${sidx} ${sord}
+       </if>
+		
+	</select>
+
+</mapper>

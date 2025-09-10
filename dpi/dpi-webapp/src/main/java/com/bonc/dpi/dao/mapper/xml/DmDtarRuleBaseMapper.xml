@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bonc.dpi.dao.mapper.DmDtarRuleBaseMapper">
+
+	<select id="selectList" 
+		parameterType="com.bonc.dpi.dao.entity.DmDtarRuleBase" 
+		resultType="com.bonc.dpi.dao.entity.DmDtarRuleBase">
+		select 
+			t.id,
+			t.tar_base_name tarBaseName,
+			t.tar_base_define tarBaseDefine,
+			t.tar_base_type tarBaseType,
+			t.tar_base_class tarBaseClass,
+			t.create_user createUser,
+			t.create_time createTime
+		from 
+			DM_D_TAR_RULE_BASE t
+		where 1 = 1
+		<if test="likeTarBaseName != null and likeTarBaseName !=''" >
+			and t.tar_base_name like #{likeTarBaseName}
+      </if>
+      <if test="likeTarBaseClass != null and likeTarBaseClass !=''" >
+			and t.tar_base_class like #{likeTarBaseClass}
+      </if>
+      <if test="tarBaseName != null and tarBaseName !=''" >
+			and t.tar_base_name = #{tarBaseName}
+      </if>
+      <if test="id != null and id !=''" >
+			and t.id != #{id}
+      </if>
+	</select>
+	
+	<select id="selectById" 
+		parameterType="java.lang.String"
+		resultType="com.bonc.dpi.dao.entity.DmDtarRuleBase">
+		select 
+			t.id,
+			t.tar_base_name tarBaseName,
+			t.tar_base_define tarBaseDefine,
+			t.tar_base_type tarBaseType,
+			t.tar_base_class tarBaseClass,
+			t.create_user createUser,
+			t.create_time createTime 
+		from 
+			DM_D_TAR_RULE_BASE t
+		where t.id = #{id}
+	</select>
+	
+	<insert id="insert" 
+		parameterType="com.bonc.dpi.dao.entity.DmDtarRuleBase">
+		INSERT INTO dm_d_tar_rule_base(
+			id,
+			tar_base_name, 
+			TAR_BASE_DEFINE, 
+			tar_base_type,
+			tar_base_class,
+			create_user, 
+			create_time) 
+		VALUES(
+			#{id},
+			#{tarBaseName},
+			#{tarBaseDefine},
+			#{tarBaseType},
+			#{tarBaseClass},
+			#{createUser},
+			#{createTime})
+	</insert>
+	
+	<update id="update" 
+		parameterType="com.bonc.dpi.dao.entity.DmDtarRuleBase">
+		update dm_d_tar_rule_base set 
+			tar_base_name=#{tarBaseName}, 
+			TAR_BASE_DEFINE=#{tarBaseDefine},
+			TAR_BASE_TYPE=#{tarBaseType},
+			TAR_BASE_CLASS=#{tarBaseClass}
+		where 
+			id=#{id}
+	</update>
+	
+	<delete id="deleteById" parameterType="java.lang.String">
+		delete from dm_d_tar_rule_base where id = #{id}
+	</delete>
+</mapper>

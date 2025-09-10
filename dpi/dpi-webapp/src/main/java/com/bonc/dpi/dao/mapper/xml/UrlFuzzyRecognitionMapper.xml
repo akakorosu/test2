@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bonc.dpi.dao.mapper.UrlFuzzyRecognitionMapper">
+ 	<resultMap id="resultMap" type="com.bonc.dpi.dao.entity.UrlFuzzyRecognition">
+		
+		<result column="RULE_ID" jdbcType="VARCHAR" property="ruleId" />
+		<result column="RULE_TYPE" jdbcType="VARCHAR" property="ruleType" />
+		<result column="DOMAIN_KEYWORD" jdbcType="VARCHAR" property="domainKeyword" />
+		<result column="PARSE_RULE" jdbcType="VARCHAR" property="parseRule" />
+		<result column="GET_INDEX" jdbcType="VARCHAR" property="getIndex" />
+		<result column="PROD_ID" jdbcType="VARCHAR" property="prodId" />
+		<result column="PROD_NAME" jdbcType="VARCHAR" property="prodName" />
+		<result column="LABEL_CODE" jdbcType="VARCHAR" property="labelCode" />
+		<result column="URL_EXAMPLE" jdbcType="VARCHAR" property="urlExample" />
+		<result column="AUTHOR" jdbcType="VARCHAR" property="author" />
+		<result column="OP_TIME" jdbcType="VARCHAR" property="opTime" />
+		<result column="IS_VALID" jdbcType="VARCHAR" property="isValid" />
+		<result column="TOTAL_COUNT" jdbcType="INTEGER" property="totalCount" />
+		<result column="date_id" jdbcType="VARCHAR" property="dateId" />
+		<result column="url" jdbcType="VARCHAR" property="url" />
+		<result column="usertotal" jdbcType="VARCHAR" property="userTotal" />
+		<result column="usercount" jdbcType="INTEGER" property="userCount" />
+		<result column="flow" jdbcType="VARCHAR" property="flow" />
+		<result column="is_check" jdbcType="VARCHAR" property="isCheck" />
+		<result column="ID" jdbcType="VARCHAR" property="id" />
+	</resultMap>
+	
+	<select id="selectList" resultMap="resultMap" databaseId="mysql">
+	
+		select t1.id,t1.url ,t1.user_total usertotal,t1.user_count usercount ,t1.flow ,t1.is_check
+		from dm_d_ia_unidentified_url t1
+		where 1=1
+		<if test="dateId != null and dateId != ''">
+			and date_id= #{dateId}  
+		</if>
+		<if test="isCheck != null and isCheck != ''">
+			and is_check= #{isCheck}  
+		</if>
+		<if test="sidx != null and sord!='' and sord != null and sidx != ''">
+             ORDER BY ${sidx} ${sord},id ${sord}
+       </if>
+	</select>
+	<select id="selectList" resultMap="resultMap" databaseId="oracle">
+	
+		select t1.rowid as "ID",t1.url ,t1.user_total usertotal,t1.user_count usercount ,t1.flow ,t1.is_check
+		from dm_d_ia_unidentified_url t1
+		where 1=1
+		<if test="dateId != null and dateId != ''">
+			and date_id= #{dateId}  
+		</if>
+		<if test="isCheck != null and isCheck != ''">
+			and is_check= #{isCheck}  
+		</if>
+		<if test="sidx != null and sord!='' and sord != null and sidx != ''">
+             ORDER BY ${sidx} ${sord},rowid ${sord}
+       </if>
+	</select>
+	<select id="getTableName" resultType="java.util.Map">
+		SELECT dm_d_data_error.check_object from dm_d_data_error 
+	</select>
+	<select id="checkDomainRule" resultType="java.util.Map">
+		select i.prod_id "PROD_ID" ,i.prod_name "PROD_NAME" 
+        ,i.prod_label_code "PROD_LABEL_CODE" from DIM_IA_DOMAIN_RULE r 
+        left join DIM_IA_PRODUCT_INFO i on r.prod_id=i.prod_id where r.domain_code=#{domainCode}
+	</select>
+	<update id="updateUrl" parameterType="com.bonc.dpi.dao.entity.UrlFuzzyRecognition" databaseId="mysql">
+		update DM_D_IA_UNIDENTIFIED_URL set is_Check='1' where 1=1
+		<if test="dateId != null and dateId != ''">
+			and date_id= #{dateId}  
+		</if>
+		<if test="id != null and id != ''">
+			and id=#{id}  
+		</if>
+		
+	</update>
+	<update id="updateUrl" parameterType="com.bonc.dpi.dao.entity.UrlFuzzyRecognition" databaseId="oracle">
+		update DM_D_IA_UNIDENTIFIED_URL set is_Check='1' where 1=1
+		<if test="dateId != null and dateId != ''">
+			and date_id= #{dateId}  
+		</if>
+		<if test="id != null and id != ''">
+			and rowid=#{id}  
+		</if>
+		
+	</update>
+	<insert id="insertIntoExportTable" parameterType="com.bonc.dpi.dao.entity.UrlFuzzyRecognition">
+		insert into dm_host_url_export (host,prod_name,OP_TIME,AUTHOR,label_code,table_type,is_export,BAK1) 
+   		values (#{parseRule,jdbcType=VARCHAR},
+   				#{prodName,jdbcType=VARCHAR},
+   				#{opTime,jdbcType=VARCHAR},
+   				#{author,jdbcType=VARCHAR},
+      			#{labelCode,jdbcType=VARCHAR},
+      			'0',
+      			'0',
+      			#{prodCatagoryCode,jdbcType=VARCHAR}
+      			)
+	</insert>
+	
+</mapper>

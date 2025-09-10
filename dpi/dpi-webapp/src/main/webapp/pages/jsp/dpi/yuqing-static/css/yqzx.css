@@ -1,0 +1,335 @@
+*{
+    margin:0;padding:0;text-decoration:none;
+}
+html,body{
+    width:100%;
+    height:100%;
+    font: normal 100% Helvetica, Arial, sans-serif;
+}
+ul ,ol,li{
+    padding:0;
+    margin:0;
+    list-style: none;
+    display: inline-block;
+}
+i,span{
+    display: inline-block;
+}
+a{
+	text-decoration:none;
+	color:rgb(32, 14, 1);
+}
+input,textarea,select,a:focus {
+    outline:none;
+    display: inline-block;
+}
+/* ----------------------------------------------------------------------------------------------------------------- */
+#container{
+    width:100%;
+    height:270%;
+    background:#f0f0f0;
+}
+#container nav{
+    width:100%;
+    height:80px;
+    background:url(../img/bg.png) no-repeat;
+    background-size: 100% 100%;
+    /* display:fixed; */
+    position: fixed;
+    z-index: 500;
+}
+#container nav .biao{
+    width:100%;
+    height:100%;
+    padding-top:1%;
+}
+#container nav .biao img{
+    vertical-align:bottom;
+}
+#container nav .biao ul{
+    width:60%;
+    height:60%;
+    margin-left:4%;
+    vertical-align:bottom;
+}
+#container nav .biao ul li{
+    width:15%;
+    cursor:pointer;
+}
+/* -------------------------------------------------------------------------- */
+.content{
+ text-align: center;
+ padding-top:100px;
+}
+.page{
+    width:100%;
+    height:100%;
+}
+/* ----------------------------------- */
+/* 左 */
+.pageZhuanti .left{
+    width:20%;
+    float:left;
+    position: fixed;
+}
+.pageZhuanti .left ul{
+    width:80%;
+    margin:0 auto;
+    text-align: left;
+    background:#fff;
+    box-shadow:0 0 15px rgba(0, 0, 0, 0.3);
+}
+.pageZhuanti .left ul li{
+    width:100%;
+    height:50px;
+    float:left;
+    cursor:pointer;
+}
+.pageZhuanti .left ul li i,.pageZhuanti .left ul li img,.pageZhuanti .left ul li span{
+    vertical-align: middle;
+}
+.pageZhuanti .left ul li i{
+    width:3px;
+    height:50px;
+    margin-right:2%;
+}
+.rq{
+    background:#2b90e0;
+}
+.dc{
+    background:#54cbab;
+}
+.sy{
+    background:#487cb3;
+}
+.gjc{
+    background:#5cc9cd;
+}
+.pageZhuanti .left ul li img{
+    margin-right:8%;
+}
+/* ----------------------------------- */
+/* 右 */
+.pageZhuanti .right{
+    width:80%;
+    float: right;
+}
+/* 日期订制 */
+.sjxz .top{
+    position: fixed;
+}
+.sjxz .xuan{
+    font-size:16px;
+    font-weight: 700;
+    padding-bottom:1%;
+    text-align: left;
+}
+.sjxz .xuan #daochu{
+    border:1px solid #54cbab;
+    border-radius: 3px;
+    padding:5px 1%;
+    background:transparent;
+    float:right;
+    color:#54cbab;
+}
+/* ---------------------- */
+/* 表格 */
+.table{
+    width:99%;
+    /* border:1px solid #000; */
+}
+.layui-table tbody tr:hover, .layui-table thead tr, .layui-table-click, .layui-table-header, .layui-table-hover, .layui-table-mend, .layui-table-patch, .layui-table-tool, .layui-table-total, .layui-table-total tr, .layui-table[lay-even] tr:nth-child(even) {
+    background-color: #cfcfcf !important;
+}
+.layui-table th {
+    position: relative;
+    padding: 9px 15px;
+    min-height: 20px;
+    line-height: 20px;
+    font-size: 14px;
+    font-weight: 700 !important;
+    color:#000;
+}
+/*table{
+    width:100%;
+    background:#fff;
+    border:1px solid #b4b4b4;
+}
+table thead tr td{
+    background:rgba(0, 0, 0, 0.2);
+    padding:2% 1%;
+    font-weight: 700;
+}
+table tbody tr td{
+    padding:1.5% 1%;
+    border-bottom:1px solid #b4b4b4;
+}
+table tbody tr:last-child td{
+    border:0;
+} */
+/* ----------------------- */
+.pageZhuanti .right .sjxz{
+    width:98%;
+}
+/* ---------------------- */
+/* 标题 */
+.pageZhuanti .right .title{
+    width:100%;
+    text-align: left;
+}
+.pageZhuanti .right .title i{
+    width:5px;
+    height:35px;
+    vertical-align: middle;
+    margin-right:1%;
+}
+.pageZhuanti .right .title span{
+    width:10%;
+    font-size:18px;
+    font-weight: 700;
+    vertical-align: middle;
+}
+/* ---------------------- */
+/* .pageZhuanti .right .sjxz .top{
+    margin-bottom:4%;
+}
+.pageZhuanti .right .sjxz .top p{
+    margin-bottom:2%;
+} */
+.pageZhuanti .right .sjxz .top i{
+    background:#2b90e0;
+} 
+.pageZhuanti .right .sjxz .top span{
+    color:#2b90e0;
+}
+.pageZhuanti .right .sjxz .top img{
+    width:23px;
+    height:22px;
+    vertical-align: middle;
+    margin-right:1%;
+}
+.pageZhuanti .right .sjxz .top input{
+    width:180px;
+    height:22px;
+    vertical-align: middle;
+    padding-left:10px;
+    /* color:#b4b4b4; */
+}
+/* ---------------------- */
+/* 导出 */
+.pageZhuanti .right .wzdc{
+    width:100%;
+    height:100%;
+    z-index:10;
+    position:absolute;
+    top:0;
+    left:0;
+}
+.pageZhuanti .right .wzdc .dime{
+    width:100%;
+    height:100%;
+    background:#000;
+    opacity: 0.3;
+}
+.pageZhuanti .right .wzdc p{
+    width:20%;
+    padding:5% 0;
+    box-shadow:0 0 15px rgba(0, 0, 0, 0.3);
+    background:#fff;
+    position:absolute;
+    top:40%;
+    left:40%;
+    font-weight: 700;
+}
+/* ---------------------- */
+/* 溯源添加  */
+.pageZhuanti .right .sytj .top > p{
+    width:40%;
+    display:inline-block;
+}
+.pageZhuanti .right .sytj .top > p > i{
+    background:#487cb3;
+    vertical-align: middle;
+}
+.pageZhuanti .right .sytj .top > p span{
+    width:100px;
+    color:#487cb3;
+    vertical-align: middle;
+}
+.pageZhuanti .right .top > .tianjia{
+    /* padding-right: 1%; */
+    float:right;
+    cursor:pointer;
+}
+.pageZhuanti .right .top > .tianjia > .tianj{
+    width:100px;
+    height:25px;
+    line-height: 25px;
+    color:#000;
+    vertical-align: middle;
+    float: right;
+}
+.pageZhuanti .right .top > .tianjia > img{
+    width:25px;
+    height:25px;
+    vertical-align: middle;
+    float: right;
+}
+.pageZhuanti .right .top > div{
+    width:100%;
+}
+.pageZhuanti .right .top > div textarea{
+    width:94%;
+    height:100px;
+    border:1px solid #b4b4b4;
+    border-radius: 10px;
+    padding:2%;
+    overflow:hidden;
+}
+.pageZhuanti .right .top{
+    margin-bottom:2%;
+    position: relative;
+}
+.pageZhuanti .right .top p{
+    margin-bottom:2%;
+}
+.pageZhuanti .right .top > input{
+    width:80px;
+    padding:6px;
+    color:#ee5d5d;
+    font-size: 16px;
+    font-weight:700;
+    text-align: right;
+    background:transparent url(../img/sc2_03.png) no-repeat 3px 0px;
+    border:2px solid #ee5d5d;
+    border-radius:8px;
+    position:absolute;
+    top:0;
+    right:2%;
+    cursor:pointer;
+}
+/* .pageZhuanti .right .top table{
+    text-align: center;
+    width:96%;
+} */
+/* .pageZhuanti .right .top table tbody tr td img{
+    vertical-align: middle;
+} */
+/* .pageZhuanti .right .top table tr td > input{
+    cursor:pointer;
+} */
+/* ---------------------- */
+/* 关键词添加  */
+.pageZhuanti .right .gjctj .top > p{
+    width:40%;
+    display:inline-block;
+}
+.pageZhuanti .right .gjctj .top > p > i{
+    background:#5cc9cd;
+    vertical-align: middle;
+}
+.pageZhuanti .right .gjctj .top > p span{
+    width:100px;
+    color:#5cc9cd;
+    vertical-align: middle;
+}

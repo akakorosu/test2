@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bonc.dpi.dao.mapper.DmDevNovelInfoMapper">
+	<select id="selectList" 
+		parameterType="com.bonc.dpi.dao.entity.DmDevNovelInfo" 
+		resultType="com.bonc.dpi.dao.entity.DmDevNovelInfo">
+		SELECT 
+		  t.CHAPTER chapter,
+		  t.CONTENT_LABEL_CODE2 contentLabelCode2,
+		  t.CONTENT_LABEL_CODE3 contentLabelCode3,
+		  t.CONTENT_LABEL_NAME2 contentLabelName2,
+		  t.CONTENT_LABEL_NAME3 contentLabelName3,
+		  t.CREATE_TIME createTime,
+		  t.DATE_ID dateId,
+		  t.DOWN_FLOW downFlow,
+		  t.HITS hits,
+		  t.IS_CHARGE isCharge,
+		  t.NOVEL_ID novelId,
+		  t.NOVEL_NAME novelName,
+		  t.PROD_ID prodId,
+		  t.SCORE score,
+		  t.STATUS status,
+		  t.TOTAL_FLOW totalFlow,
+		  t.TOTAL_NUM totalNum,
+		  t.UP_FLOW upFlow,
+		  t.USER_TOTAL userTotal,
+		  t.WAP_DURATION wapDuration,
+		  t.WORD_COUNT wordCount,
+		  t.WRITER writer
+		FROM
+		  dm_d_ev_novel_info t where 1=1
+		<if test="writer != null and writer != ''">
+			and writer like CONCAT(CONCAT('%', #{writer}), '%')
+		</if>
+		<if test="novelName != null and novelName != ''">
+			and NOVEL_NAME like CONCAT(CONCAT('%', #{novelName}), '%')
+		</if>
+	</select>
+</mapper>

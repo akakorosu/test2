@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bonc.dpi.dao.mapper.IndustryPicMapper">
+	<!-- top10 -->
+  	<select id="select" parameterType="com.bonc.dpi.dao.entity.IndustryPic" resultType="com.bonc.dpi.dao.entity.IndustryPic">
+		SELECT PROD_NAME prodName,sum(USER_TOTAL) userTotal
+		FROM dm_d_ev_app_top 
+		where 1=1  	
+		<if test="dateId != null and dateId != ''">
+			and date_id= #{dateId}  
+		</if>
+		<if test="labelName1 != null and labelName1 != ''">
+			and label_name1= #{labelName1}  
+		</if>
+		<if test="labelName2 != null and labelName2 != ''">
+			and label_name2= #{labelName2}  
+		</if>
+		group by PROD_NAME 
+		order by userTotal DESC	
+	</select>  
+	<!-- top10总数 -->
+	<select id="selectTopTotal" resultType="java.lang.String">	
+		select sum(user_total) USER_TOTAL
+		from dm_d_ev_usr_label_info 
+		where 
+		<if test="labelName1 == null or labelName1 == ''">
+		LABEL_LEVEL=0
+		</if>
+		<if test="labelName1 != null and labelName1 != ''">
+		LABEL_LEVEL=2 and trim(LEVEL_NAME)=#{labelName1}
+		</if>
+		<if test="dateId != null and dateId != ''">
+			and date_id= #{dateId}  
+		</if>
+	</select>		
+	
+    <!-- 地图某标签数据 -->
+	<select id="selectMapDataList" resultType="com.bonc.dpi.dao.entity.IndustryPic">
+	SELECT	a.area_name areaId,t.userTotal,t.userTotalPer,t.totalFlow,t.totalFlowPer,t.perCapitaFlow from
+		(SELECT t1.AREA_ID areaId,t1.total1 userTotal, round(100*t1.total1/t2.total2,2) userTotalPer,
+		round(t1.flow1/1024,2) totalFlow,round(100*t1.flow1/t2.flow2,2) totalFlowPer,round(t1.flow1/t1.total1 ,2) perCapitaFlow from
+			(SELECT AREA_ID,SUM(USER_TOTAL) total1,sum(FLOW) flow1 from
+				dm_d_ev_usr_label_info
+				where LABEL_LEVEL=2
+				<if test="dateId != null and dateId != ''">
+					and DATE_ID = #{dateId}  
+				</if>
+				<if test="labelName1 != null and labelName1 != ''">
+				and trim(LEVEL_NAME)=#{labelName1}
+				</if>
+				<if test="labelName2 != null and labelName2 != ''">
+				and trim(LEVEL_NAME)=#{labelName2}
+				</if>
+				group by AREA_ID
+			)t1,
+			(SELECT AREA_ID,SUM(USER_TOTAL) total2,sum(FLOW) flow2 from
+				dm_d_ev_usr_label_info
+				where
+				LABEL_LEVEL=0
+				<if test="dateId != null and dateId != ''">
+					and DATE_ID = #{dateId}  
+				</if>
+				group by AREA_ID
+			)t2 
+		where t1.AREA_ID=t2.AREA_ID
+		)t LEFT JOIN dim_area_info a on t.areaId=a.area_id  
+	order by t.userTotal desc
+	</select>
+	<!-- 地图所有标签的数据 -->
+	<select id="selectMapAllData" resultType="com.bonc.dpi.dao.entity.IndustryPic">
+	SELECT	a.area_name areaId,t.userTotal,t.userTotalPer,t.totalFlow,t.totalFlowPer,t.perCapitaFlow from
+		(SELECT t1.AREA_ID areaId,t1.total1 userTotal, round(100*t1.total1/t2.total2,2) userTotalPer,
+		round(t1.flow1/1024,2) totalFlow,round(100*t1.flow1/t2.flow2,2) totalFlowPer,round(t1.flow1/t1.total1,2) perCapitaFlow from
+			(
+				SELECT AREA_ID,SUM(USER_TOTAL) total1,SUM(FLOW) flow1 from
+				dm_d_ev_usr_label_info
+				where LABEL_LEVEL=0
+				<if test="dateId != null and dateId != ''">
+					and DATE_ID = #{dateId}  
+				</if>
+				group by AREA_ID
+			)t1,
+			(
+				SELECT SUM(USER_TOTAL) total2,sum(FLOW) flow2 from
+				dm_d_ev_usr_label_info
+				where LABEL_LEVEL=0
+				<if test="dateId != null and dateId != ''">
+					and DATE_ID = #{dateId}  
+				</if>
+			)t2
+	) t LEFT JOIN dim_area_info a on t.areaId=a.area_id  
+	order by t.userTotal desc
+	</select>
+	
+	<!-- 所有标签性别比例 -->
+	<select id="selectAllSex" parameterType="com.bonc.dpi.dao.entity.IndustryPic"  resultType="com.bonc.dpi.dao.entity.IndustryPic">
+		 SELECT round(100*t1.total1/t2.total2,2) userTotalPer,t1.SEX sex from	
+			(
+				SELECT sum(USER_TOTAL) total1,SEX  from
+				dm_d_ev_usr_label_info
+				where LABEL_LEVEL=0 
+				and SEX in(1,2)
+				<if test="dateId != null and dateId != ''">
+					and DATE_ID = #{dateId}  
+				</if>
+				group by SEX
+			)t1,
+			(
+				SELECT sum(USER_TOTAL) total2 from
+				dm_d_ev_usr_label_info
+				where LABEL_LEVEL=0 
+				and SEX in(1,2)
+				<if test="dateId != null and dateId != ''">
+					and DATE_ID = #{dateId}  
+				</if>
+			)t2
+			order by t1.SEX asc
+	</select>
+	<!-- 某标签性别比例 -->
+	<select id="selectSex" parameterType="com.bonc.dpi.dao.entity.IndustryPic"  resultType="com.bonc.dpi.dao.entity.IndustryPic">
+	SELECT round(100*t1.total1/t2.total2,2) userTotalPer,t1.SEX sex from
+	(
+		SELECT SUM(USER_TOTAL) total1,SEX from
+		dm_d_ev_usr_label_info
+		where LABEL_LEVEL=2
+		and SEX in(1,2) 
+		<if test="dateId != null and dateId != ''">
+			and DATE_ID = #{dateId}
+		</if>
+		<if test="labelName1 != null and labelName1 != ''">
+			and trim(LEVEL_NAME)=#{labelName1}
+		</if>
+		<if test="labelName2 != null and labelName2 != ''">
+			and trim(LEVEL_NAME)=#{labelName2}
+		</if>
+		group by SEX
+	)t1,
+	(
+		SELECT SUM(USER_TOTAL) total2 from
+		dm_d_ev_usr_label_info
+		where LABEL_LEVEL=2 
+		and SEX in(1,2)
+		<if test="dateId != null and dateId != ''">
+			and DATE_ID = #{dateId}
+		</if>
+		<if test="labelName1 != null and labelName1 != ''">
+			and trim(LEVEL_NAME)=#{labelName1}
+		</if>
+		<if test="labelName2 != null and labelName2 != ''">
+			and trim(LEVEL_NAME)=#{labelName2}
+		</if>
+	)t2
+	order by t1.SEX asc
+	</select>
+	
+	
+	<!-- 所有标签年龄比例 -->
+	<select id="selectAllAge" parameterType="com.bonc.dpi.dao.entity.IndustryPic"  resultType="com.bonc.dpi.dao.entity.IndustryPic">
+		 SELECT round(100*t1.total1/t2.total2,2) userTotalPer,t1.AGE age from	
+			(
+				SELECT sum(USER_TOTAL) total1,AGE from
+				dm_d_ev_usr_label_info
+				where LABEL_LEVEL=0 
+				<if test="dateId != null and dateId != ''">
+					and DATE_ID = #{dateId}  
+				</if>
+				group by AGE
+			)t1,
+			(
+				SELECT sum(USER_TOTAL) total2 from
+				dm_d_ev_usr_label_info
+				where LABEL_LEVEL=0 
+				<if test="dateId != null and dateId != ''">
+					and DATE_ID = #{dateId}  
+				</if>
+			)t2
+			order by t1.AGE asc
+	</select>
+	<!-- 某标签年龄比例 -->
+	<select id="selectAge" parameterType="com.bonc.dpi.dao.entity.IndustryPic"  resultType="com.bonc.dpi.dao.entity.IndustryPic">
+	SELECT round(100*t1.total1/t2. total2,2) userTotalPer,t1.AGE age from
+	(
+	SELECT SUM(USER_TOTAL) total1,AGE from dm_d_ev_usr_label_info
+	where LABEL_LEVEL=2
+	<if test="dateId != null and dateId != ''">
+		and DATE_ID = #{dateId}
+	</if>
+	<if test="labelName1 != null and labelName1 != ''">
+		and trim(LEVEL_NAME)=#{labelName1}
+	</if>
+	<if test="labelName2 != null and labelName2 != ''">
+		and trim(LEVEL_NAME)=#{labelName2}
+	</if>
+	group by AGE
+	)t1,
+	(
+	SELECT SUM(USER_TOTAL) total2 from dm_d_ev_usr_label_info
+	where LABEL_LEVEL=2 
+	<if test="dateId != null and dateId != ''">
+		and DATE_ID = #{dateId}
+	</if>
+	<if test="labelName1 != null and labelName1 != ''">
+		and trim(LEVEL_NAME)=#{labelName1}
+	</if>
+	<if test="labelName2 != null and labelName2 != ''">
+		and trim(LEVEL_NAME)=#{labelName2}
+	</if>
+	)t2
+	order by t1.AGE asc
+	</select>
+</mapper>

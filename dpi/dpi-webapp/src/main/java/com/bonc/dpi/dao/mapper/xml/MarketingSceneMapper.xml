@@ -1,0 +1,436 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.bonc.dpi.dao.mapper.MarketingSceneMapper">
+    <resultMap id="MarketingScene" type="com.bonc.dpi.entity.MarketingScene">
+        <result column="scene_code" property="scene_code" jdbcType="VARCHAR" />
+        <result column="scene_text" property="scene_text" jdbcType="VARCHAR" />
+        <result column="app_codes" property="app_codes" jdbcType="VARCHAR" />
+        <result column="app_name" property="app_name" jdbcType="VARCHAR" />
+        <result column="video_name" property="video_name" jdbcType="VARCHAR" />
+        <result column="video_code" property="video_code" jdbcType="VARCHAR" />
+        <result column="keys_strs" property="keys_strs" jdbcType="VARCHAR" />
+        <result column="state_name" property="state_name" jdbcType="VARCHAR" />
+        <result column="state_code" property="state_code" jdbcType="VARCHAR" />
+        <result column="operator_code" property="operator_code" jdbcType="VARCHAR" />
+        <result column="operator_name" property="operator_name" jdbcType="VARCHAR" />
+        <result column="type_code" property="type_code" jdbcType="VARCHAR" />
+        <result column="type_name" property="type_name" jdbcType="VARCHAR" />
+        <result column="start_date" property="start_date" jdbcType="VARCHAR" />
+        <result column="rule_type" property="rule_type" jdbcType="VARCHAR" />
+        <result column="flow_max" property="flow_max" jdbcType="VARCHAR" />
+        <result column="end_date" property="end_date" jdbcType="VARCHAR" />
+        <result column="go_times" property="go_times" jdbcType="VARCHAR" />
+        <result column="flow_time_circle" property="flow_time_circle" jdbcType="VARCHAR" />
+        <result column="busi_up_date" property="busi_up_date" jdbcType="VARCHAR" />
+        <result column="busi_down_date" property="busi_down_date" jdbcType="VARCHAR" />
+        <result column="busi_code" property="busi_code" jdbcType="VARCHAR" />
+    </resultMap>
+    <resultMap id="host" type="com.bonc.dpi.entity.MarketingHost">
+        <result column="domain_code" property="domain_code" jdbcType="VARCHAR" />
+        <result column="prod_id" property="prod_id" jdbcType="VARCHAR" />
+        <result column="prod_name" property="prod_name" jdbcType="VARCHAR" />
+    </resultMap>
+    <resultMap id="marketBushi" type="com.bonc.dpi.entity.MarketBushi">
+        <result column="market_id" property="market_id" jdbcType="VARCHAR" />
+        <result column="account_id" property="account_id" jdbcType="VARCHAR" />
+        <result column="busi_code" property="busi_code" jdbcType="VARCHAR" />
+        <result column="busi_name" property="busi_name" jdbcType="VARCHAR" />
+        <result column="type_list" property="type_list" jdbcType="VARCHAR" />
+        <result column="rule_list" property="rule_list" jdbcType="VARCHAR" />
+        <result column="keyword_hostlist" property="keyword_hostlist" jdbcType="VARCHAR" />
+        <result column="status" property="status" jdbcType="VARCHAR" />
+        <result column="start_date" property="start_date" jdbcType="VARCHAR" />
+        <result column="end_date" property="end_date" jdbcType="VARCHAR" />
+    </resultMap>
+    <resultMap id="marketBushiCondition" type="com.bonc.dpi.entity.MarketBushiCondition">
+        <result column="condition_id" property="condition_id" jdbcType="VARCHAR" />
+        <result column="busi_code" property="busi_code" jdbcType="VARCHAR" />
+        <result column="condition_type" property="condition_type" jdbcType="VARCHAR" />
+        <result column="send_num" property="send_num" jdbcType="VARCHAR" />
+        <result column="send_rate_unit" property="send_rate_unit" jdbcType="VARCHAR" />
+        <result column="send_rate_value" property="send_rate_value" jdbcType="VARCHAR" />
+        <result column="field_name" property="field_name" jdbcType="VARCHAR" />
+        <result column="sum_field_unit" property="sum_field_unit" jdbcType="VARCHAR" />
+        <result column="sum_field_value" property="sum_field_value" jdbcType="VARCHAR" />
+        <result column="sum_time_unit" property="sum_time_unit" jdbcType="VARCHAR" />
+        <result column="sum_time_value" property="sum_time_value" jdbcType="VARCHAR" />
+        <result column="status" property="status" jdbcType="VARCHAR" />
+        <result column="send_start_date" property="send_start_date" jdbcType="VARCHAR" />
+        <result column="send_end_date" property="send_end_date" jdbcType="VARCHAR" />
+        <result column="start_date" property="start_date" jdbcType="VARCHAR" />
+        <result column="end_date" property="end_date" jdbcType="VARCHAR" />
+    </resultMap>
+    <select id="getSceneTotalNum" parameterType="com.bonc.dpi.entity.MarketingScene" resultType="int">
+        select count(*) from st_sig_scene_config
+        where 1=1
+        <if test="app_name!= null and app_name!= ''">
+            and app_name like concat('%',#{app_name,jdbcType=VARCHAR},'%')
+        </if>
+
+        <if test="keys_strs!= null and keys_strs!= ''">
+            and keys_strs like concat('%',#{keys_strs,jdbcType=VARCHAR},'%')
+        </if>
+        <if test="operator_code!= null and operator_code!= ''">
+            and operator_code = #{operator_code,jdbcType=VARCHAR}
+        </if>
+        <if test="scene_text!= null and scene_text!= ''">
+            and scene_text like concat('%',#{scene_text,jdbcType=VARCHAR},'%')
+        </if>
+        <if test="state_code!= null and state_code!= ''">
+            and state_code = #{state_code,jdbcType=VARCHAR}
+        </if>
+        <if test="type_code!= null and type_code!= ''">
+            and type_code = #{type_code,jdbcType=VARCHAR}
+        </if>
+        <if test="video_name!= null and video_name!= ''">
+            and video_name like concat('%',#{video_name,jdbcType=VARCHAR},'%')
+        </if>
+        <if test="start_date!=null and start_date.trim() neq ''">
+            and date_format(start_date,'%Y-%m-%d') &gt;= str_to_date(#{start_date},'%Y-%m-%d')
+        </if>
+        <if test="end_date!=null and end_date.trim() neq ''">
+            and date_format(end_date,'%Y-%m-%d') &lt;= str_to_date(#{end_date},'%Y-%m-%d')
+        </if>
+    </select>
+
+    <select id="getSceneByState" parameterType="java.lang.String" resultMap="MarketingScene">
+            select * from st_sig_scene_config where state_code = #{state_code,jdbcType=VARCHAR}
+    </select>
+
+    <select id="getSceneList" parameterType="java.util.Map" resultMap="MarketingScene">
+        select *
+        from st_sig_scene_config
+        where 1=1
+        <if test="app_name!= null and app_name!= ''">
+            and app_name like concat('%',#{app_name,jdbcType=VARCHAR},'%')
+        </if>
+
+        <if test="keys_strs!= null and keys_strs!= ''">
+            and keys_strs like concat('%',#{keys_strs,jdbcType=VARCHAR},'%')
+        </if>
+        <if test="operator_code!= null and operator_code!= ''">
+            and operator_code = #{operator_code,jdbcType=VARCHAR}
+        </if>
+        <if test="scene_text!= null and scene_text!= ''">
+            and scene_text like concat('%',#{scene_text,jdbcType=VARCHAR},'%')
+        </if>
+        <if test="state_code!= null and state_code!= ''">
+            and state_code = #{state_code,jdbcType=VARCHAR}
+        </if>
+        <if test="type_code!= null and type_code!= ''">
+            and type_code = #{type_code,jdbcType=VARCHAR}
+        </if>
+        <if test="video_name!= null and video_name!= ''">
+            and video_name like concat('%',#{video_name,jdbcType=VARCHAR},'%')
+        </if>
+        <if test="start_date!=null and start_date.trim() neq ''">
+            and date_format(start_date,'%Y-%m-%d') &gt;= str_to_date(#{start_date},'%Y-%m-%d')
+        </if>
+        <if test="end_date!=null and end_date.trim() neq ''">
+            and date_format(end_date,'%Y-%m-%d') &lt;= str_to_date(#{end_date},'%Y-%m-%d')
+        </if>
+        order by scene_code desc
+        limit #{limitnum,jdbcType=INTEGER} offset #{startrow,jdbcType=INTEGER}
+    </select>
+
+    <insert id="save" parameterType="java.util.Map">
+        insert into st_sig_scene_config (
+        scene_text,
+        app_codes,
+        app_name,
+        video_name,
+        video_code,
+        keys_strs,
+        state_name,
+        state_code,
+        operator_code,
+        operator_name,
+        type_code,
+        type_name,
+        start_date,
+        end_date,
+        rule_type,
+        flow_max,
+        go_times,
+        flow_time_circle,
+        busi_up_date,
+        busi_down_date)
+         VALUES (
+          #{scene_text,jdbcType=VARCHAR},
+          #{app_codes,jdbcType=VARCHAR},
+          #{app_name,jdbcType=VARCHAR},
+          #{video_name,jdbcType=VARCHAR},
+          #{video_code,jdbcType=VARCHAR},
+          #{keys_strs,jdbcType=VARCHAR},
+          #{state_name,jdbcType=VARCHAR},
+          #{state_code,jdbcType=VARCHAR},
+          #{operator_code,jdbcType=VARCHAR},
+          #{operator_name,jdbcType=VARCHAR},
+          #{type_code,jdbcType=VARCHAR},
+          #{type_name,jdbcType=VARCHAR},
+          #{start_date,jdbcType=VARCHAR},
+          #{end_date,jdbcType=VARCHAR},
+          #{rule_type,jdbcType=VARCHAR},
+          #{flow_max,jdbcType=VARCHAR},
+          #{go_times,jdbcType=VARCHAR},
+          #{flow_time_circle,jdbcType=VARCHAR},
+          #{busi_up_date,jdbcType=VARCHAR},
+          #{busi_down_date,jdbcType=VARCHAR})
+    </insert>
+
+    <update id="update">
+        UPDATE st_sig_scene_config
+        <trim prefix="set" suffixOverrides=",">
+            <if test="scene_text!= null and scene_text!= ''">scene_text=#{scene_text},</if>
+            <if test="app_codes!= null and app_codes!= ''">app_codes=#{app_codes},</if>
+            <if test="app_name!= null and app_name!= ''">app_name=#{app_name},</if>
+            <if test="video_name!= null and video_name!= ''">video_name=#{video_name},</if>
+            <if test="video_code!= null and video_code!= ''">video_code=#{video_code},</if>
+            <if test="keys_strs!= null and keys_strs!= ''">keys_strs=#{keys_strs},</if>
+            <if test="state_name!= null and state_name!= ''">state_name=#{state_name},</if>
+            <if test="state_code!= null and state_code!= ''">state_code=#{state_code},</if>
+            <if test="start_date!= null and start_date!= ''">start_date=#{start_date},</if>
+            <if test="end_date!= null and end_date!= ''">end_date=#{end_date},</if>
+            <if test="rule_type!= null and rule_type!= ''">rule_type=#{rule_type},</if>
+            <if test="flow_max!= null and flow_max!= ''">flow_max=#{flow_max},</if>
+            <if test="go_times!= null and go_times!= ''">go_times=#{go_times},</if>
+            <if test="busi_code!= null and busi_code!= ''">busi_code=#{busi_code},</if>
+            <if test="flow_time_circle!= null and flow_time_circle!= ''">flow_time_circle=#{flow_time_circle},</if>
+        </trim>
+        WHERE scene_code=#{scene_code,jdbcType=VARCHAR}
+    </update>
+
+    <update id="updateBushi">
+        UPDATE dim_scene_busi_market
+        <trim prefix="set" suffixOverrides=",">
+            <if test="busi_name!= null and busi_name!= ''">busi_name=#{busi_name},</if>
+            <if test="type_list!= null and type_list!= ''">type_list=#{type_list},</if>
+            <if test="rule_list!= null and rule_list!= ''">rule_list=#{rule_list},</if>
+            <if test="start_date!= null and start_date!= ''">start_date=#{start_date},</if>
+            <if test="end_date!= null and end_date!= ''">end_date=#{end_date},</if>
+        </trim>
+        WHERE busi_code=#{busi_code,jdbcType=VARCHAR}
+    </update>
+
+    <update id="updateCondition" parameterType="java.util.Map">
+        update dim_scene_busi_market_condition  set
+        condition_type=#{condition_type},
+        send_num=#{send_num},
+        field_name=#{field_name},
+        send_rate_unit=#{send_rate_unit},
+        send_rate_value=#{send_rate_value},
+        sum_field_unit=#{sum_field_unit},
+        sum_field_value=#{sum_field_value},
+        sum_time_unit=#{sum_time_unit},
+        sum_time_value=#{sum_time_value},
+        start_date=#{start_date},
+        end_date=#{end_date}
+        where busi_code=#{busi_code,jdbcType=VARCHAR}
+    </update>
+
+    <select id="getauthority" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT auth_code
+        FROM `dim_scene_user_auth`
+        where user_code = #{user_id}
+    </select>
+    <select id="getProdInfo" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT concat(prod_id,'(',prod_name,')') prod
+        FROM `dim_rd_ia_product_info`
+        where prod_name like concat('%',#{querystr,jdbcType=VARCHAR},'%')
+        or prod_id like concat('%',#{querystr,jdbcType=VARCHAR},'%')
+        or concat(prod_id,'(',prod_name,')') like concat('%',#{querystr,jdbcType=VARCHAR},'%')
+        limit 10
+    </select>
+    <select id="getProdHosts" parameterType="java.lang.String" resultMap="host">
+    	<!-- dim_ia_domain_rule -> dim_prod_host_info -->
+	        SELECT t1.host as domain_code, t1.prod_id,t2.prod_name
+	        FROM dim_prod_host_info t1 left join dim_rd_ia_product_info t2 on t1.prod_id=t2.prod_id
+	        where t1.prod_id = #{querystr,jdbcType=VARCHAR} and t1.host not REGEXP '^[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}$'
+
+        <!-- SELECT domain_code, t1.prod_id, prod_name
+        FROM dim_ia_domain_rule t1 left join dim_rd_ia_product_info t2 on t1.prod_id=t2.prod_id
+        where t1.prod_id = #{querystr,jdbcType=VARCHAR} limit 2 -->
+
+    </select>
+    <select id="searchhostrule" parameterType="java.util.Map" resultType="int">
+        select count(*) from dim_scene_rule_domain
+        where prod_code= #{prod_code,jdbcType=VARCHAR} and host_rule = #{host_rule,jdbcType=VARCHAR}
+    </select>
+    <!--rule-->
+    <select id="getRuleIds" parameterType="java.util.List" resultType="int">
+        SELECT rule_id
+        from dim_scene_rule_domain
+        where prod_code
+        in
+        <foreach collection="array" item="id" index="index" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+    <select id="getRules" parameterType="java.util.List" resultType="java.util.HashMap">
+    <!-- SELECT rule_id ,concat(rule_id,'|',rule_id,'|',prod_type_code,'|',prod_type_name,'|',prod_code,'|',prod_name,'|',host_rule) val -->
+        SELECT rule_id ,prod_type_code, prod_type_name, prod_code, prod_name, host_rule
+        from dim_scene_rule_domain
+        where rule_id
+        in
+        <foreach collection="list" item="id" index="index" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+
+    <insert id="addhostrule" parameterType="java.util.Map" useGeneratedKeys="true" keyProperty="rule_id">
+        insert into dim_scene_rule_domain (
+        prod_type_code,
+        prod_type_name,
+        host_rule,
+        prod_code,
+        prod_name,
+        rule_type,
+        insert_date)
+         VALUES (
+          #{prod_type_code,jdbcType=VARCHAR},
+          #{prod_type_name,jdbcType=VARCHAR},
+          #{host_rule,jdbcType=VARCHAR},
+          #{prod_code,jdbcType=VARCHAR},
+          #{prod_name,jdbcType=VARCHAR},
+          #{rule_type,jdbcType=VARCHAR},
+          #{insert_date,jdbcType=VARCHAR})
+    </insert>
+    <!--keyword-->
+
+    <delete id="deleteMarketBushi" parameterType="com.bonc.dpi.entity.MarketingScene">
+        delete from dim_scene_busi_market
+        where busi_code = #{busi_code,jdbcType=VARCHAR}
+    </delete>
+    <delete id="deleteMarketBushiCondition" parameterType="com.bonc.dpi.entity.MarketingScene">
+        delete from dim_scene_busi_market_condition
+        where busi_code = #{busi_code,jdbcType=VARCHAR}
+    </delete>
+    <select id="getMarketBushi" parameterType="com.bonc.dpi.entity.MarketBushi" resultMap="marketBushi">
+        SELECT *
+        from dim_scene_busi_market
+        where busi_code = #{busi_code,jdbcType=VARCHAR}
+    </select>
+    <select id="getMarketBushiCondition" parameterType="com.bonc.dpi.entity.MarketBushi" resultMap="marketBushiCondition">
+        SELECT *
+        from dim_scene_busi_market_condition
+        where busi_code = #{busi_code,jdbcType=VARCHAR}
+    </select>
+<!--    getMarketBushiCondition-->
+    <select id="getkeywords4redis" parameterType="java.util.List" resultType="java.util.HashMap">
+        SELECT rule_id ,keyword
+        from dim_scene_rule_keyword
+        where rule_id
+        in
+        <foreach collection="list" item="id" index="index" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+    <select id="keywordsExistFilter"  resultType="int">
+        SELECT rule_id
+        from dim_scene_rule_keyword
+        where keyword
+        in
+        <foreach collection="array" item="id" index="index" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+    <select id="getKeywords" resultType="int">
+        SELECT rule_id
+        from dim_scene_rule_keyword
+        where keyword
+        in
+        <foreach collection="array" item="id" index="index" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="keywordsExist" parameterType="java.lang.String" resultType="int">
+        SELECT count(*)
+        from dim_scene_rule_keyword
+        where keyword = #{key}
+    </select>
+
+    <select id="getVideoContentId" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT content_id
+        from dim_scene_rule_content
+        where content_rule = #{content_rule}
+    </select>
+    <insert id="videoContentInsert" parameterType="java.util.HashMap" >
+        insert into dim_scene_rule_content (
+        content_id,
+        content_rule)
+         VALUES (
+         #{content_id,jdbcType=VARCHAR},
+          #{content_rule,jdbcType=VARCHAR})
+    </insert>
+    <insert id="insertKeyword" parameterType="java.util.HashMap" >
+        insert into dim_scene_rule_keyword (
+        keyword)
+         VALUES (
+          #{keyword,jdbcType=VARCHAR})
+    </insert>
+    <insert id="insertbushi" parameterType="com.bonc.dpi.entity.MarketBushi">
+        insert into dim_scene_busi_market (
+        account_id,
+        busi_code,
+        busi_name,
+        type_list,
+        rule_list,
+        keyword_hostlist,
+        status,
+        start_date,
+        end_date)
+         VALUES (
+          #{account_id,jdbcType=VARCHAR},
+          #{busi_code,jdbcType=VARCHAR},
+          #{busi_name,jdbcType=VARCHAR},
+          #{type_list,jdbcType=VARCHAR},
+          #{rule_list,jdbcType=VARCHAR},
+          #{keyword_hostlist,jdbcType=VARCHAR},
+          #{status,jdbcType=VARCHAR},
+          #{start_date,jdbcType=VARCHAR},
+          #{end_date,jdbcType=VARCHAR})
+    </insert>
+
+    <insert id="insertbushicondition" parameterType="com.bonc.dpi.entity.MarketBushiCondition" >
+        insert into dim_scene_busi_market_condition (
+        busi_code,
+        condition_type,
+        send_num,
+        send_rate_unit,
+        send_rate_value,
+        field_name,
+        sum_field_unit,
+        sum_field_value,
+        sum_time_unit,
+        sum_time_value,
+        status,
+        send_start_date,
+        send_end_date,
+        start_date,
+        end_date)
+         VALUES (
+          #{busi_code,jdbcType=VARCHAR},
+          #{condition_type,jdbcType=VARCHAR},
+          #{send_num,jdbcType=VARCHAR},
+          #{send_rate_unit,jdbcType=VARCHAR},
+          #{send_rate_value,jdbcType=VARCHAR},
+          #{field_name,jdbcType=VARCHAR},
+          #{sum_field_unit,jdbcType=VARCHAR},
+          #{sum_field_value,jdbcType=VARCHAR},
+          #{sum_time_unit,jdbcType=VARCHAR},
+          #{sum_time_value,jdbcType=VARCHAR},
+          #{status,jdbcType=VARCHAR},
+          #{send_start_date,jdbcType=VARCHAR},
+          #{send_end_date,jdbcType=VARCHAR},
+          #{start_date,jdbcType=VARCHAR},
+          #{end_date,jdbcType=VARCHAR})
+
+    </insert>
+    <select id="videoContentIdExist" parameterType="java.lang.String" resultType="int">
+        SELECT count(*)
+        from dim_scene_rule_content
+        where content_rule = #{video_code}
+    </select>
+</mapper>

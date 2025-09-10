@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bonc.dpi.dao.mapper.UnidentifiedUrlMapper">
+ 	<resultMap id="resultMap" type="com.bonc.dpi.dao.entity.UnidentifiedUrl">
+		<result column="month_id" jdbcType="VARCHAR" property="monthId" />
+		<result column="HOST" jdbcType="VARCHAR" property="host" />
+		<result column="title" jdbcType="VARCHAR" property="title" />
+		<result column="PROD_ID" jdbcType="VARCHAR" property="prodId" />
+		<result column="PROD_NAME" jdbcType="VARCHAR" property="prodName" />
+		<result column="prod_label_code" jdbcType="VARCHAR" property="prodLabelCode" />
+		<result column="prod_label_name" jdbcType="VARCHAR" property="prodLabelName" />
+		<result column="user_total" jdbcType="VARCHAR" property="userTotal" />
+		<result column="user_count" jdbcType="VARCHAR" property="userCount" />
+		<result column="flow" jdbcType="VARCHAR" property="flow" />
+		<result column="clash_label" jdbcType="VARCHAR" property="clashLabel" />
+		<result column="author" jdbcType="VARCHAR" property="author" />
+		<result column="op_time" jdbcType="VARCHAR" property="opTime" />
+		<result column="is_discern" jdbcType="VARCHAR" property="isDiscern" />
+		<result column="type_id" jdbcType="VARCHAR" property="typeId" />
+		<result column="is_check" jdbcType="VARCHAR" property="isCheck" />
+	</resultMap>
+	<resultMap id="resultMap1" type="com.bonc.dpi.dao.entity.UnidentifiedUrl">
+		<result column="month_id" jdbcType="VARCHAR" property="monthId" />
+		<result column="HOST" jdbcType="VARCHAR" property="host" />
+		<result column="title" jdbcType="VARCHAR" property="title" />
+		<result column="PROD_ID" jdbcType="VARCHAR" property="prodId" />
+		<result column="PROD_NAME" jdbcType="VARCHAR" property="prodName" />
+		<result column="prod_label_code" jdbcType="VARCHAR" property="prodLabelCode" />
+		<result column="prod_label_name" jdbcType="VARCHAR" property="prodLabelName" />
+		<result column="usertotal" jdbcType="VARCHAR" property="userTotal" />
+		<result column="usercount" jdbcType="VARCHAR" property="userCount" />
+		<result column="flow" jdbcType="VARCHAR" property="flow" />
+		<result column="clash_label" jdbcType="VARCHAR" property="clashLabel" />
+		<result column="author" jdbcType="VARCHAR" property="author" />
+		<result column="op_time" jdbcType="VARCHAR" property="opTime" />
+		<result column="is_discern" jdbcType="VARCHAR" property="isDiscern" />
+		<result column="type_id" jdbcType="VARCHAR" property="typeId" />
+		<result column="is_check" jdbcType="VARCHAR" property="isCheck" />
+		<result column="flowCount" jdbcType="VARCHAR" property="flowCount" />
+	</resultMap>
+	
+	<select id="selectList" resultMap="resultMap1">
+		select t.host,t.title,t.prod_id,t.prod_name,t.prod_label_code,t.prod_label_name,
+          t.user_total userTotal,t.user_count userCount,t.flow,t.op_time ,t.type_id,t.is_check 
+          ,round(flow/t.user_count,2) as flowCount
+		from dm_d_ev_unidentified_host_top t
+		where 1=1 and TYPE_ID=#{typeId} 
+		<if test="monthId != null and monthId != ''">
+			and DATE_ID = #{monthId}  
+		</if>
+		<if test="isCheck != null and isCheck != ''">
+			and is_check = #{isCheck}  
+		</if>
+		<if test="sidx != null and sord!='' and sord != null and sidx != ''">
+             ORDER BY ${sidx} ${sord},prod_id ${sord}
+        </if>
+	</select>
+	
+	<!-- 稽核向域名表插入数据 -->
+	<insert id="insertDomainRule" parameterType="com.bonc.dpi.dao.entity.UnidentifiedUrl">
+   		insert into dim_ia_domain_rule (DOMAIN_CODE,PROD_ID,OP_TIME,AUTHOR,IS_VALID,TOTAL_COUNT) 
+   		values (#{host,jdbcType=VARCHAR},
+   				#{prodId,jdbcType=VARCHAR},
+   				#{opTime,jdbcType=VARCHAR},
+   				#{author,jdbcType=VARCHAR},
+      			#{isValid,jdbcType=VARCHAR},
+      			#{totalCount,jdbcType=VARCHAR})
+  	</insert>
+  	<!-- 更改稽核状态 -->
+	<update id="updateAuditStatus" parameterType="com.bonc.dpi.dao.entity.UnidentifiedUrl">
+    	update dm_d_ev_unidentified_host_top set 
+    		AUDIT_STATUS=1
+    	where ID=#{id}
+  	</update>
+  	
+  	<select id="selectVoById"  parameterType="java.lang.String" resultMap="resultMap">
+    	select *
+      		from dm_d_ev_unidentified_host_top
+     	where dm_d_ev_unidentified_host_top.host = #{host1,jdbcType=VARCHAR} and DATE_ID = #{time,jdbcType=VARCHAR}  
+  	</select>
+	
+  	<update id="updateVo" parameterType="com.bonc.dpi.dao.entity.UnidentifiedUrl">
+    	update dm_d_ev_unidentified_host_top set
+    		HOST=#{host}, 
+    		PROD_ID=#{prodId},
+  			PROD_NAME=#{prodName}	
+    	where ID=#{id}
+  	</update>
+  	
+  	
+	<select id="selectProdId" resultType="java.util.Map">
+    	select PROD_ID ,PROD_NAME from dim_ia_product_info where  PROD_NAME like concat("%",#{prodName},"%")      	
+  	</select>
+  	
+  	<select id="selectInfoByProdId" resultType="com.bonc.dpi.dao.entity.UnidentifiedUrl">
+    	
+    	SELECT a.PROD_ID prodId,
+    	a.PROD_NAME prodName,
+    	a.PROD_LABEL_CODE prodLabelCode,
+    	a.PROD_TYPE_NAME prodTypeName,
+    	a.PROD_CATAGORY prodCatagory,
+        b.join_label_name prodLabelName 
+        from dim_ia_product_info a ,dim_ia_product_label b where a.PROD_LABEL_CODE=b.LABEL_CODE and a.PROD_ID=#{prodId}
+  	</select>
+  	<select id="getprodCatagoryName" resultType="com.bonc.dpi.dao.entity.UnidentifiedUrl">
+    	
+    	SELECT LABEL_CODE1 labelCode1,LABEL_CODE2 labelCode2,LABEL_NAME1 labelName1,LABEL_NAME2 labelName2 from dim_ia_product_label where LABEL_CODE1=#{prodCatagory} or LABEL_CODE2=#{prodCatagory}
+  	</select>
+  		<select id="selectInfoByProdName" resultType="com.bonc.dpi.dao.entity.ProductInfo">
+    	select PROD_ID prodId,
+    	PROD_NAME prodName,
+    	PROD_LABEL_CODE prodLabelCode,
+    	PROD_TYPE_NAME prodTypeName
+    	from dim_ia_product_info where  PROD_Name=#{prodName}      	
+  	</select>
+  	<!-- 当prodid 为空时 只更新url表 -->
+  	<update id="onlyUpdateCheck" parameterType="String" >
+    	update dm_d_ev_unidentified_host_top set
+    		is_check='1'	
+    	where dm_d_ev_unidentified_host_top.host=#{host}
+  	</update>
+  	<!-- 当prodid 不为空时 更新url表的同时向domain表插入数据 -->
+  	<insert id="insertDomainRuleNew" parameterType="com.bonc.dpi.dao.entity.UnidentifiedUrl" >
+    	insert into dim_ia_domain_rule ( ID,DOMAIN_CODE, OP_TIME,AUTHOR,PROD_ID) VALUES (#{uuid},#{host}, #{opTime}, #{author}, #{prodId}) 
+  	</insert>
+  	<!-- 当prodid 为空时 只更新url表  批量更新-->
+  	<update id="batchUpdateEmptyCheck" parameterType="java.util.Map" >
+    	update dm_d_ev_unidentified_host_top set
+    		is_check='1'	
+    	where host in 
+         <foreach collection="emptyIds" item="obj" index="index" open="(" separator="," close=")">
+			#{obj}
+		</foreach> 
+  	</update>
+  	<!-- 当prodid 不为空时 更新url表  批量更新-->
+  	<update id="batchUpdateCheck" parameterType="java.util.Map" >
+    	update dm_d_ev_unidentified_host_top set
+    		is_check='1'	
+    	where dm_d_ev_unidentified_host_top.host in 
+         <foreach collection="prodIds" item="obj" index="index" open="(" separator="," close=")">
+			#{obj}
+		</foreach> 
+  	</update>
+  	<!-- 当prodid 不为空时 更新url表的同时向domain表插入数据 -->
+  	<insert id="batchInsertDomainRule" parameterType="com.bonc.dpi.dao.entity.UnidentifiedUrl" >
+    	insert into dim_ia_domain_rule ( DOMAIN_CODE, OP_TIME,AUTHOR,PROD_ID)
+    	 values
+          <foreach collection="objs" item="obj" index="index" separator="," >
+			 (#{obj.host}, DATE_FORMAT(NOW(),'%Y%m%d'), 'system', #{obj.prodId})
+		</foreach> 
+		ON DUPLICATE KEY UPDATE 
+			 
+		PROD_ID = VALUES(PROD_ID)
+		
+  	</insert>
+  	<select id="getAllProdName" resultType="java.util.Map">
+  	
+    	SELECT a.PROD_ID,a.PROD_NAME from dim_ia_product_info a    	
+  	</select>
+  	<select id="getAllProdId" resultType="java.util.Map">
+  	
+    	SELECT a.PROD_ID,a.PROD_NAME from dim_ia_product_info a    	
+  	</select>
+  	<!-- 当prodid 不为空时 更新url表  (修改功能)-->
+  	<update id="alterAndInsert" parameterType="com.bonc.dpi.dao.entity.UnidentifiedUrl" >
+    	update dm_d_ev_unidentified_host_top set
+    		is_check='1'
+    		,prod_id=#{prodId}
+    		,prod_name=#{prodName}
+    		,prod_label_code=#{prodLabel}
+    		,prod_label_name=#{labelName}
+    	where dm_d_ev_unidentified_host_top.host=#{host}
+          
+  	</update>
+  	<!-- 当prodid 为空时 更新url表  (修改功能)-->
+  	<update id="alterOnlyUpdate" parameterType="com.bonc.dpi.dao.entity.UnidentifiedUrl" >
+    	update dm_d_ev_unidentified_host_top 
+    	<trim prefix="set" suffixOverrides=",">
+          <if test="isCheck!=null">is_check=#{isCheck},</if>
+          <if test="labelName!=null">prod_label_name=#{labelName},</if>
+          <if test="prodLabel!=null">prod_label_code=#{prodLabel},</if>
+  
+       </trim>
+    	where dm_d_ev_unidentified_host_top.host=#{host}
+          
+  	</update>
+  	<update id="alterProdInfo" parameterType="com.bonc.dpi.dao.entity.UnidentifiedUrl" >
+    	update dim_ia_product_info a set a.LABEL_CHECK='1',a.PROD_LABEL_CODE=#{prodLabel}
+    	where a.prod_id=#{prodId}
+    </update>
+  	<!-- 当prodid 不为空时 更新url表的同时向domain表插入数据(修改功能) -->
+  	<insert id="alterInsertDomain" parameterType="com.bonc.dpi.dao.entity.UnidentifiedUrl" >
+    	insert into dim_ia_domain_rule ( DOMAIN_CODE, OP_TIME,AUTHOR,PROD_ID) VALUES (#{host}, #{opTime}, #{author}, #{prodId})
+  	</insert>
+  	<select id="comLikeSearch" parameterType="java.lang.String" resultMap="resultMap" databaseId="oracle">
+		SELECT prod_id,prod_name from dim_ia_product_info where PROD_NAME like   '%' ||  #{prodName} || '%'
+	</select>
+	<select id="comLikeSearch" parameterType="java.lang.String" resultMap="resultMap" databaseId="mysql">
+		SELECT prod_id,prod_name from dim_ia_product_info where PROD_NAME like   CONCAT('%',#{prodName},'%')
+	</select>
+	<select id="checkData" parameterType="com.bonc.dpi.dao.entity.UnidentifiedUrl" resultType="int">
+    	
+    	select count(*) from dim_ia_domain_rule where 
+   
+		dim_ia_domain_rule.domain_code=#{host}
+	
+    	
+  	</select>
+  	<update id="updateDomainRuleNew" parameterType="com.bonc.dpi.dao.entity.UnidentifiedUrl" >
+    	update dim_ia_domain_rule 
+    	<set>
+    	<if test="prodId != null and prodId != ''">
+			 prod_id = #{prodId},
+		</if>
+		<if test="author != null and author != ''">
+			 author = #{author} , 
+		</if>
+		<if test="opTime != null and opTime != ''">
+			 op_time = #{opTime} ,
+		</if>
+		</set>
+    	where domain_code=#{host}
+    </update>
+    <insert id="insertExport" parameterType="com.bonc.dpi.dao.entity.UnidentifiedUrl">
+		insert into dm_host_url_export (host,prod_name,OP_TIME,AUTHOR,label_code,table_type,is_export,bak1) 
+   		values (#{host,jdbcType=VARCHAR},
+   				#{prodName,jdbcType=VARCHAR},
+   				#{opTime,jdbcType=VARCHAR},
+   				#{author,jdbcType=VARCHAR},
+      			#{prodLabel,jdbcType=VARCHAR},
+      			'1',
+      			'0',
+      			#{prodCatagory,jdbcType=VARCHAR}
+      			)
+	</insert>
+</mapper>

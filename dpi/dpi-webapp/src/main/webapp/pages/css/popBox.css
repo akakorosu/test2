@@ -1,0 +1,72 @@
+
+.modal-content{
+	border:0;
+}
+.modal-content{
+	background:none !important;
+}
+.modal-header{
+	background-color:#367cc2 !important;
+	border:0 !important;
+	color:#fff !important;
+	border-radius:8px 8px 0 0;
+	padding:8px;
+}
+.modal-title{
+	font-size:16px;
+	color:#fff !important;
+	font-weight:normal;
+}
+.modal-header .bootbox-close-button.close{
+	padding:0;
+	margin-top:-2px;
+	color:#fff;
+	font-weight:normal;
+	vertical-align:top;
+	opacity:0.8;
+}
+.modal-header .close{
+	font-weight:normal;
+	color:#fff !important;
+	opacity:0.8;
+}
+.modal-header .bootbox-close-button.close:hover{
+	opacity:1;
+}
+.modal-header .close:hover{
+	opacity:1;
+}
+.modal-body{
+	text-align:left;
+	font-size:14px;
+	background:#f9f9f9;
+}
+.modal-footer{
+	padding:0 10px 10px 0;
+	background:#f9f9f9;
+	border:0;
+}
+.modal-footer .btn{
+	height:30px;
+	padding:6px 20px;
+	border:0;
+}
+.modal-footer .btn-success{
+	background-color:#367cc2 !important;
+}
+.modal-footer .btn-danger,.modal-footer .btn-default,.modal-body .btn-warning{
+	background-color:#8e8e8e !important;
+}
+.modal-header .close{
+	font-size:21px;
+}
+.modal-backdrop{
+	display:none !important;
+}
+.modal{
+	overflow-x:auto !important;
+	background:url(../img/blackBg.png) repeat;
+}
+.dd2-content{
+	min-height:20px\9;
+}

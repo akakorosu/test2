@@ -1,0 +1,418 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bonc.dpi.dao.mapper.IndustryGroupPicMapper">
+	<resultMap id="IndustryGroupPic" type="com.bonc.dpi.dao.entity.IndustryGroupPic">
+		<result column="AREA_ID" jdbcType="VARCHAR" property="areaId" />
+		<!-- <result column="PROD_NAME" jdbcType="VARCHAR" property="prodName" 
+			/> <result column="USER_TOTAL" jdbcType="VARCHAR" property="userTotal" /> -->
+		<result column="DATE_ID" jdbcType="VARCHAR" property="dateId" />
+		<result column="SEX" jdbcType="VARCHAR" property="sex" />
+		<result column="AGE" jdbcType="VARCHAR" property="age" />
+
+	</resultMap>
+
+	<select id="selectAgeEcharts" parameterType="com.bonc.dpi.dao.entity.IndustryGroupPic"
+		resultMap="IndustryGroupPic">
+		select
+		Age as age,
+		sum(user_total) as ageCount
+		from
+		dm_d_ev_usr_label_info t
+		where label_level = '0'
+		<if test="dateId != null and dateId != ''">
+			and DATE_ID = #{dateId}
+		</if>
+		<if test="areaId != null and areaId != ''">
+			and AREA_ID = #{areaId}
+		</if>
+		<if test="sex != null and sex != ''">
+			and SEX = #{sex}
+		</if>
+		group by age
+	</select>
+
+
+	<select id="selectTopAppdate" parameterType="com.bonc.dpi.dao.entity.IndustryGroupPic"
+		resultMap="IndustryGroupPic" databaseId="mysql">
+		select
+		t1.prod_name name,t1.sex
+		sex,round(t1.user_total/t2.user_total_t2,2) percent
+		from (
+		(select
+		prod_name,sex,sum(user_total) user_total
+		from DM_D_EV_PRODUCT_INFO t1
+		where
+		sex = '1'
+		<if test="dateId != null and dateId != ''">
+			and DATE_ID = #{dateId}
+		</if>
+		<if test="areaId != null and areaId != ''">
+			and AREA_ID = #{areaId}
+		</if>
+		group by prod_name,sex
+		order by user_total desc limit 5)
+		union all
+		(select
+		prod_name,sex,sum(user_total) user_total
+		from
+		DM_D_EV_PRODUCT_INFO t1 where
+		sex = '2'
+		<if test="dateId != null and dateId != ''">
+			and DATE_ID = #{dateId}
+		</if>
+		<if test="areaId != null and areaId != ''">
+			and AREA_ID = #{areaId}
+		</if>
+		group by prod_name,sex
+		order by user_total desc limit 5)) t1 ,
+		(select
+		sex,sum(user_total) user_total_t2
+		from dm_d_ev_usr_label_info where
+		label_level = '0'
+		<if test="dateId != null and dateId != ''">
+			and DATE_ID = #{dateId}
+		</if>
+		<if test="areaId != null and areaId != ''">
+			and AREA_ID = #{areaId}
+		</if>
+		group by sex) t2
+		where t1.sex = t2.sex
+
+
+	</select>
+
+	
+		<!-- select prod_name as name, sex as sex,
+		round(sum(case when sex = '1'
+		then user_total/sex1 else user_total/sex2 end),4) as
+		percent
+		from(
+		select prod_name,sex,user_total,row_number() over(partition by sex
+		order by
+		user_total desc) rn
+		from ( select
+		prod_name,sex,sum(user_total)user_total from
+		DM_D_EV_PRODUCT_INFO
+		where
+		1 = 1
+		<if test="dateId != null and dateId != ''">
+			and DATE_ID = #{dateId}
+		</if>
+
+		<if test="areaId != null and areaId != ''">
+			and AREA_ID = #{areaId}
+		</if>
+		<if test="age != null and age != ''">
+			and AGE = #{age}
+		</if>
+		group by prod_name,sex ) t ) f1,
+		(select sum(case when sex = '1' then
+		user_total else 0 end) sex1,
+		sum(case when sex ='2'then user_total else
+		0 end) sex2
+		from DM_D_EV_PRODUCT_INFO
+		where 1 = 1
+		<if test="dateId != null and dateId != ''">
+			and DATE_ID = #{dateId}
+		</if>
+		<if test="areaId != null and areaId != ''">
+			and AREA_ID = #{areaId}
+		</if>
+		<if test="age != null and age != ''">
+			and AGE = #{age}
+		</if>
+		) f2
+		where rn &lt;= 5 and sex &lt;&gt; '3'
+		group by prod_name,sex
+		order
+		by percent desc, sex desc -->
+		<select id="selectTopAppdate" parameterType="com.bonc.dpi.dao.entity.IndustryGroupPic"
+		resultMap="IndustryGroupPic" databaseId="oracle">
+		select prod_name as name, sex as sex,
+		round(sum(case when sex = '1'
+		then user_total/sex1 else user_total/sex2 end),4) as
+		percent
+		from(
+		select prod_name,sex,user_total,row_number() over(partition by sex
+		order by
+		user_total desc) rn
+		from ( select
+		prod_name,sex,sum(user_total)user_total from
+		DM_D_EV_PRODUCT_INFO
+		where
+		1 = 1
+		<if test="dateId != null and dateId != ''">
+			and DATE_ID = #{dateId}
+		</if>
+
+		<if test="areaId != null and areaId != ''">
+			and AREA_ID = #{areaId}
+		</if>
+		<if test="age != null and age != ''">
+			and AGE = #{age}
+		</if>
+		group by prod_name,sex ) t ) f1,
+		(select sum(case when sex = '1' then
+		user_total else 0 end) sex1,
+		sum(case when sex ='2'then user_total else
+		0 end) sex2
+		from dm_d_ev_usr_label_info
+		where  label_level = '0'
+		<if test="dateId != null and dateId != ''">
+			and DATE_ID = #{dateId}
+		</if>
+		<if test="areaId != null and areaId != ''">
+			and AREA_ID = #{areaId}
+		</if>
+		<if test="age != null and age != ''">
+			and AGE = #{age}
+		</if>
+		) f2
+		where rn &lt;= 5 and sex &lt;&gt; '3'
+		group by prod_name,sex
+		order
+		by percent desc, sex desc
+
+	</select>
+
+	
+	<select id="selectProdTypePer" parameterType="com.bonc.dpi.dao.entity.IndustryGroupPic"
+		resultMap="IndustryGroupPic">
+		select
+		t1.level_name name,
+		t1.sex sex,
+		round(user_total/user_total_t2,2)
+		percent
+		from(
+		select
+		level_name,
+		sex,
+		sum(user_total) user_total
+		from
+		dm_d_ev_usr_label_info
+		where label_level = '1'
+		<if test="dateId != null and dateId != ''">
+			and DATE_ID = #{dateId}
+		</if>
+		<if test="areaId != null and areaId != ''">
+			and AREA_ID = #{areaId}
+		</if>
+		and sex &lt;&gt; '3' and level_code &lt;&gt; '1009'
+		group by
+		level_name,
+		sex) t1,
+		(select sex,sum(user_total)user_total_t2
+		from
+		dm_d_ev_usr_label_info where
+		label_level = '0'
+		<if test="dateId != null and dateId != ''">
+			and DATE_ID = #{dateId}
+		</if>
+		<if test="areaId != null and areaId != ''">
+			and AREA_ID = #{areaId}
+		</if>
+		group by sex)t2
+		where t1.sex = t2.sex
+		order by percent desc
+	</select>
+
+
+
+	<select id="ageEchartsClickLeft" parameterType="com.bonc.dpi.dao.entity.IndustryGroupPic"
+		resultMap="IndustryGroupPic">
+		select level_name name,
+		round(sum(user_total)/(select sum(user_total) from dm_d_ev_usr_label_info where label_level = '0'
+		<if test="dateId != null and dateId != ''">
+			and DATE_ID = #{dateId}
+		</if>
+		<if test="age != null and age != ''">
+			and AGE = #{age}
+		</if>
+		<if test="areaId != null and areaId != ''">
+			and AREA_ID = #{areaId}
+		</if>
+		<if test="sex != null and sex != ''">
+			and SEX = #{sex}
+		</if>
+		),2) percent
+		from dm_d_ev_usr_label_info where label_level = '1' and level_code
+		&lt;&gt; '1009'
+		<if test="dateId != null and dateId != ''">
+			and DATE_ID = #{dateId}
+		</if>
+		<if test="age != null and age != ''">
+			and AGE = #{age}
+		</if>
+		<if test="areaId != null and areaId != ''">
+			and AREA_ID = #{areaId}
+		</if>
+		<if test="sex != null and sex != ''">
+			and SEX = #{sex}
+		</if>
+		group by level_name
+		order by percent
+
+
+	</select>
+
+
+
+	<select id="ageEchartsClickRight" parameterType="com.bonc.dpi.dao.entity.IndustryGroupPic"
+		resultMap="IndustryGroupPic" databaseId="mysql">
+		<!-- select prod_name as name,
+		round(sum(user_total/(select sum(user_total)
+		from DM_D_EV_PRODUCT_INFO where
+		1 = 1
+		<if test="dateId != null and dateId != ''">
+			and DATE_ID = #{dateId}
+		</if>
+		<if test="age != null and age != ''">
+			and AGE = #{age}
+		</if>
+		<if test="areaId != null and areaId != ''">
+			and AREA_ID = #{areaId}
+		</if>
+		<if test="sex != null and sex != ''">
+			and SEX = #{sex}
+		</if>
+		)),2)as percent
+		from(
+		select prod_name,sum(user_total) user_total
+		from
+		DM_D_EV_PRODUCT_INFO where
+		1 = 1
+		<if test="dateId != null and dateId != ''">
+			and DATE_ID = #{dateId}
+		</if>
+		<if test="age != null and age != ''">
+			and AGE = #{age}
+		</if>
+		<if test="areaId != null and areaId != ''">
+			and AREA_ID = #{areaId}
+		</if>
+		<if test="sex != null and sex != ''">
+			and SEX = #{sex}
+		</if>
+		group by prod_name order by user_total desc) t
+		where 1 = 1
+		group by
+		prod_name
+		order by percent desc
+		limit 5 -->
+		select prod_name as name,
+    round(sum(user_total/(select sum(user_total)
+    from dm_d_ev_usr_label_info
+    where
+    label_level = 0
+    <if test="dateId != null and dateId != ''">
+      and DATE_ID = #{dateId}
+    </if>
+    <if test="age != null and age != ''">
+      and AGE = #{age}
+    </if>
+    <if test="areaId != null and areaId != ''">
+      and AREA_ID = #{areaId}
+    </if>
+    <if test="sex != null and sex != ''">
+      and SEX = #{sex}
+    </if>
+    )),2)as percent
+    from(
+    select prod_name,sum(user_total) user_total
+    from
+    DM_D_EV_PRODUCT_INFO where
+    1 = 1
+    <if test="dateId != null and dateId != ''">
+      and DATE_ID = #{dateId}
+    </if>
+    <if test="age != null and age != ''">
+      and AGE = #{age}
+    </if>
+    <if test="areaId != null and areaId != ''">
+      and AREA_ID = #{areaId}
+    </if>
+    <if test="sex != null and sex != ''">
+      and SEX = #{sex}
+    </if>
+    group by prod_name order by user_total desc) t
+    where 1 = 1
+    group by
+    prod_name
+    order by percent desc
+    limit 5
+		
+	</select>
+
+	<select id="ageEchartsClickRight" parameterType="com.bonc.dpi.dao.entity.IndustryGroupPic"
+		resultMap="IndustryGroupPic" databaseId="oracle">
+		select prod_name as name,
+		round(sum(user_total/(select sum(user_total) from dm_d_ev_usr_label_info 
+		where  label_level = '0'
+		<if test="dateId != null and dateId != ''">
+			and DATE_ID = #{dateId}
+		</if>
+		<if test="age != null and age != ''">
+			and AGE = #{age}
+		</if>
+		<if test="areaId != null and areaId != ''">
+			and AREA_ID = #{areaId}
+		</if>
+		<if test="sex != null and sex != ''">
+			and SEX = #{sex}
+		</if>
+		)),2)as percent
+		from(
+		select prod_name,sum(user_total) user_total
+		from
+		DM_D_EV_PRODUCT_INFO where
+		1 = 1
+		<if test="dateId != null and dateId != ''">
+			and DATE_ID = #{dateId}
+		</if>
+		<if test="age != null and age != ''">
+			and AGE = #{age}
+		</if>
+		<if test="areaId != null and areaId != ''">
+			and AREA_ID = #{areaId}
+		</if>
+		<if test="sex != null and sex != ''">
+			and SEX = #{sex}
+		</if>
+		group by prod_name order by user_total desc)
+		where rownum &lt;= 5
+		group
+		by prod_name
+		order by percent desc
+	</select>
+
+	<select id="selectCount" parameterType="com.bonc.dpi.dao.entity.IndustryGroupPic"
+		resultType="int" databaseId="oracle">
+		SELECT NVL(sum(user_total),0)
+		from dm_d_ev_usr_label_info
+		where  LABEL_LEVEL=0 
+		<if test="sex != null and sex != ''">
+			and SEX = #{sex}
+		</if>
+		<if test="dateId != null and dateId != ''">
+			and DATE_ID = #{dateId}
+		</if>
+		<if test="areaId != null and areaId != ''">
+			and AREA_ID = #{areaId}
+		</if>
+	</select>
+	<select id="selectCount" parameterType="com.bonc.dpi.dao.entity.IndustryGroupPic"
+		resultType="int" databaseId="mysql">
+		SELECT ifnull(sum(user_total),0)
+		from dm_d_ev_usr_label_info
+		where  LABEL_LEVEL=0 
+		<if test="sex != null and sex != ''">
+			and SEX = #{sex}
+		</if>
+		<if test="dateId != null and dateId != ''">
+			and DATE_ID = #{dateId}
+		</if>
+		<if test="areaId != null and areaId != ''">
+			and AREA_ID = #{areaId}
+		</if>
+	</select>
+</mapper>

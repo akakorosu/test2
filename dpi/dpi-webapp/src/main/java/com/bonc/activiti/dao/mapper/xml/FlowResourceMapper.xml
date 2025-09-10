@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bonc.activiti.dao.mapper.FlowResourceMapper" >
+  <resultMap id="BaseResultMap" type="com.bonc.activiti.dao.entity.FlowResource" >
+    <id column="APPID" property="appid" jdbcType="VARCHAR" />
+    <result column="DEPLOYID" property="deployid" jdbcType="VARCHAR" />
+    <result column="PROCESSID" property="processid" jdbcType="VARCHAR" />
+    <result column="PROCESSNAME" property="processname" jdbcType="VARCHAR" />
+    <result column="APPCLASSNAME" property="appclassname" jdbcType="VARCHAR" />
+    <result column="MEMO" property="memo" jdbcType="VARCHAR" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from WF_FLOW_RESOURCE
+    where APPID = #{appid,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.bonc.activiti.dao.entity.FlowResource" >
+    insert into WF_FLOW_RESOURCE (APPID, DEPLOYID, PROCESSID,
+      PROCESSNAME, APPCLASSNAME, MEMO
+      )
+    values (#{appid,jdbcType=VARCHAR}, #{deployid,jdbcType=VARCHAR}, #{processid,jdbcType=VARCHAR}, 
+      #{processname,jdbcType=VARCHAR}, #{appclassname,jdbcType=VARCHAR}, #{memo,jdbcType=VARCHAR}
+      )
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.bonc.activiti.dao.entity.FlowResource" >
+    update WF_FLOW_RESOURCE
+    set DEPLOYID = #{deployid,jdbcType=VARCHAR},
+      PROCESSID = #{processid,jdbcType=VARCHAR},
+      PROCESSNAME = #{processname,jdbcType=VARCHAR},
+      APPCLASSNAME = #{appclassname,jdbcType=VARCHAR},
+      MEMO = #{memo,jdbcType=VARCHAR}
+    where APPID = #{appid,jdbcType=VARCHAR}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select APPID, DEPLOYID, PROCESSID, PROCESSNAME, APPCLASSNAME, MEMO
+    from WF_FLOW_RESOURCE
+    where APPID = #{appid,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectListByCondition" resultMap="BaseResultMap" parameterType="com.bonc.activiti.dao.entity.FlowResource" >
+    select APPID, DEPLOYID, PROCESSID, PROCESSNAME, APPCLASSNAME, MEMO
+    from WF_FLOW_RESOURCE
+    where 1=1
+    <if test="appid != null and appid != '' ">
+        AND APPID = #{appid,jdbcType=VARCHAR}
+    </if>
+    <if test="deployid != null and deployid != '' ">
+        AND DEPLOYID = #{deployid,jdbcType=VARCHAR}
+    </if>
+    <if test="processid != null and processid != '' ">
+        AND PROCESSID = #{processid,jdbcType=VARCHAR}
+    </if>
+    <if test="processname != null and processname != '' ">
+        AND PROCESSNAME LIKE '%'||#{processname,jdbcType=VARCHAR}||'%'
+    </if>
+    <if test="appclassname != null and appclassname != '' ">
+        AND APPCLASSNAME LIKE '%'||#{appclassname,jdbcType=VARCHAR}||'%'
+    </if>
+    <if test="memo != null and memo != '' ">
+        AND MEMO LIKE '%'||#{memo,jdbcType=VARCHAR}||'%'
+    </if>    
+  </select>
+  <select id="selectByAppClassName" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select APPID, DEPLOYID, PROCESSID, PROCESSNAME, APPCLASSNAME, MEMO
+      from WF_FLOW_RESOURCE
+     where APPCLASSNAME = #{appClassName,jdbcType=VARCHAR}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select APPID, DEPLOYID, PROCESSID, PROCESSNAME, APPCLASSNAME, MEMO
+    from WF_FLOW_RESOURCE
+  </select>
+  <select id="isFlowNotExists" parameterType="com.bonc.activiti.dao.entity.FlowResource" resultType="java.lang.Integer">
+  	select count(*)
+  	from WF_FLOW_RESOURCE wf
+  	where wf.APPCLASSNAME=#{appclassname,jdbcType=VARCHAR}
+  	<if test="appid != null and appid != '' ">
+        AND APPID != #{appid,jdbcType=VARCHAR}
+    </if>
+  </select>
+</mapper>

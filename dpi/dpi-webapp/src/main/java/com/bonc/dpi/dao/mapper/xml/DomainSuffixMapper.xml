@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bonc.dpi.dao.mapper.DomainSuffixMapper">
+  <resultMap id="BaseResultMap" type="com.bonc.dpi.dao.entity.DomainSuffix">
+    <result column="ROW_ID" jdbcType="VARCHAR" property="rowId" />
+    <result column="DOMAIN_CODE" jdbcType="VARCHAR" property="domainCode" />
+  </resultMap>
+  <select id="selectList" parameterType="com.bonc.dpi.dao.entity.DomainSuffix"
+		resultMap="BaseResultMap">
+		SELECT *
+		FROM dim_ia_domain_suffix t
+		where 1=1
+		 <if test="domainCode != null and domainCode != ''">
+			and t.DOMAIN_CODE = #{domainCode}  
+		</if>
+	</select>
+	
+  <insert id="insert" parameterType="com.bonc.dpi.dao.entity.DomainSuffix">
+    insert into dim_ia_domain_suffix (DOMAIN_CODE, ROW_ID)
+    values (#{domainCode,jdbcType=VARCHAR}, #{rowId,jdbcType=VARCHAR})
+  </insert>
+  <select id="selectById"  parameterType="com.bonc.dpi.dao.entity.DomainSuffix"
+    resultType="com.bonc.dpi.dao.entity.DomainSuffix">
+    select *
+      from dim_ia_domain_suffix
+     where ROW_ID = #{rowId,jdbcType=VARCHAR} 
+  </select>
+  <delete id="delete" parameterType="com.bonc.dpi.dao.entity.DomainSuffix">
+    delete from dim_ia_domain_suffix
+     where ROW_ID = #{rowId,jdbcType=VARCHAR} 
+  </delete>
+  <update id="update" parameterType="com.bonc.dpi.dao.entity.DomainSuffix">
+    update dim_ia_domain_suffix
+       set DOMAIN_CODE=#{domainCode}
+     where ROW_ID=#{rowId}
+  </update>
+  
+</mapper>

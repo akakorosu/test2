@@ -1,0 +1,105 @@
+/****************************header部分*************************************/
+header{
+	width: 100%;
+	height:90px;
+	overflow: hidden;
+	z-index: 1;
+	background:url("../img/bg.png") no-repeat center center;
+}
+header>div#logo{
+	float:left;
+	width:20%;
+	height:50px;
+	margin-top:15px;
+	background: url("../img/1-1.png") no-repeat center center;
+}
+header>div#subjects{
+	float:left;
+	width:60%;
+	height:60px;
+	margin-top:15px;
+}
+header>div#subjects .svg-wrapper {
+	margin-top: 10px;
+	position: relative;
+	width: 15%;
+	height: 30px;
+	display: inline-block;
+	margin-left: 5px;
+	margin-right: 5px;
+}
+
+header>div#subjects #shape {
+	stroke-width: 6px;
+	fill: transparent;
+	stroke: #06D6A0;
+	stroke-dasharray: 0 400;
+	stroke-dashoffset: -220;
+	transition: 1s all ease;
+}
+header>div#subjects .text {
+	margin-top: -25px;
+	text-align: center;
+}
+header>div#subjects .text li {
+	color: #fff;
+	text-decoration: none;
+	font-weight: 100;
+	font-size: 1.3em;
+}
+header>div#subjects .svg-wrapper:hover #shape {
+	stroke-dasharray: 50 0;
+	stroke-width: 3px;
+	stroke-dashoffset: 0;
+	stroke: #06D6A0;
+	cursor: pointer;
+}
+header>div#subjects .svg-wrapper:hover .text li{
+	color:#06D6A0;
+	cursor:pointer;
+}
+header>div#subjects div.current .text li{
+	color:#06D6A0;
+}
+header>div#login{
+	float:right;
+	width:12%;
+	height:60px;
+	line-height: 60px;
+	margin-top:20px;
+}
+header>div#login>div.user{
+	color:#fff;
+	cursor: pointer;
+}
+header>div#login ul.slideToggle{
+	width: 12%;
+	height:45px;
+	padding:10px 20px;
+	line-height: 25px;
+	border:1px solid #CACACA;
+	border-radius: 5px;
+	background: #fff;
+	position:absolute;
+	top:90px;
+	right:20px;
+	z-index: 1000;
+	color:#000000;
+	display: none;
+}
+header>div#login ul.slideToggle a{
+	color:#000;
+	text-decoration: none;
+}
+header>div#login ul.slideToggle a:hover{
+	color:#EB601C;
+}
+header>div#login ul.slideToggle a span{
+	padding:0 10px;
+}
+
+section{
+	width:100%;
+	height:100%;
+	overflow: auto;
+}

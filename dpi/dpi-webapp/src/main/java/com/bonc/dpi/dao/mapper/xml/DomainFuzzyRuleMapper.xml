@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bonc.dpi.dao.mapper.DomainFuzzyRuleMapper">
+  <resultMap id="BaseResultMap" type="com.bonc.dpi.dao.entity.DomainFuzzyRule">
+    <result column="ID" jdbcType="VARCHAR" property="id" />
+    <result column="PARSE_RULE" jdbcType="VARCHAR" property="parseRule" />
+    <result column="GET_INDEX" jdbcType="VARCHAR" property="getIndex" />
+    <result column="PROD_ID" jdbcType="VARCHAR" property="prodid" />
+    <result column="PROD_NAME" jdbcType="VARCHAR" property="prodName" />
+    <result column="LABEL_CODE" jdbcType="VARCHAR" property="labelCode" />
+    <result column="URL_EXAMPLE" jdbcType="VARCHAR" property="urlExample" />
+     <result column="PROD_CATAGORY" jdbcType="VARCHAR" property="prodCatagory" />
+    <result column="AUTHOR" jdbcType="VARCHAR" property="author" />
+    <result column="OP_TIME" jdbcType="DATE" property="opTime" />
+    <result column="label_code1" jdbcType="VARCHAR" property="labelCode1" />
+     <result column="label_name1" jdbcType="VARCHAR" property="labelName1" />
+    <result column="label_code2" jdbcType="VARCHAR" property="labelCode2" />
+    <result column="label_name2" jdbcType="DATE" property="labelName2" />
+  </resultMap>
+  
+  <select id="selectDataNum" resultType="int">
+		SELECT count(*) 
+		<if test="prodName != null and prodName != ''">
+		FROM dim_ia_url_fuzzy_rule t1 left join dim_ia_product_info t2 on t1.prod_id = t2.prod_id 
+		</if>
+		<if test="prodName == null or prodName == ''">
+		FROM dim_ia_url_fuzzy_rule t1 
+		</if>
+		where 1=1 
+		<!-- <if test="opTime != null and opTime != ''">
+		    and t1.OP_TIME=#{opTime} 
+		</if>  -->
+		<if test="author != null and author != ''">
+		    <bind name="author" value="'%' + _parameter.getAuthor() + '%'" />
+		    and t1.author like #{author} 
+		</if>
+		<if test="startTime != null and startTime != ''">
+		    and t1.OP_TIME &gt;= #{startTime} 
+		</if>
+		<if test="endTime != null and endTime != ''">
+		    and t1.OP_TIME &lt;= #{endTime} 
+		</if>
+		<if test="parseRule != null and parseRule != ''">
+			<bind name="parseRule" value="'%' + _parameter.getParseRule() + '%'" />
+		    and t1.PARSE_RULE like  #{parseRule} 
+		</if>
+		<if test="prodName != null and prodName != ''">
+			<bind name="prodName" value="'%' + _parameter.getProdName() + '%'" />
+			and t2.PROD_NAME like  #{prodName}
+		</if>
+	</select>
+  
+  <select id="selectList" resultMap="BaseResultMap">
+		SELECT ID,PARSE_RULE,GET_INDEX,PROD_ID,URL_EXAMPLE,AUTHOR,OP_TIME 
+		FROM dim_ia_url_fuzzy_rule
+		order by OP_TIME desc,ID desc
+	</select>
+	
+	 <select id="selectListByPar" resultMap="BaseResultMap">
+		SELECT t1.ID,t1.PARSE_RULE,t1.GET_INDEX,t1.PROD_ID,t1.URL_EXAMPLE,t1.AUTHOR,t1.OP_TIME,t2.PROD_NAME 
+		FROM dim_ia_url_fuzzy_rule t1 left join dim_ia_product_info t2 on t1.prod_id = t2.prod_id 		 
+		where 1=1
+		<!-- <if test="opTime != null and opTime != ''">
+		    and t1.OP_TIME=#{opTime} 
+		</if> --> 
+		<if test="author != null and author != ''">
+		    <bind name="author" value="'%' + _parameter.getAuthor() + '%'" />
+		    and t1.author like #{author} 
+		</if>
+		<if test="startTime != null and startTime != ''">
+		    and t1.OP_TIME &gt;= #{startTime} 
+		</if>
+		<if test="endTime != null and endTime != ''">
+		    and t1.OP_TIME &lt;= #{endTime} 
+		</if>
+		<if test="parseRule != null and parseRule != ''">
+			<bind name="parseRule" value="'%' + _parameter.getParseRule() + '%'" />
+		    and t1.PARSE_RULE like  #{parseRule} 
+		</if>
+		<if test="prodName != null and prodName != ''">
+			<bind name="prodName" value="'%' + _parameter.getProdName() + '%'" />
+			and t2.PROD_NAME like  #{prodName}
+		</if>
+		order by t1.OP_TIME desc
+	</select>
+	
+  <insert id="insert" parameterType="com.bonc.dpi.dao.entity.DomainFuzzyRule">
+    insert into dim_ia_url_fuzzy_rule  (ID ,PARSE_RULE,PROD_ID,GET_INDEX,
+       URL_EXAMPLE,AUTHOR,OP_TIME)
+    values (#{id,jdbcType=VARCHAR},
+      #{parseRuleParam,jdbcType=VARCHAR}, #{prodid,jdbcType=VARCHAR}, #{getIndex,jdbcType=VARCHAR},
+       #{urlExample,jdbcType=VARCHAR},
+      #{author,jdbcType=VARCHAR}, #{opTime,jdbcType=DATE})
+  </insert>
+  <insert id="insertUuid" parameterType="com.bonc.dpi.dao.entity.DomainFuzzyRule">
+    insert into dim_ia_url_fuzzy_rule  (ID ,PARSE_RULE,PROD_ID,GET_INDEX,
+       URL_EXAMPLE,AUTHOR,OP_TIME)
+    values (#{UUID,jdbcType=VARCHAR},
+      #{parseRule,jdbcType=VARCHAR}, #{prodid,jdbcType=VARCHAR}, #{getIndex,jdbcType=VARCHAR},
+       #{urlExample,jdbcType=VARCHAR},
+      #{author,jdbcType=VARCHAR}, #{opTime,jdbcType=DATE})
+  </insert>
+  <insert id="insertDomainRule" parameterType="com.bonc.dpi.dao.entity.DomainFuzzyRule" >
+    insert into dim_ia_domain_rule  (domain_code ,PROD_ID,
+      AUTHOR,OP_TIME,ID)
+    values (
+      #{parseRule,jdbcType=VARCHAR}, #{prodid,jdbcType=VARCHAR}, 
+       
+      #{author,jdbcType=VARCHAR}, #{opTime,jdbcType=DATE},#{UUID,jdbcType=VARCHAR})
+  </insert>
+  <select id="selectById"  parameterType="java.lang.String" resultMap="BaseResultMap">
+    select t1.ID,t1.PARSE_RULE,t1.GET_INDEX,t1.PROD_ID,t1.URL_EXAMPLE,t1.AUTHOR,t1.OP_TIME,t2.PROD_NAME 
+     from dim_ia_url_fuzzy_rule t1 left join	dim_ia_product_info t2 on t1.PROD_ID=t2.PROD_ID
+     where t1.ID=#{id}  
+  </select>
+  <delete id="delete" parameterType="java.lang.String">
+    delete from dim_ia_url_fuzzy_rule
+     where ID=#{id}
+  </delete>
+  <update id="update" parameterType="com.bonc.dpi.dao.entity.DomainFuzzyRule">
+    update dim_ia_url_fuzzy_rule
+    <set>   	
+    	<if test="parseRule != null">
+    		PARSE_RULE=#{parseRuleParam},
+    	</if>
+    	<if test="parseRuleParam != null">
+    		PARSE_RULE=#{parseRuleParam},
+    	</if>
+    	<if test="getIndex != null">
+    		GET_INDEX=#{getIndex},
+    	</if>
+    	<if test="prodid != null">
+    		PROD_ID=#{prodid},
+    	</if>  	
+    	<if test="urlExample != null">
+    		URL_EXAMPLE=#{urlExample},
+    	</if>
+    	<if test="author != null">
+    		AUTHOR=#{author},
+    	</if>
+    	<if test="opTime != null">
+    		OP_TIME=#{opTime},
+    	</if>      	   	
+    </set> 
+     where ID=#{id}
+  </update>
+  
+  <select id="check" parameterType="com.bonc.dpi.dao.entity.DomainFuzzyRule" resultType="int">
+    	select count(*) from dim_ia_url_fuzzy_rule where 1=1
+    	<if test="id != null and id != ''">
+		    and ID!=#{id}
+		</if> 
+    	<if test="parseRuleParam != null and parseRuleParam != ''">
+		    and parse_rule=#{parseRuleParam}
+		</if>
+		<if test="prodid != null and prodid != ''">
+			and PROD_ID=#{prodid}
+		</if>
+  </select>
+  
+  <insert id="insertVoPl" >
+  	   <if test="database_type=='mysql'">
+	    	insert into dim_ia_url_fuzzy_rule (ID,PARSE_RULE,GET_INDEX,PROD_ID, URL_EXAMPLE,AUTHOR,OP_TIME)
+    		values 
+	    	<foreach item="data" index="index" collection="list" open="" close="" separator=",">
+	         	(#{data.id,jdbcType=VARCHAR},#{data.parseRule,jdbcType=VARCHAR}, #{data.getIndex,jdbcType=VARCHAR}, #{data.prodid,jdbcType=VARCHAR},
+	     		 #{data.urlExample,jdbcType=VARCHAR}, #{data.author,jdbcType=VARCHAR}, #{data.opTime,jdbcType=DATE})
+	        </foreach>
+	    </if>
+	    <if test="database_type=='oracle'">
+		    insert all
+	    	<foreach item="data" index="index" collection="list" open="" close="" separator="">
+	           into dim_ia_url_fuzzy_rule (ID,PARSE_RULE,GET_INDEX,PROD_ID, URL_EXAMPLE,AUTHOR,OP_TIME) 
+	    		values
+	         	(#{data.id,jdbcType=VARCHAR},#{data.parseRule,jdbcType=VARCHAR}, #{data.getIndex,jdbcType=VARCHAR}, #{data.prodid,jdbcType=VARCHAR},
+	     		 #{data.urlExample,jdbcType=VARCHAR}, #{data.author,jdbcType=VARCHAR}, #{data.opTime,jdbcType=DATE})
+	        </foreach>
+	        select 1 from dual
+	    </if>
+  </insert>
+  
+  <select id="selectVoByPrimaryKey" parameterType="com.bonc.dpi.dao.entity.DomainFuzzyRule" resultMap="BaseResultMap">
+    SELECT ID,PARSE_RULE,GET_INDEX,PROD_ID,URL_EXAMPLE,AUTHOR,OP_TIME 
+		FROM dim_ia_url_fuzzy_rule 
+		where 1=1 
+		<if test="parseRule != null and parseRule != ''">
+		    and parse_rule=#{parseRule} 
+		</if>
+		<if test="prodid != null and prodid != ''">
+		    and PROD_ID=#{prodid} 
+		</if>
+  </select>
+  
+   <select id="deleteVoByPrimaryKey" parameterType="com.bonc.dpi.dao.entity.DomainFuzzyRule" resultMap="BaseResultMap">
+    delete from dim_ia_url_fuzzy_rule
+     where 1=1
+		<if test="parseRule != null and parseRule != ''">
+		    and parse_rule=#{parseRule} 
+		</if>
+		<if test="prodid != null and prodid != ''">
+		    and PROD_ID=#{prodid} 
+		</if>
+  </select>
+  
+  <select id="getLabelById" parameterType="com.bonc.dpi.dao.entity.DomainFuzzyRule" resultMap="BaseResultMap">
+    	select PROD_LABEL_CODE as LABEL_CODE , PROD_CATAGORY from dim_ia_product_info where PROD_ID = #{prodId} 
+  </select>
+  <select id="getLabelByCode" parameterType="com.bonc.dpi.dao.entity.DomainFuzzyRule" resultMap="BaseResultMap">
+    	SELECT label_code1,label_name1,label_code2,label_name2 from dim_ia_product_label where label_code1=#{labelCode} or label_code2=#{labelCode}
+  </select>
+  <select id="checkProdIdAndProdName" parameterType="com.bonc.dpi.dao.entity.DomainFuzzyRule" resultType="int">
+    	select count(*) from dim_ia_product_info  where 1=1 
+		<if test="prodId != null and prodId != ''">
+		    and prod_id = #{prodId}  
+		</if>
+		<if test="prodName != null and prodName != ''">
+			and PROD_NAME = #{prodName}  
+		</if>
+  </select>
+  <select id="checkData" parameterType="com.bonc.dpi.dao.entity.DomainFuzzyRule" resultType="int">
+    	select count(*) from dim_ia_url_fuzzy_rule  where 1=1 
+		<if test="parseRule != null and parseRule != ''">
+		    and parse_rule = #{parseRule}  
+		</if>
+		<if test="prodid != null and prodid != ''">
+			and prod_id = #{prodid}  
+		</if>
+  </select>
+  <select id="checkDomainRuleData" parameterType="com.bonc.dpi.dao.entity.DomainFuzzyRule" resultType="int">
+    	select count(*) from dim_ia_domain_rule  where 1=1 
+		<if test="parseRule != null and parseRule != ''">
+		    and domain_code = #{parseRule}  
+		</if>
+		
+  </select>
+  <select id="checkDomainFuzzyRule" parameterType="com.bonc.dpi.dao.entity.DomainFuzzyRule" resultType="int">
+    	select count(*) from dim_ia_url_fuzzy_rule  where 1=1 
+		<if test="parseRule != null and parseRule != ''">
+		    and parse_rule = #{parseRule}  
+		</if>
+		<if test="prodid != null and prodid != ''">
+		    and PROD_ID = #{prodid}  
+		</if>
+		
+  </select>
+  <update id="updateUrlStu" parameterType="com.bonc.dpi.dao.entity.DomainFuzzyRule" databaseId="mysql">
+    update dm_d_ia_unidentified_url set dm_d_ia_unidentified_url.is_check='1'  
+    where 1=1 
+    <if test="dateId != null and dateId != ''">
+		and date_id = #{dateId}  
+	</if>
+	<if test="id != null and id != ''">
+		and id = #{id}  
+	</if>
+  </update>
+  <update id="updateUrlStu" parameterType="com.bonc.dpi.dao.entity.DomainFuzzyRule" databaseId="oracle">
+    update dm_d_ia_unidentified_url set dm_d_ia_unidentified_url.is_check='1'  
+    where 1=1 
+    <if test="dateId != null and dateId != ''">
+		and date_id = #{dateId}  
+	</if>
+	<if test="id != null and id != ''">
+		and rowid = #{id}  
+	</if>
+  </update>
+</mapper>

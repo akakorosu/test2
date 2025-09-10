@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bonc.dpi.dao.mapper.DmDevVideoInfoMapper">
+	<select id="selectList" 
+		parameterType="com.bonc.dpi.dao.entity.DmDevVideoInfo" 
+		resultType="com.bonc.dpi.dao.entity.DmDevVideoInfo">
+		SELECT 
+		  t.director director,
+		  t.CONTENT_LABEL_CODE2 contentLabelCode2,
+		  t.CONTENT_LABEL_CODE3 contentLabelCode3,
+		  t.CONTENT_LABEL_NAME2 contentLabelName2,
+		  t.CONTENT_LABEL_NAME3 contentLabelName3,
+		  t.DATE_ID dateId,
+		  t.DOWN_FLOW downFlow,
+		  t.screen_writer screenWriter,
+		  t.IS_CHARGE isCharge,
+		  t.video_id videoId,
+		  t.video_name videoName,
+		  t.PROD_ID prodId,
+		  t.SCORE score,
+		  t.STATUS status,
+		  t.TOTAL_FLOW totalFlow,
+		  t.TOTAL_NUM totalNum,
+		  t.UP_FLOW upFlow,
+		  t.USER_TOTAL userTotal,
+		  t.WAP_DURATION wapDuration,
+		  t.actor actor,
+		  t.duration duration,
+		  t.area area,
+		  t.language language,
+		  t.release_time releaseTime,
+		  t.episodes episodes
+		FROM
+		  dm_d_ev_video_info t where 1=1
+		<if test="actor != null and actor != ''">
+			and actor like CONCAT(CONCAT('%', #{actor}), '%')
+		</if>
+		<if test="area != null and area != ''">
+			and area like CONCAT(CONCAT('%', #{area}), '%')
+		</if>
+		<if test="director != null and director != ''">
+			and director like CONCAT(CONCAT('%', #{director}), '%')
+		</if>
+		<if test="language != null and language != ''">
+			and language like CONCAT(CONCAT('%', #{language}), '%')
+		</if>
+		<if test="videoName != null and videoName != ''">
+			and video_name like CONCAT(CONCAT('%', #{videoName}), '%')
+		</if>
+	</select>
+</mapper>

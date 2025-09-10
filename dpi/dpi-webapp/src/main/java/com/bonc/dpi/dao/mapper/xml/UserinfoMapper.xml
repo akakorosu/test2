@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bonc.dpi.dao.mapper.UserinfoMapper">
+	<resultMap id="BaseResultMap" type="com.bonc.login.action.City">
+		<!-- <id column="ID" property="id" jdbcType="VARCHAR" /> -->
+		<result column="CITY_DS_DM" property="cityds_dm" jdbcType="VARCHAR" />
+		<result column="CITY_DS_MC" property="cityds_mc" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<select id="selectByCitydm" resultMap="BaseResultMap" parameterType="java.util.Map">
+		SELECT CITY_DS_DM, CITY_DS_MC FROM DIM_CITY_DS
+		<if test="cityds_dm!=null and cityds_dm!=''">  
+    		WHERE CITY_DS_DM = #{cityds_dm}
+		</if>
+		ORDER BY CITY_DS_DM
+	</select>
+</mapper>

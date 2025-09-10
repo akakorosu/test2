@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bonc.dpi.dao.mapper.TopLevelDomainMapper">
+ 	<resultMap id="resultMap" type="com.bonc.dpi.dao.entity.TopLevelDomain">
+		
+		<result column="HOST" jdbcType="VARCHAR" property="host" />
+		<result column="PROD_ID" jdbcType="VARCHAR" property="prodId" />
+		<result column="PROD_NAME" jdbcType="VARCHAR" property="prodName" />
+		<result column="FLOW" jdbcType="DECIMAL" property="flow" />
+		<result column="USER_COUNT" jdbcType="DECIMAL" property="userCount" />
+		<result column="USER_TOTAL" jdbcType="DECIMAL" property="userTotal" />
+		<result column="MONTH_ID" jdbcType="VARCHAR" property="monthId" />
+		<result column="is_check" jdbcType="VARCHAR" property="isCheck" />
+	</resultMap>
+	<resultMap id="resultMap1" type="com.bonc.dpi.dao.entity.TopLevelDomain">
+		
+		<result column="HOST" jdbcType="VARCHAR" property="host" />
+		<result column="PROD_ID" jdbcType="VARCHAR" property="prodId" />
+		<result column="PROD_NAME" jdbcType="VARCHAR" property="prodName" />
+		<result column="FLOW" jdbcType="DECIMAL" property="flow" />
+		<result column="USERCOUNT" jdbcType="DECIMAL" property="userCount" />
+		<result column="USERTOTAL" jdbcType="DECIMAL" property="userTotal" />
+		<result column="MONTH_ID" jdbcType="VARCHAR" property="monthId" />
+		<result column="is_check" jdbcType="VARCHAR" property="isCheck" />
+		<result column="flowCount" jdbcType="VARCHAR" property="flowCount" />
+	</resultMap>
+	
+	<select id="selectDataNum" resultType="int">
+		select count(*) 
+		from dm_d_ia_top_level_domain 
+		where 1=1
+		
+	 	<if test="monthId != null and monthId != ''">
+			and DATE_ID = #{monthId}  
+		</if> 
+		<if test="isCheck != null and isCheck != ''">
+			and is_check = #{isCheck}  
+		</if> 
+	</select>
+	<select id="selectList" resultMap="resultMap1">
+		select HOST,PROD_ID,PROD_NAME,round(flow,0) FLOW,USER_COUNT USERCOUNT,USER_TOTAL USERTOTAL,DATE_ID ,is_check,round((flow/USER_COUNT),2) flowCount
+		from dm_d_ia_top_level_domain 
+		where 1=1
+		
+	 	<if test="monthId != null and monthId != ''">
+			and DATE_ID = #{monthId}  
+		</if> 
+		<if test="isCheck != null and isCheck != ''">
+			and is_check = #{isCheck}  
+		</if> 
+		<if test="sidx != null and sord!='' and sord != null and sidx != ''">
+             ORDER BY ${sidx} ${sord},PROD_ID ${sord}
+        </if>
+	</select>
+	
+	<select id="selectListNotProdId" resultMap="resultMap">
+		select HOST,PROD_ID,PROD_NAME,FLOW,USER_COUNT,USER_TOTAL  
+		from dwa_d_ia_top_level_domain 
+		where PROD_ID  is  null or PROD_ID='' 
+		<if test="monthId != null and monthId != ''">
+			and MONTH_ID = #{monthId}  
+		</if> 
+		
+		order by USER_TOTAL desc 
+	</select>
+	
+	
+	<insert id="insertVo" parameterType="com.bonc.dpi.dao.entity.TopLevelDomain">
+   		insert into dwa_d_ia_top_level_domain (ID,HOST,PROD_ID,PROD_NAME,FLOW,USER_COUNT,USER_TOTAL,MONTH_ID) 
+   		values (#{id,jdbcType=VARCHAR},
+   				#{host,jdbcType=VARCHAR},
+   				#{prodId,jdbcType=VARCHAR},
+   				#{prodName,jdbcType=VARCHAR},
+   				#{flow,jdbcType=VARCHAR},
+   				#{userCount,jdbcType=VARCHAR},
+      			#{userTotal,jdbcType=VARCHAR},
+      			#{monthId,jdbcType=VARCHAR})
+  	</insert>
+
+  	
+  	<select id="selectVoById"  parameterType="java.lang.String" resultMap="resultMap">
+    	select *
+      		from dm_d_ia_top_level_domain
+     	where dm_d_ia_top_level_domain.HOST = #{host,jdbcType=VARCHAR} and DATE_ID = #{monthId,jdbcType=VARCHAR}
+  	</select>
+	
+  	<update id="updateVo" parameterType="com.bonc.dpi.dao.entity.TopLevelDomain">
+    	update dwa_d_ia_top_level_domain set 
+    		HOST=#{host},
+    		PROD_ID=#{prodId},
+  			PROD_NAME=#{prodName},	
+    		FLOW=#{flow},
+    		USER_COUNT=#{userCount},
+    		USER_TOTAL=#{userTotal},
+    		MONTH_ID=#{monthId}
+    	where ID=#{id}
+  	</update>
+  	<update id="updateTopDomain" parameterType="com.bonc.dpi.dao.entity.TopLevelDomain">
+    	update dm_d_ia_top_level_domain set 
+    		
+    		PROD_ID=#{prodId},
+  			PROD_NAME=#{prodName},	
+    		is_check='1'
+    	where dm_d_ia_top_level_domain.HOST=#{host}
+  	</update>
+  	<update id="updateDomainCode" parameterType="com.bonc.dpi.dao.entity.TopLevelDomain">
+    	 update dim_ia_domain_rule set prod_id=#{prodId},author=#{author} ,OP_TIME=#{opTime} where domain_code=#{host}
+  	</update>
+	<insert id="updateOrInsertDomain" parameterType="com.bonc.dpi.dao.entity.TopLevelDomain" >
+    	insert into dim_ia_domain_rule ( ID,DOMAIN_CODE, OP_TIME,AUTHOR,PROD_ID) VALUES (#{uuid},#{host}, #{opTime}, #{author}, #{prodId}) 
+  	</insert>
+  	<select id="checkDomainCode"  parameterType="com.bonc.dpi.dao.entity.TopLevelDomain" resultType="int">
+    	select count(*)
+      		from dim_ia_domain_rule
+     	where dim_ia_domain_rule.DOMAIN_CODE=#{host}
+  	</select>
+  	<update id="topLvlDomainCheck2" parameterType="com.bonc.dpi.dao.entity.TopLevelDomain">
+    	update dm_d_ia_top_level_domain set 
+    	is_check='2'
+  		where dm_d_ia_top_level_domain.HOST=#{host}
+  	</update>
+</mapper>

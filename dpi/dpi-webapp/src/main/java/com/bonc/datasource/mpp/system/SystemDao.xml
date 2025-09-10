@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bonc.datasource.mpp.system.SystemDao">
+
+	<insert id="insertLog" parameterType="com.bonc.system.dao.entity.LogEntity">
+    	INSERT INTO st_sig_log_all(
+        operateid, userorg, mainaccount, subaccount, subtype,
+        subifsensitive, sysid, visitway, serverip, clientip,
+        opername, ifsensitive, fuzzify, batchoper, senid,
+        involvephone, opertypenum, operdate, operdescribe, servertypenum,
+        goldbank, goldbankid, ifauth, authtype, userauthid, endopertime,
+        op_time)
+    	VALUES
+    	(
+    	#{operateId, jdbcType=VARCHAR}, #{userOrg, jdbcType=VARCHAR},
+    	#{mainAccount, jdbcType=VARCHAR}, #{subAccount, jdbcType=VARCHAR}, #{subType, jdbcType=VARCHAR},
+    	#{subIfSensitive, jdbcType=VARCHAR}, #{sysId, jdbcType=VARCHAR},
+    	#{visitWay, jdbcType=VARCHAR}, #{serverIp, jdbcType=VARCHAR}, #{clientIp, jdbcType=VARCHAR},
+    	#{operName, jdbcType=VARCHAR}, #{ifsensitive, jdbcType=VARCHAR},
+    	#{fuzzify, jdbcType=VARCHAR}, #{batchOper, jdbcType=VARCHAR}, #{senID, jdbcType=VARCHAR},
+    	#{involvePhone, jdbcType=VARCHAR}, #{operTypeNum, jdbcType=VARCHAR},
+    	#{operDate, jdbcType=VARCHAR}, #{operDescribe, jdbcType=VARCHAR}, #{serverTypeNum, jdbcType=VARCHAR},
+    	#{goldbank, jdbcType=VARCHAR}, #{goldbankId, jdbcType=VARCHAR},
+    	#{ifAuth, jdbcType=VARCHAR}, #{authType, jdbcType=VARCHAR}, #{userauthId, jdbcType=VARCHAR}, #{endOperTime, jdbcType=VARCHAR},
+    	#{op_time ,jdbcType=INTEGER}
+    	)
+    </insert>
+
+    <insert id="insertLogReportSecond" parameterType="com.bonc.system.dao.entity.LogEntity">
+    	INSERT INTO st_sig_log_report_dm(
+    	 logdate, operateid, subaccount, subtype,
+        subifsensitive, sysid, visitway, serverip, clientip,
+        opername, ifsensitive, fuzzify, batchoper, senid,
+        involvephone, opertypenum, operdate, servertypenum,
+        goldbank, goldbankid, ifauth, authtype, userauthid, service_port)
+    	VALUES
+    	(
+    	#{logDate, jdbcType=VARCHAR},  #{operateId, jdbcType=VARCHAR}, #{subAccount, jdbcType=VARCHAR}, #{subType, jdbcType=VARCHAR},
+    	#{subIfSensitive, jdbcType=VARCHAR}, #{sysId, jdbcType=VARCHAR},
+    	#{visitWay, jdbcType=VARCHAR}, #{serverIp, jdbcType=VARCHAR}, #{clientIp, jdbcType=VARCHAR},
+    	#{operName, jdbcType=VARCHAR}, #{ifsensitive, jdbcType=VARCHAR},
+    	#{fuzzify, jdbcType=VARCHAR}, #{batchOper, jdbcType=VARCHAR}, #{senID, jdbcType=VARCHAR},
+    	#{involvePhone, jdbcType=VARCHAR}, #{operTypeNum, jdbcType=VARCHAR},
+    	#{operDate, jdbcType=VARCHAR}, #{serverTypeNum, jdbcType=VARCHAR},
+    	#{goldbank, jdbcType=VARCHAR}, #{goldbankId, jdbcType=VARCHAR},
+    	#{ifAuth, jdbcType=VARCHAR}, #{authType, jdbcType=VARCHAR}, #{userauthId, jdbcType=VARCHAR},#{server_port, jdbcType=VARCHAR}
+    	)
+    </insert>
+</mapper>

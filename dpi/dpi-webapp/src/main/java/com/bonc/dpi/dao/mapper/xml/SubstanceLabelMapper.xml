@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bonc.dpi.dao.mapper.SubstanceLabelMapper">
+
+
+	<select id="selectList" parameterType="com.bonc.dpi.dao.entity.SubstanceLabel" resultType="com.bonc.dpi.dao.entity.SubstanceLabel">
+		select
+		v.content_label_code contentLabelCode, prod_id prodId,<!-- prod_name prodName, -->cat_content_type
+		catContentType,
+		cat_full_label_name catFullLabelName,cat_content_name catContentName,cat_content_total
+		catContentTotal,
+		is_check isCheck, id ,content_label_code1 contentLabelCode1,
+		content_label_name1 contentLabelName1,
+		content_label_code2 contentLabelCode2, content_label_name2
+		contentLabelName2,content_label_code3 contentLabelCode3,
+		content_label_name3 contentLabelName3
+		,content_label_code4 contentLabelCode4, content_label_name4
+		contentLabelName4,content_label_code5 contentLabelCode5,
+		content_label_name5 contentLabelName5
+		,content_label_code6 contentLabelCode6, content_label_name6
+		contentLabelName6,content_label_name
+		contentLabelName,content_label_level contentLabelLevel,
+		author ,op_time opTime
+		from 
+		<if test="tableName != null and tableName != ''">
+			${tableName} v LEFT JOIN dim_ia_content_label l on v.content_label_code=l.CONTENT_LABEL_CODE
+		</if>
+		where 1=1
+		<if test="codeLength != null and codeLength != ''">
+			  and	length(v.content_label_code) =#{codeLength}
+		</if>
+		<if test="prodName != null and prodName != ''">
+			  and	prod_id =#{prodName}
+		</if>
+		<if test="isCheck != null and isCheck != ''">
+			  and	v.is_check =#{isCheck}
+		</if>
+		<if test="sord != null and sord != ''">
+			 order by v.content_label_code ${sord},prod_id ${sord}
+		</if>
+		
+	</select>
+	<select id="getGroupType" resultType="java.util.Map">
+		SELECT DISTINCT group_type "groupType" from DIM_IA_CONTENT_PROD  where is_valid='1'
+	</select>
+	<select id="getProdIdAndName" parameterType="com.bonc.dpi.dao.entity.SubstanceLabel" resultType="com.bonc.dpi.dao.entity.SubstanceLabel" databaseId="mysql">
+		select  PROD_ID prodId <!-- ,PROD_NAME prodName --> from 
+		<if test="tableName != null and tableName != ''">
+			${tableName} 
+		</if>
+		where 1=1
+		<if test="codeLength != null and codeLength != ''">
+			and length(content_label_code)=#{codeLength} 
+		</if>
+		GROUP BY prodId<!-- ,prodName -->
+	</select>
+	<select id="getProdIdAndName" parameterType="com.bonc.dpi.dao.entity.SubstanceLabel" resultType="com.bonc.dpi.dao.entity.SubstanceLabel" databaseId="oracle">
+		select  PROD_ID prodId <!-- ,PROD_NAME prodName  -->from 
+		<if test="tableName != null and tableName != ''">
+			${tableName} 
+		</if>
+		where 1=1
+		<if test="codeLength != null and codeLength != ''">
+		  and	length(content_label_code)=#{codeLength} 
+		</if>
+		GROUP BY PROD_ID<!-- ,PROD_NAME -->
+	</select>
+	<select id="getInitProdName" parameterType="com.bonc.dpi.dao.entity.SubstanceLabel" resultType="com.bonc.dpi.dao.entity.SubstanceLabel" >
+		select  PROD_ID prodId ,PROD_NAME prodName from 
+		DIM_IA_CONTENT_PROD
+		where 1=1 and IS_VALID='1'
+		<if test="tableName != null and tableName != ''">
+			and group_type =#{tableName} 
+		</if>
+		GROUP BY PROD_ID,PROD_NAME
+	</select>
+	<select id="getCatContentType" parameterType="com.bonc.dpi.dao.entity.SubstanceLabel" resultType="com.bonc.dpi.dao.entity.SubstanceLabel" >
+		select content_label_code2 contentLabelCode2 ,content_label_name2 contentLabelName2  from 
+        dim_ia_content_label where content_label_code1='AN00' and content_label_code2 is not null 
+        and content_label_name2 is not null
+        GROUP BY content_label_code2,content_label_name2
+	</select>
+	<delete id="delContent" parameterType="com.bonc.dpi.dao.entity.SubstanceLabel" >
+		delete  from 
+		<if test="tableName != null and tableName != ''">
+			${tableName} 
+		</if>
+		where 1=1
+		<if test="contentLabelCode != null and contentLabelCode != ''">
+		  and	content_label_code=#{contentLabelCode} 
+		</if>
+		<if test="catContentName != null and catContentName != ''">
+		  and	cat_content_name=#{catContentName} 
+		</if>
+		<if test="prodId != null and prodId != ''">
+		  and	prod_id=#{prodId} 
+		</if>
+		
+	</delete>
+	<update id="checkContent" parameterType="com.bonc.dpi.dao.entity.SubstanceLabel" >
+		update   
+		<if test="tableName != null and tableName != ''">
+			${tableName} 
+		</if>
+		set is_check='1'
+		where 1=1
+		<if test="contentLabelCode != null and contentLabelCode != ''">
+		  and	content_label_code=#{contentLabelCode} 
+		</if>
+		<if test="catContentName != null and catContentName != ''">
+		  and	cat_content_name=#{catContentName} 
+		</if>
+		<if test="prodId != null and prodId != ''">
+		  and	prod_id=#{prodId} 
+		</if>
+		
+	</update>
+	<update id="updateContentLabelCode" parameterType="com.bonc.dpi.dao.entity.SubstanceLabel" >
+		update   
+		<if test="tableName != null and tableName != ''">
+			${tableName} 
+		</if>
+		set content_label_code=#{contentLabelCode} 
+		where 1=1
+		<if test="contentLabelCodeOriginal != null and contentLabelCodeOriginal != ''">
+		  and	content_label_code=#{contentLabelCodeOriginal} 
+		</if>
+		<if test="catContentName != null and catContentName != ''">
+		  and	cat_content_name=#{catContentName} 
+		</if>
+		<if test="prodId != null and prodId != ''">
+		  and	prod_id=#{prodId} 
+		</if>
+		
+	</update>
+	<select id="countData" parameterType="com.bonc.dpi.dao.entity.SubstanceLabel" resultType="int">
+		select  count(*) from
+		<if test="tableName != null and tableName != ''">
+			${tableName} 
+		</if>
+		
+		where 1=1
+		<if test="contentLabelCode != null and contentLabelCode != ''">
+		  and	content_label_code=#{contentLabelCode} 
+		</if>
+		<if test="catContentName != null and catContentName != ''">
+		  and	cat_content_name=#{catContentName} 
+		</if>
+		<if test="prodId != null and prodId != ''">
+		  and	prod_id=#{prodId} 
+		</if>
+		
+	</select>
+	<select id="selectVoById" parameterType="com.bonc.dpi.dao.entity.SubstanceLabel" resultType="com.bonc.dpi.dao.entity.SubstanceLabel" >
+		select v.content_label_code contentLabelCode, PROD_ID prodId <!-- ,PROD_NAME prodName  -->,cat_content_type catContentType
+		,cat_full_label_name catFullLabelName ,cat_content_name catContentName ,cat_content_total catContentTotal,content_label_name1 contentLabelName1 from 
+		<if test="tableName != null and tableName != ''">
+			${tableName} v LEFT JOIN dim_ia_content_label l on v.content_label_code=l.CONTENT_LABEL_CODE
+		</if>
+		where 1=1
+		<if test="contentLabelCode != null and contentLabelCode != ''">
+		  and	v.content_label_code=#{contentLabelCode} 
+		</if>
+		<if test="catContentName != null and catContentName != ''">
+		  and	cat_content_name=#{catContentName} 
+		</if>
+		<if test="prodId != null and prodId != ''">
+		  and	prod_id=#{prodId} 
+		</if>
+	</select>
+	<select id="getProdNameById" parameterType="com.bonc.dpi.dao.entity.SubstanceLabel" resultType="com.bonc.dpi.dao.entity.SubstanceLabel" >
+		select prod_name prodName from 
+		
+		DIM_IA_PRODUCT_INFO
+		
+		where 1=1
+		
+		<if test="prodId != null and prodId != ''">
+		  and	prod_id=#{prodId} 
+		</if>
+	</select>
+    <select id="comLikeSearch" parameterType="com.bonc.dpi.dao.entity.SubstanceLabel" resultType="com.bonc.dpi.dao.entity.SubstanceLabel" databaseId="oracle">
+		SELECT content_label_code contentLabelCode ,content_label_name1 contentLabelName1,content_label_name2 contentLabelName2
+		,content_label_name3 contentLabelName3,content_label_name4 contentLabelName4
+		,content_label_name5 contentLabelName5,content_label_name6 contentLabelName6
+		
+		 from dim_ia_content_label where 1=1
+		<if test="contentLabelName1 != null and contentLabelName1 != ''">
+		  and	content_label_name1=#{contentLabelName1} 
+		</if>
+		<if test="prodName != null and prodName != ''">
+		 and (content_label_name1 like   '%' ||  #{prodName} || '%' or content_label_name2 like   '%' ||  #{prodName} || '%'
+		 or content_label_name3 like   '%' ||  #{prodName} || '%' or content_label_name4 like   '%' ||  #{prodName} || '%'
+		  or content_label_name5 like   '%' ||  #{prodName} || '%' or content_label_name6 like   '%' ||  #{prodName} || '%'
+		 ) 
+		</if>
+		
+	</select>
+	<select id="comLikeSearch" parameterType="com.bonc.dpi.dao.entity.SubstanceLabel" resultType="com.bonc.dpi.dao.entity.SubstanceLabel" databaseId="mysql">
+		SELECT content_label_code contentLabelCode ,content_label_name1 contentLabelName1,content_label_name2 contentLabelName2
+		,content_label_name3 contentLabelName3,content_label_name4 contentLabelName4
+		,content_label_name5 contentLabelName5,content_label_name6 contentLabelName6
+		
+		 from dim_ia_content_label where 1=1
+		<if test="contentLabelName1 != null and contentLabelName1 != ''">
+		  and	content_label_name1=#{contentLabelName1} 
+		</if>
+		<if test="prodName != null and prodName != ''">
+		 and (content_label_name1 like   CONCAT('%',#{prodName},'%') or content_label_name2 like   CONCAT('%',#{prodName},'%')
+		 or content_label_name3 like   CONCAT('%',#{prodName},'%') or content_label_name4 like   CONCAT('%',#{prodName},'%')
+		  or content_label_name5 like   CONCAT('%',#{prodName},'%') or content_label_name6 like   CONCAT('%',#{prodName},'%')
+		 ) 
+		</if>
+		   
+	</select>
+	<insert id="insertContentLabelCode" parameterType="com.bonc.dpi.dao.entity.SubstanceLabel"  >
+		 insert into 
+		<if test="tableName != null and tableName != ''">
+			${tableName} 
+		</if>
+	    (content_label_code,PROD_ID,cat_content_type,cat_content_name,is_check) 
+   		values (#{contentLabelCode,jdbcType=VARCHAR},
+   				#{prodId,jdbcType=VARCHAR},
+   				
+   				#{catContentType,jdbcType=VARCHAR},
+      			#{catContentName,jdbcType=VARCHAR},
+      			#{isCheck,jdbcType=VARCHAR})
+		
+	</insert>
+</mapper>

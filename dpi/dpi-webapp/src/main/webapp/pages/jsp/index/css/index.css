@@ -1,0 +1,555 @@
+*{
+	margin:0px;
+	padding:0px;
+	font-family: "微软雅黑";	
+}
+body{
+	background:#031e3b !important;
+}
+/*===============头部=====================*/
+.header{
+	width:100%;
+	height:50px;
+}
+.header .headerLogo{
+	float:left;
+	width:110px;
+	height:50px;
+	background:url(../img/logo.png) no-repeat center;
+}
+.header .headerTitle{
+	width:850px;
+	margin:0 auto;
+}
+.header .headerTitle .headerTitleL{
+	float:left;
+	width:200px;
+	height:50px;
+	background:url(../img/u392.png) no-repeat center;
+}
+.header .headerTitle .headerTitleC{
+	float:left;
+	width:450px;
+	height:50px;
+	background:url(../img/headerC.png) no-repeat center;
+	text-align:center;
+	color:white;
+	font-size:18px;
+	font-weight: bolder;
+	line-height:50px;
+}
+.header .headerTitle .headerTitlerR{
+	float:left;
+	width:200px;
+	height:50px;
+	background:url(../img/u394.png) no-repeat center;
+}
+.header .headerMenu{
+	color: white;
+    float: right;
+    height: 50px;
+    line-height: 50px;
+    margin-right: 15px;
+    cursor:pointer;
+}
+/*===center===*/
+.mainCenter{
+	width:100%;
+	padding:10px;
+}
+.mainCenter1{
+	width:25%;
+	float:left;
+}
+.mainCenter1 .total{
+	margin-bottom:10px;
+	height:118px;
+	background:url(../img/bgLight.png) no-repeat top center;
+	position: relative;
+	border-radius: 5px;
+	overflow: hidden;
+	border:1px solid #367cbb;
+}
+.mainCenter1 .total .total1{
+	position: absolute;
+	top:0px;
+	left:0px;
+	width:11px;
+	height:118px;
+	background:url(../img/bgL.png) no-repeat right;
+}
+.mainCenter1 .total .total2{
+	position: absolute;
+	top:0px;
+	left:0px;
+	right:0px;
+	height:118px;
+	background:url(../img/bgC.png) repeat-x;
+}
+.mainCenter1 .total .total3{
+	position: absolute;
+	top:0px;
+	right:0px;
+	width:10px;
+	height:118px;
+	background:url(../img/bgR.png) no-repeat left;
+}
+.mainCenter1 .totals1{
+	margin-bottom:10px;
+	height:185px;
+	background:url(../img/bgLight.png) no-repeat top center;
+	position: relative;
+	border-radius: 5px;
+	overflow: hidden;
+	border:1px solid #367cbb;
+}
+.mainCenter1 .totals1 .total1{
+	position: absolute;
+	top:0px;
+	left:0px;
+	width: 11px;
+	height:185px;
+	background:url(../img/bgL1.png) no-repeat right;
+}
+.mainCenter1 .totals1 .total2{
+	position: absolute;
+	top:0px;
+	left:11px;
+	right:10px;
+	height:185px;
+	background:url(../img/bgC1.png) repeat-x;
+}
+.mainCenter1 .totals1 .total3{
+	position: absolute;
+	top:0px;
+	right:0px;
+	width: 10px;
+	height:185px;
+	background:url(../img/bgR1.png) no-repeat left;
+}
+#mainCenters1, #mainCenters2{
+	width:100%;
+	height:91px;
+	position:absolute;
+	top:20px;
+}
+#mainCentersData1, #mainCentersData2{
+	left:5%;
+	right:5%;
+	height:10px;
+	position:absolute;
+	top:38px;
+	color:white;
+}
+#mainCentersData1 .mainCentersData1L, #mainCentersData2 .mainCentersData1L{
+	float:left;
+	font-size: 16px;
+	font-weight: bolder;
+}
+#mainCentersData1 .mainCentersData1C, #mainCentersData2 .mainCentersData1C{
+	margin-left:40px;
+	font-size: 12px;
+}
+#mainCentersData1 .mainCentersData1R, #mainCentersData2 .mainCentersData1R{
+	float:right;
+	font-size: 14px;
+}
+#basis, #basis1{
+	left:5%;
+	right:5%;
+	position:absolute;
+	top:94px;
+	color:white;
+	font-size: 12px;
+}
+#basis span, #basis1 span{
+	display: block;
+	float:left;
+}
+#basis .basis, #basis1 .basis{
+	margin-left:10px;
+	padding-left:10px;
+}
+.mainCenter2{
+	width:0%;
+	float:left;
+	margin-left:1%;
+}
+.mainCenter2 .total{
+	margin-bottom:10px;
+	height:441px;
+	position: relative;
+	border-radius: 5px;
+	overflow: hidden;
+}
+.mainCenter2 .total .total1{
+	position: absolute;
+	top:0px;
+	left:0px;
+	width: 15px;
+	height:441px;
+	background:url(../img/bgL2.png) no-repeat right;
+}
+.mainCenter2 .total .total2{
+	position: absolute;
+	top:0px;
+	right:15px;
+	left:15px;
+	height:441px;
+	background:url(../img/bgC2.png) repeat-x;
+}
+.mainCenter2 .total .total3{
+	position: absolute;
+	top:0px;
+	right:0px;
+	width: 15px;
+	height:441px;
+	background:url(../img/bgR2.png) no-repeat left;
+}
+.centerMain{
+	position: absolute;
+	top:1px;
+	left:1px;
+	right:2px;
+}
+.mainCenter2 .centerMain1, .mainCenter2 .centerMain2, .mainCenter2 .centerMain3{
+	float:left;
+	width:33.333333%;
+	height:27px;
+	position: relative;
+	background:url(../img/footerLight.png) top center no-repeat;
+}
+.centerTopBg{
+	position: absolute;
+	top:1px;
+	left: 0px;
+	right: 0px;
+	height:27px;
+	text-align: center;
+	color:#fff;
+	line-height: 27px;
+	background:url(../img/footerTopBg.png) center;
+	border-radius: 5px 5px 0px 0px;
+	overflow: hidden;
+}
+.centerTopBgC1{
+	color:#fff;
+	cursor: pointer;
+}
+.centerTopBgC2{
+	color:#aeaeae;
+	cursor: pointer;
+}
+.centerTopBg:hover{
+	color:white;
+}
+.mainCenterLight{
+	width:100%;
+	background:url(../img/footerLight.png) no-repeat top center;
+	margin-top: 27px;
+	height:152px;
+	position: relative;
+	cursor: pointer;
+
+}
+.mainCenter2 .mainCenterRange1, .mainCenter2 .mainCenterRange2, .mainCenter2 .mainCenterRange3{
+    border-right: 1px dashed #367cbb;
+    height: 100px;
+    position: absolute;
+    top: 52px;
+    width: 100%;
+}
+.centerBorder{
+	position:absolute;
+	top:180px;
+	left:10px;
+	right:10px;
+	border-top:1px solid #367cbb;
+	height:1px;
+	
+}
+
+#mainCenterRange1, #mainCenterRange2, #mainCenterRange3{
+	width:100%;
+	height:80px;
+	position: absolute;
+	top:20px;
+}
+.mainCenterRangeD1, .mainCenterRangeD2 , .mainCenterRangeD3{
+	position:absolute;
+	top:0px;
+	height:20px;
+	width:100%;
+	color:white;
+	font-size: 18px;
+	text-align: center;
+}
+.mainCenter2 .mainCenterRange3{
+	border: none;
+}
+.basis1{
+	position:absolute;
+	top:51px;
+	right:10%;
+	color:white;
+	font-size:12px;
+	padding-left:10px;
+}
+.rangeTable{
+	position: absolute;
+	top:220px;
+	left:10px;
+	right:10px;
+	height:300px;
+	text-align: center;
+	font-weight: normal;
+	overflow: hidden;
+}
+.rangeTable .tableScroll1{
+	position: absolute;
+	top:0px;
+	left:0px;
+	width:100%;
+}
+.rangeTable .tableScroll2{
+	position: absolute;
+	top:0px;
+	width:100%;
+}
+.rangeTable .slimScrollDiv{
+	position: absolute !important;
+	top:0px;
+	left:0px;
+}
+.table > thead > tr > th{
+	border-bottom:1px solid #367cbb;
+	text-align:center;
+	font-weight: normal;
+	color:#ffffff;
+}
+.table-striped > tbody > tr:nth-child(2n+1) {
+    background-color: #0b335e;
+    color:#c9c9c9;
+   
+}
+.table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td{
+	 border-top:1px solid #184572;
+	 padding:10px;
+	 color:#c9c9c9;
+}
+.colorsBorder{
+	position:absolute;
+	bottom:0px;
+	height:10px;
+	left:0px;
+	background:url(../img/borders.png) no-repeat bottom center;
+}
+.tableScrollLeft1{
+	position:absolute;
+	top:0px;
+	left:0px;
+	width:100%;
+}
+.tableScrollLeft2{
+	position:absolute;
+	top:0px;
+	left:100%;
+	width:100%;
+}
+.mainCenter3{
+	width:73%;
+	float:right;
+	height:100px;
+}
+.mainCenter3 .total{
+	margin-bottom:10px;
+	height:186px;
+	background:url(../img/bgLight.png) no-repeat top center;
+	position: relative;
+	border-radius: 5px;
+	border:1px solid #367cbb;
+	overflow: hidden;
+    background-size: 100% 100%;
+    width:60%;
+}
+.mainCenter3 .total1{
+	margin-bottom:10px;
+	height:186px;
+	background:url(../img/bgLight.png) no-repeat top center;
+	position: relative;
+	border-radius: 5px;
+	border:1px solid #367cbb;
+	overflow: hidden;
+    background-size: 100% 100%;
+    width:38%;
+    left:18px;
+}
+.mainCenter3 .total .total1{
+	position: absolute;
+	top:0px;
+	left:0px;
+	width: 11px;
+	height:210px;
+	background:url(../img/bgL3.png) no-repeat right;
+}
+.mainCenter3 .total .totals2{
+	position: absolute;
+	top:0px;
+	left:11px;
+	right:10px;
+	height:170px;
+	background:url(../img/bgC3.png) repeat-x;
+}
+.mainCenter3 .total .total3{
+	position: absolute;
+	top:0px;
+	right:0px;
+	width: 10px;
+	height:210px;
+	background:url(../img/bgR3.png) no-repeat left;
+}
+.mainCenter3 .totals1{
+/* 	margin-top:-15px; */
+/* 	margin-bottom:10px; */
+	height:245px;
+	background:url(../img/bgLight.png) no-repeat top center;
+	position: relative;
+	border-radius: 5px;
+	overflow: hidden;
+	border:1px solid #367cbb;
+    background-size: 100% 100%;
+}
+.mainCenter3 .totals1 .total1{
+	position: absolute;
+	top:0px;
+	left:0px;
+	width: 11px;
+	height:210px;
+	background:url(../img/bgL3.png) no-repeat right;
+}
+.mainCenter3 .totals1 .total2{
+	position: absolute;
+	top:0px;
+	left:11px;
+	right:10px;
+	height:210px;
+	background:url(../img/bgC3.png) repeat-x;
+}
+.mainCenter3 .totals1 .totals3{
+	position: absolute;
+	top:0px;
+	right:0px;
+	width: 10px;
+	height:210px;
+	background:url(../img/bgR3.png) no-repeat left;
+}
+.income{
+	position:absolute;
+	top:37px;
+	left:30px;
+	right:30px;
+	color:white;
+	font-size: 12px;
+}
+.income .incomeL{
+	float:left;
+	text-align: center;
+}
+.income .incomeL .income1{
+	font-size: 12px;
+}
+.income .incomeR{
+	float:right;
+	text-align: center;
+}
+/*topt*/
+.topT{
+	height:27px;
+	background:url(../img/topBG.png) center repeat-x;
+	position:absolute;
+	border-radius: 5px 5px 0 0;
+    right: 2px;
+    top: 2px;
+    left: 2px;
+    color:white;
+    text-align: center;
+    line-height: 27px;
+    overflow: hidden;
+}
+/* footer */
+.mainFooter{
+	padding:0px 10px;
+	margin-bottom: 10px;
+	position: relative;
+	overflow: hidden;
+}
+.mainFooter .total{
+	height:100px;
+	width: 100%;
+	position: relative;
+	border-radius: 5px;
+	overflow: hidden;
+	border:1px solid #367cbb;
+}
+.mainFooter .total .footer1{
+	position: absolute;
+	left:0px;
+	top:0px;
+	width:8px;
+	height:90px;
+	background:url(../img/footerL.png) no-repeat center;
+}
+.mainFooter .total .footer2{
+	position: absolute;
+	left:8px;
+	right:8px;
+	height:90px;
+	background:url(../img/footerC.png) repeat-x;
+}
+.mainFooter .total .footer3{
+	position: absolute;
+	right:0px;
+	top:0px;
+	width:8px;
+	height:90px;
+	background:url(../img/footerR.png) no-repeat center;
+}
+.footerMain{
+	position: absolute;
+	top:0px;
+	left: 30px;
+    position: absolute;
+    right: 10px;
+}
+.footerMain .footerMain1, .footerMain .footerMain2, .footerMain .footerMain3, .footerMain .footerMain4, .footerMain .footerMain5, .footerMain .footerMain6, .footerMain .footerMain7{
+	float:left;
+	width:14%;
+	height:97px;
+	border-right:1px dashed #367cbb;
+	position: relative;
+	background:url(../img/footerLight.png) top center no-repeat;
+}
+.footerMain .footerMain5{
+	border:none;
+}
+.footerTopBg{
+	position: absolute;
+	top:1px;
+	left: 1px;
+	right: 1px;
+	height:27px;
+	text-align: center;
+	color:white;
+	line-height: 27px;
+	background:url(../img/footerTopBg.png) center;
+	border-radius: 5px 5px 0px 0px;
+	overflow: hidden;
+}
+.up{
+	position: absolute;
+	bottom:30px;
+	left:20px;
+	right:10px;
+	color:white;
+	font-size: 12px;
+}

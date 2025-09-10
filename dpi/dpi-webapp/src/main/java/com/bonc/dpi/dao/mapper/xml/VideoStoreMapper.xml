@@ -1,0 +1,425 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bonc.dpi.dao.mapper.VideoStoreMapper">
+
+	<resultMap id="weblist" type="com.bonc.dpi.entity.VideoWebInfo">
+		<result column="net_id" property="net_id" jdbcType="VARCHAR" />
+		<result column="net_name" property="net_name" jdbcType="VARCHAR" />
+	</resultMap>
+	<resultMap id="categorylist" type="com.bonc.dpi.entity.VideoCategoryInfo">
+		<result column="video_type_code" property="video_type_code" jdbcType="VARCHAR" />
+		<result column="video_type_name" property="video_type_name" jdbcType="VARCHAR" />
+	</resultMap>
+	<resultMap id="labellist" type="com.bonc.dpi.entity.VideoLabel">
+		<result column="label_type" property="label_type" jdbcType="VARCHAR" />
+		<result column="label_name" property="label_name" jdbcType="VARCHAR" />
+		<result column="video_type_code" property="video_type_code" jdbcType="VARCHAR" />
+		<result column="video_type_name" property="video_type_name" jdbcType="VARCHAR" />
+	</resultMap>
+	<resultMap id="totalNum" type="java.lang.Integer">
+		<result column="totalnum" property="totalnum" jdbcType="INTEGER" />
+	</resultMap>
+
+	<resultMap id="videocontent" type="com.bonc.dpi.entity.VideoContent">
+		<result column="net_name" property="net_name" jdbcType="VARCHAR" />
+		<result column="video_name" property="video_name" jdbcType="VARCHAR" />
+		<result column="video_type" property="video_type" jdbcType="VARCHAR" />
+		<result column="director" property="director" jdbcType="VARCHAR" />
+		<result column="actor" property="actor" jdbcType="VARCHAR" />
+		<result column="spot" property="spot" jdbcType="VARCHAR" />
+		<result column="language" property="language" jdbcType="VARCHAR" />
+		<result column="video_tag" property="video_tag" jdbcType="VARCHAR" />
+		<result column="release_date" property="release_date" jdbcType="VARCHAR" />
+		<result column="video_rating" property="video_rating" jdbcType="VARCHAR" />
+		<result column="view_counts" property="view_counts" jdbcType="VARCHAR" />
+		<result column="video_id" property="video_id" jdbcType="VARCHAR" />
+		<result column="app_id" property="app_id" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<resultMap id="exportVideoJob" type="com.bonc.dpi.entity.VideoExport">
+		<result column="task_id" property="task_id" jdbcType="VARCHAR" />
+		<result column="video_id" property="video_id" jdbcType="VARCHAR" />
+		<result column="user_id" property="user_id" jdbcType="VARCHAR" />
+		<result column="net_id" property="net_id" jdbcType="VARCHAR" />
+		<result column="op_time" property="op_time" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<resultMap id="videoQuery" type="com.bonc.dpi.entity.VideoQuery">
+		<result column="video_hj_id" property="video_hj_id" jdbcType="VARCHAR" />
+		<result column="label_name" property="label_name" jdbcType="VARCHAR" />
+		<result column="area_desc" property="area_desc" jdbcType="VARCHAR" />
+		<result column="video_label_id" property="video_label_id" jdbcType="VARCHAR" />
+		<result column="performer" property="performer" jdbcType="VARCHAR" />
+		<result column="flag_id" property="flag_id" jdbcType="VARCHAR" />
+		<result column="video_type" property="video_type" jdbcType="VARCHAR" />
+		<result column="actor" property="actor" jdbcType="VARCHAR" />
+		<result column="opr_id" property="opr_id" jdbcType="VARCHAR" />
+		<result column="net_id" property="net_id" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<resultMap id="logNum" type="java.lang.Integer">
+		<result column="lognum" property="lognum" jdbcType="INTEGER" />
+	</resultMap>
+
+	<select id="selectWeblist" resultMap="weblist" parameterType="java.util.Map">
+		SELECT net_id,net_name
+		FROM dim_sig_web_info
+		ORDER BY net_id ASC;
+	</select>
+
+	<select id="selectCategorylist" resultMap="categorylist" parameterType="java.util.Map">
+		SELECT video_type_code,any_value(video_type_name) as video_type_name
+		FROM st_sig_video_info_total_dm
+		GROUP BY video_type_code
+	</select>
+
+	<select id="countVideoQueryList" resultType="java.lang.Integer">
+		SELECT count(*)
+		FROM st_sig_video_query_dm
+	</select>
+
+	<select id="selectVideoQueryList" resultMap="videoQuery">
+		SELECT video_hj_id,label_name,area_desc,video_label_id,performer,flag_id,video_type,actor,opr_id,net_id
+		FROM st_sig_video_query_dm
+		where 1=1
+		<if test="flag_id!= null and flag_id!= ''">
+			and flag_id = #{flag_id,jdbcType=VARCHAR}
+		</if>
+		order by video_hj_id asc;
+	</select>
+
+	<insert id="insertVideoQuery" parameterType="com.bonc.dpi.entity.VideoQuery">
+		insert into st_sig_video_query_dm
+		(video_hj_id,label_name,area_desc,video_label_id,performer,flag_id,video_type,actor,opr_id,net_id)
+		values
+		(#{video_hj_id,jdbcType=VARCHAR},#{label_name,jdbcType=VARCHAR}, #{area_desc,jdbcType=VARCHAR}, #{video_label_id,jdbcType=VARCHAR}, #{performer,jdbcType=VARCHAR}, #{flag_id,jdbcType=VARCHAR}, #{video_type,jdbcType=VARCHAR}, #{actor,jdbcType=VARCHAR}, #{opr_id,jdbcType=VARCHAR}, #{net_id,jdbcType=VARCHAR})
+	</insert>
+
+	<delete id="deleteVideoLabelDm">
+		delete from st_sig_video_info_label_dm;
+	</delete>
+
+	<insert id="insertVideoLabelDm" parameterType="java.util.List">
+		insert into st_sig_video_info_label_dm
+		(video_hj_id,label_name,video_id,net_id)
+		values
+		<foreach collection ="videoQueries" item="list" index= "index" separator =",">
+			(#{list.video_hj_id}, #{list.label_name},
+			#{list.video_id},#{list.net_id})
+		</foreach >
+	</insert>
+
+	<select id="selectLabellist" resultMap="labellist" parameterType="java.util.Map">
+		SELECT label_type,label_name
+		FROM dim_sig_video_label
+		where 1=1
+		<if test="video_type_code!= null and video_type_code!= ''">
+			and video_type_code =  #{video_type_code,jdbcType=VARCHAR}
+		</if>
+		<if test="video_type_name!= null and video_type_name!= ''">
+			and video_type_name =  #{video_type_name,jdbcType=VARCHAR}
+		</if>
+	</select>
+<!-- 	<select id="getVideoAmount" resultMap="totalNum" parameterType="java.util.Map" >
+		select count(id) as totalnum
+		from st_sig_video_info_dm_test
+		where 1=1
+		<if test="net_id!= null and net_id!= ''">
+		    and net_id =  #{net_id,jdbcType=VARCHAR}
+		</if>
+		<if test="video_name!= null and video_name!= ''">
+			and video_name like concat('%',#{video_name,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="video_type!= null and video_type!= ''">
+			and video_type like concat('%',#{video_type,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="director!= null and director!= ''">
+			and director like concat('%',#{director,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="actor!= null and actor!= ''">
+			and actor like concat('%',#{actor,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="spot!= null and  spot!= ''">
+			and spot	 like concat('%',#{spot,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="language!= null and language!= ''">
+			and language like concat('%',#{language,jdbcType=VARCHAR},'%')
+		</if>
+	</select> -->
+	<select id="getVideoAmount" resultMap="totalNum" parameterType="java.util.Map" >
+		select count(video_id) as totalnum from
+		(select video_id
+		from st_sig_video_info_total_dm
+		where 1=1
+		<if test="net_id!= null and net_id!= ''">
+			and app_id =  #{net_id,jdbcType=VARCHAR}
+		</if>
+		<if test="video_name!= null and video_name!= ''">
+			and video_name like concat('%',#{video_name,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="video_type!= null and video_type!= ''">
+			and video_type_name like concat('%',#{video_type,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="video_label!= null and video_label!= ''">
+			and label_type = #{video_label,jdbcType=VARCHAR}
+		</if>
+		<if test="director!= null and director!= ''">
+			and actor like concat('%',#{director,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="actor!= null and actor!= ''">
+			and yanyuan like concat('%',#{actor,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="spot!= null and  spot!= ''">
+			and diqu like concat('%',#{spot,jdbcType=VARCHAR},'%')
+		</if>
+		and play_num+0 >=0
+		group by video_id) as a
+	</select>
+
+<!-- 	<select id="getVideoContent" resultMap="videocontent" parameterType="java.util.Map" >
+		select video_id,net_name,video_name,video_type,video_tag,release_date,director,actor,spot,video_rating,view_counts,language
+		from st_sig_video_info_dm_test
+		where 1=1
+		<if test="net_id!= null and net_id!= ''">
+			and net_id =  #{net_id,jdbcType=VARCHAR}
+		</if>
+		<if test="video_name!= null and video_name!= ''">
+			and video_name like concat('%',#{video_name,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="video_type!= null and video_type!= ''">
+			and video_type like concat('%',#{video_type,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="director!= null and director!= ''">
+			and director like concat('%',#{director,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="actor!= null and actor!= ''">
+			and actor like concat('%',#{actor,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="spot!= null and  spot!= ''">
+			and spot	 like concat('%',#{spot,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="language!= null and language!= ''">
+			and language like concat('%',#{language,jdbcType=VARCHAR},'%')
+		</if>
+		order by view_counts desc, video_rating desc
+		limit #{limitnum,jdbcType=INTEGER} offset #{startrow,jdbcType=INTEGER}
+
+	</select> -->
+<!-- 	<select id="getVideoContent" resultMap="videocontent" parameterType="java.util.Map" >
+		select video_id,net_name,video_name,video_type,video_tag,release_date,director,actor,spot,video_rating,view_counts,language
+		from st_sig_video_info_dm_test
+		where 1=1
+		<if test="net_id!= null and net_id!= ''">
+			and net_id =  #{net_id,jdbcType=VARCHAR}
+		</if>
+		<if test="video_name!= null and video_name!= ''">
+			and video_name like concat('%',#{video_name,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="video_type!= null and video_type!= ''">
+			and video_type like concat('%',#{video_type,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="director!= null and director!= ''">
+			and director like concat('%',#{director,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="actor!= null and actor!= ''">
+			and actor like concat('%',#{actor,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="spot!= null and  spot!= ''">
+			and spot	 like concat('%',#{spot,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="language!= null and language!= ''">
+			and language like concat('%',#{language,jdbcType=VARCHAR},'%')
+		</if>
+		order by view_counts desc, video_rating desc
+		limit #{limitnum,jdbcType=INTEGER} offset #{startrow,jdbcType=INTEGER}
+
+	</select> -->
+	<select id="getVideoContent" resultMap="videocontent" parameterType="java.util.Map" >
+		SELECT video_id, any_value(app_id) app_id, any_value(app_name) AS net_name, any_value(video_name) as video_name, any_value(GROUP_CONCAT( label_name )) AS video_tag,any_value ( video_type_name ) AS video_type,any_value(IF ( CHAR_LENGTH( fb_time )= 4 or CHAR_LENGTH( fb_time )= 6, fb_time, '' ) )AS release_date,SUBSTRING( play_num, - 1 )AS unit,any_value(actor) AS director, any_value(yanyuan) AS actor,any_value(diqu) AS spot ,any_value(IF( CHAR_LENGTH( score )> 3, '', score ) )AS video_rating,any_value(IF( CHAR_LENGTH( play_num )> 0, play_num, hot )) AS view_counts,any_value(hot+0) as hot,any_value(play_num) as play_num  FROM st_sig_video_info_total_dm
+		where 1=1
+		<if test="net_id!= null and net_id!= ''">
+			and app_id =  #{net_id,jdbcType=VARCHAR}
+		</if>
+		<if test="video_name!= null and video_name!= ''">
+			and video_name like concat('%',#{video_name,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="video_type!= null and video_type!= ''">
+			and video_type_name like concat('%',#{video_type,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="video_label!= null and video_label!= ''">
+			and label_type = #{video_label,jdbcType=VARCHAR}
+		</if>
+		<if test="director!= null and director!= ''">
+			and actor like concat('%',#{director,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="actor!= null and actor!= ''">
+			and yanyuan like concat('%',#{actor,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="spot!= null and  spot!= ''">
+			and diqu like concat('%',#{spot,jdbcType=VARCHAR},'%')
+		</if>
+
+		AND play_num + 0 >= 0  GROUP BY video_id,play_num ORDER BY FIELD( unit, '万', '亿' ) DESC, play_num + 0 DESC,hot DESC, video_rating
+		limit #{limitnum,jdbcType=INTEGER} offset #{startrow,jdbcType=INTEGER}
+
+	</select>
+<!-- 	<select id="getVideoContentNotLimited" resultMap="videocontent" parameterType="java.util.Map" >
+		select video_id,net_name,video_name,video_type,video_tag,release_date,director,actor,spot,video_rating,view_counts,language
+		from st_sig_video_info_dm_test
+		where 1=1
+		<if test="net_id!= null and net_id!= ''">
+			and net_id =  #{net_id,jdbcType=VARCHAR}
+		</if>
+		<if test="video_name!= null and video_name!= ''">
+			and video_name like concat('%',#{video_name,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="video_type!= null and video_type!= ''">
+			and video_type like concat('%',#{video_type,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="director!= null and director!= ''">
+			and director like concat('%',#{director,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="actor!= null and actor!= ''">
+			and actor like concat('%',#{actor,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="spot!= null and  spot!= ''">
+			and spot	 like concat('%',#{spot,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="language!= null and language!= ''">
+			and language like concat('%',#{language,jdbcType=VARCHAR},'%')
+		</if>
+		order by view_counts desc, video_rating desc
+
+	</select> -->
+	<select id="getVideoContentNotLimited" resultMap="videocontent" parameterType="java.util.Map" >
+<!-- 		select video_id,app_name as net_name,video_name,video_type_name as video_type,label_name as video_tag,Num_char_extract(fb_time,0) as release_date,actor as director,yanyuan as actor,diqu as spot,score as video_rating,play_num as view_counts,Num_char_extract(play_num,0) as num,Num_char_extract(play_num,3) as unit
+ -->
+		SELECT video_id, any_value(app_name) AS net_name, any_value(video_name) as video_name, any_value(GROUP_CONCAT( label_name )) AS video_tag,any_value ( video_type_name ) AS video_type,any_value(IF ( CHAR_LENGTH( fb_time )= 4, fb_time, '' ) )AS release_date,SUBSTRING( play_num, - 1 )AS unit,any_value(actor) AS director, any_value(yanyuan) AS actor,any_value(diqu) AS spot ,any_value(IF( CHAR_LENGTH( score )> 3, '', score ) )AS video_rating,any_value(IF( CHAR_LENGTH( play_num )> 0, play_num, hot )) AS view_counts,any_value(hot+0) as hot,any_value(play_num) as play_num  FROM st_sig_video_info_total_dm
+		where 1=1
+		<if test="net_id!= null and net_id!= ''">
+			and app_id =  #{net_id,jdbcType=VARCHAR}
+		</if>
+		<if test="video_name!= null and video_name!= ''">
+			and video_name like concat('%',#{video_name,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="video_type!= null and video_type!= ''">
+			and video_type_name like concat('%',#{video_type,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="director!= null and director!= ''">
+			and actor like concat('%',#{director,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="actor!= null and actor!= ''">
+			and yanyuan like concat('%',#{actor,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="spot!= null and  spot!= ''">
+			and diqu like concat('%',#{spot,jdbcType=VARCHAR},'%')
+		</if>
+		AND play_num + 0 >= 0  GROUP BY video_id,play_num ORDER BY FIELD( unit, '万', '亿' ) DESC, play_num + 0 DESC,hot DESC, video_rating
+	</select>
+	<insert id="exportData"  parameterType="java.util.Map" >
+		insert into st_sig_export_job_dm (task_id, video_id,user_id,net_id,op_time)
+		select #{task_id,jdbcType=VARCHAR}, video_id, #{user_id,jdbcType=VARCHAR}, net_id, #{op_time,jdbcType=VARCHAR}
+		from st_sig_video_info_total_dm
+		<where>
+		<if test="net_id!= null and net_id!= ''">
+			net_id =  #{net_id,jdbcType=VARCHAR}
+		</if>
+		<if test="video_name!= null and video_name!= ''">
+			and video_name like concat('%',#{video_name,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="video_type!= null and video_type!= ''">
+			and video_type like concat('%',#{video_type,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="director!= null and director!= ''">
+			and director like concat('%',#{director,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="actor!= null and actor!= ''">
+			and actor like concat('%',#{actor,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="spot!= null and  spot!= ''">
+			and spot	 like concat('%',#{spot,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="language!= null and language!= ''">
+			and language like concat('%',#{language,jdbcType=VARCHAR},'%')
+		</if>
+		</where>
+	</insert>
+
+	<insert id="insertExportLog" parameterType="com.bonc.dpi.entity.VideoExportLog">
+		insert into st_sig_video_export_log
+		(lablename,user_id, net_id, video_name, video_type, director, actor, spot, language, op_time, task_id)
+		values
+		(#{lablename,jdbcType=VARCHAR},#{user_id,jdbcType=VARCHAR}, #{net_id,jdbcType=VARCHAR}, #{video_name,jdbcType=VARCHAR}, #{video_type,jdbcType=VARCHAR}, #{director,jdbcType=VARCHAR}, #{actor,jdbcType=VARCHAR}, #{spot,jdbcType=VARCHAR}, #{language,jdbcType=VARCHAR}, #{op_time,jdbcType=VARCHAR}, #{task_id,jdbcType=VARCHAR})
+	</insert>
+
+	<select id="getExportLogNum" parameterType="java.util.Map" resultMap="logNum">
+		select count(lablename) as lognum
+		from st_sig_video_export_log
+		where
+		lablename = #{lablename,jdbcType=VARCHAR}
+	</select>
+
+	<select id="getExportLog" parameterType="java.util.Map" resultMap="logNum">
+		select count(user_id) as lognum
+		from st_sig_video_export_log
+		where
+			user_id = #{user_id,jdbcType=VARCHAR}
+			<choose>
+			    	<when test="net_id!= null and net_id!= ''">
+			        and 	net_id =  #{net_id,jdbcType=VARCHAR}
+			    </when>
+			    <otherwise>
+			        and 	net_id is null
+			    </otherwise>
+			</choose>
+			<choose>
+			    	<when test="video_name!= null and video_name!= ''">
+			        and 	video_name =  #{video_name,jdbcType=VARCHAR}
+			    </when>
+			    <otherwise>
+			        and 	video_name is null
+			    </otherwise>
+			</choose>
+			<choose>
+			    	<when test="video_type!= null and video_type!= ''">
+			        and 	video_type =  #{video_type,jdbcType=VARCHAR}
+			    </when>
+			    <otherwise>
+			        and 	video_type is null
+			    </otherwise>
+			</choose>
+			<choose>
+			    	<when test="director!= null and director!= ''">
+			        and 	director =  #{director,jdbcType=VARCHAR}
+			    </when>
+			    <otherwise>
+			        and 	director is null
+			    </otherwise>
+			</choose>
+			<choose>
+			    	<when test="actor!= null and actor!= ''">
+			        and 	actor =  #{actor,jdbcType=VARCHAR}
+			    </when>
+			    <otherwise>
+			        and 	actor is null
+			    </otherwise>
+			</choose>
+			<choose>
+			    	<when test="spot!= null and spot!= ''">
+			        and 	spot =  #{spot,jdbcType=VARCHAR}
+			    </when>
+			    <otherwise>
+			        and 	spot is null
+			    </otherwise>
+			</choose>
+			<choose>
+			    	<when test="language!= null and language!= ''">
+			        and 	language =  #{language,jdbcType=VARCHAR}
+			    </when>
+			    <otherwise>
+			        and 	language is null
+			    </otherwise>
+			</choose>
+	</select>
+
+</mapper>

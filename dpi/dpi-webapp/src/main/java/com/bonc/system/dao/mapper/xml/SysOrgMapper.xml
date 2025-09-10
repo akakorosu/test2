@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bonc.system.dao.mapper.SysOrgMapper">
+
+	<select id="selectList" 
+		parameterType="com.bonc.system.dao.entity.SysOrg" 
+		resultType="com.bonc.system.dao.entity.SysOrg">
+		select 
+			t.org_id orgId, 
+			t.pid pid, 
+			t.name name, 
+			t.memo memo, 
+			t.display_order displayOrder, 
+			t.orglevel orgLevel,
+			t.tree_code treeCode
+		from 
+			SYS_ORG t 
+		where 1=1
+		<if test="name != null and name != ''">
+			<bind name="newName" value="'%' + _parameter.getName() + '%'" />
+			and t.name like #{newName}
+		</if>			
+		<if test="orgId != null and orgId != ''">
+			and t.org_id = #{orgId}
+		</if>
+		<if test="pid != null and pid != ''">
+			and t.pid = #{pid}
+		</if>
+		<if test="orgLevel != null and orgLevel != ''">
+			and t.orglevel = #{orgLevel}
+		</if>
+		<if test="orgLevel != null and orgLevel != ''">
+			and t.orglevel = #{orgLevel}
+		</if>
+		<if test="treeCode != null and treeCode != ''">
+			<bind name="newTreeCode" value="'%' + _parameter.getTreeCode() + '%'" />
+			and t.tree_code like #{newTreeCode}
+		</if>
+		order by 
+			t.orglevel,t.display_order
+	</select>
+	
+	<select id="selectSysOrgById" 
+		parameterType="java.lang.String"
+		resultType="com.bonc.system.dao.entity.SysOrg">
+		select 
+			t.org_id orgId, 
+			t.pid pid, 
+			t.name name, 
+			t.memo memo, 
+			t.display_order displayOrder, 
+			t.orglevel orgLevel,
+			t.tree_code treeCode
+		from 
+			SYS_ORG t 
+		where t.org_id = #{orgId}
+	</select>
+	
+	<select id="selectSysOrgById" 
+		parameterType="java.lang.String"
+		resultType="com.bonc.system.dao.entity.SysOrg" databaseId="mysql">
+		select 
+			t.org_id orgId, 
+			t.pid pid, 
+			t.name name, 
+			t.memo memo1, 
+			t.display_order displayOrder, 
+			t.orglevel orgLevel,
+			t.tree_code treeCode
+		from 
+			SYS_ORG t 
+		where t.org_id = #{orgId}
+	</select>
+	
+	<insert id="insertSysOrg" 
+		parameterType="com.bonc.system.dao.entity.SysOrg">
+		insert into sys_org(ORG_ID,pid,tenant_id,name,memo,display_order,orglevel,tree_code) 
+		values(#{orgId},#{pid},#{tenantId},#{name},#{memo},#{displayOrder},#{orgLevel},#{treeCode})
+	</insert>
+	
+	<update id="updateSysOrg" 
+		parameterType="com.bonc.system.dao.entity.SysOrg">
+		update sys_org set name=#{name}, display_order=#{displayOrder} where org_id=#{orgId}
+	</update>
+	
+	<delete id="deleteSysOrgByTreeCode" parameterType="java.lang.String">
+		<bind name="newTreeCode" value="'%' + _parameter.getTreeCode() + '%'" />
+		delete from sys_org where tree_code like #{newTreeCode}
+	</delete>
+
+	<select id="getCityOption" parameterType="com.bonc.system.dao.entity.SysOrg" resultType="com.bonc.system.dao.entity.SysOrg">
+		select area_id as orgId, area_name as name
+		from dim_area_info
+		where 1=1
+		<if test="orgId != null and orgId != ''">
+			  and area_id = #{orgId}
+		</if>
+		order by area_id
+	</select>
+</mapper>

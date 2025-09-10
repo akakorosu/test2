@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bonc.dpi.dao.mapper.PositionCheckMapper">
+	
+	<select id="selectDataNum11" parameterType="com.bonc.dpi.dao.entity.PositionCheck"
+		resultType="int">
+		SELECT	count(*) 
+		<if test="prodName != null and prodName != ''">
+		FROM DIM_IA_KEYWORD_SEARCH_RULE_CHK t1 left join dim_ia_product_info t2 on t1.prod_id = t2.prod_id
+		</if>
+		<if test="prodName == null or prodName == ''">
+		FROM DIM_IA_KEYWORD_SEARCH_RULE_CHK t1
+		</if>		 
+		where 1=1
+		<if test="startTime != null and startTime != ''">
+		    and t1.OP_TIME &gt;= #{startTime} 
+		</if>
+		<if test="endTime != null and endTime != ''">
+		    and t1.OP_TIME &lt;= #{endTime} 
+		</if>
+		<if test="prodName != null and prodName != ''">
+			<bind name="prodName" value="'%' + _parameter.getProdName() + '%'" />
+			and t2.PROD_NAME like  #{prodName}
+		</if>
+	</select>
+	
+	<select id="selectList" parameterType="com.bonc.dpi.dao.entity.PositionCheck"
+		resultType="com.bonc.dpi.dao.entity.PositionCheck">
+		SELECT
+		    t.RULE_URL  ruleUrl,
+		    t.PROD_NAME prodName,
+		    t.HOST host,
+		    t.LONGITUDE_RULE longitudeRule,
+		    t.GET_INDEX_LONG  getIndexLong,
+		    t.T_LONG_RESULT tLongResult,
+		    t.LATITUDE_RULE latitudeRule,
+		    t.GET_INDEX_LATI getIndexLati,
+		    t.T_LATI_RESULT  tLatiResult,
+		    t.SYSTEM system1,
+		    t.LONG_RESULT longResult,
+		    t.LATI_RESULT latiResult,
+		    t.MATCH_TYPE matchType,
+		    t.URL url,
+		    t.GROUP_TYPE groupType,
+		    t.AUTHOR author,
+		    t.OP_TIME opTime,
+		    t.STATE state,
+		    t.SYSTEM system
+		    FROM DIM_IA_POSITION_RULE_CHK t
+		    WHERE 1=1
+		<if test="startTime != null and startTime != ''">
+			and t.OP_TIME &gt;= #{startTime}
+		</if>
+		<if test="endTime != null and endTime != ''">
+			and t.OP_TIME &lt;= #{endTime}
+		</if>
+		<if test="prodName != null and prodName != ''">
+			<bind name="prodName" value="'%' + _parameter.getProdName() + '%'" />
+			and t.PROD_NAME like  #{prodName}
+		</if>
+		order by t.OP_TIME DESC
+	</select>
+
+	<delete id="deleteById" parameterType="java.lang.String">
+		delete from DIM_IA_POSITION_RULE_CHK where HOST=#{id}
+	</delete>
+
+	<insert id="insert" parameterType="com.bonc.dpi.dao.entity.PositionCheck">
+		insert into DIM_IA_POSITION_RULE
+			(URL,HOST,MATCH_TYPE,LONGITUDE_RULE,GET_INDEX_LONG,LATITUDE_RULE,GET_INDEX_LATI,SYSTEM,GROUP_TYPE,AUTHOR,
+			 OP_TIME,IS_VALID,NUM
+			)
+		values
+			(#{ruleUrl},#{host},#{matchType},#{longitudeRule},#{getIndexLong},#{latitudeRule},#{getIndexLati},#{system}, #{groupType},
+			 #{author},#{opTime},'1',#{num}
+			)
+	</insert>
+
+	<select id="selectById" parameterType="java.lang.String"
+			resultType="com.bonc.dpi.dao.entity.PositionCheck">
+		SELECT
+		t.PROD_NAME prodName,
+		t.HOST host,
+		t.MATCH_TYPE matchType,
+		t.RULE_URL ruleUrl,
+		t.LONGITUDE_RULE longitudeRule,
+		t.URL url,
+		t.GET_INDEX_LONG getIndexLong,
+		t.T_LONG_RESULT tLongResult,
+		t.LATITUDE_RULE latitudeRule,
+		t.GROUP_TYPE groupType,
+		t.GET_INDEX_LATI getIndexLati,
+		t.T_LATI_RESULT tLatiResult,
+		t.AUTHOR author,
+		t.OP_TIME opTime,
+		t.SYSTEM system,
+		t.STATE state,
+		t.LONG_RESULT longResult,
+		t.LATI_RESULT latiResult
+		FROM DIM_IA_POSITION_RULE_CHK t
+		WHERE t.HOST = #{id}
+	</select>
+
+	<select id="selectMaxNum" resultType="int">
+		SELECT max(NUM+0) FROM DIM_IA_POSITION_RULE
+	</select>
+
+
+	<select id="selectVoByPrimaryKey" parameterType="com.bonc.dpi.dao.entity.PositionCheck" resultType="com.bonc.dpi.dao.entity.PositionCheck">
+		SELECT
+		t.PROD_NAME prodName,
+		t.HOST host,
+		t.MATCH_TYPE matchType,
+		t.RULE_URL ruleUrl,
+		t.LONGITUDE_RULE longitudeRule,
+		t.URL url,
+		t.GET_INDEX_LONG getIndexLong,
+		t.T_LONG_RESULT tLongResult,
+		t.LATITUDE_RULE latitudeRule,
+		t.GROUP_TYPE groupType,
+		t.GET_INDEX_LATI getIndexLati,
+		t.T_LATI_RESULT tLatiResult,
+		t.AUTHOR author,
+		t.OP_TIME opTime,
+		t.SYSTEM system,
+		t.STATE state,
+		t.LONG_RESULT longResult,
+		t.LATI_RESULT latiResult
+		FROM DIM_IA_POSITION_RULE_CHK t
+		where 1=1
+		
+		<if test="id != null and id != ''">
+			and t.HOST=#{id}
+		</if>
+	</select>
+
+<!-- 	<select id="deleteVoByPrimaryKey" parameterType="com.bonc.dpi.dao.entity.PositionCheck" > -->
+<!-- 		delete from DIM_IA_KEYWORD_SEARCH_RULE_CHK -->
+<!-- 		where 1=1 -->
+<!-- 		<if test="parseRule != null and parseRule != ''"> -->
+<!-- 			and PARSE_RULE=#{parseRule} -->
+<!-- 		</if> -->
+<!-- 		<if test="url != null and url != ''"> -->
+<!-- 			and URL=#{url} -->
+<!-- 		</if> -->
+<!-- 	</select> -->
+
+
+	<insert id="insertVoPl" >
+		<if test="database_type=='mysql'">
+			insert into DIM_IA_POSITION_RULE_CHK ( PROD_NAME, HOST, MATCH_TYPE, RULE_URL, LONGITUDE_RULE, URL,
+			      GET_INDEX_LONG,T_LONG_RESULT,LATITUDE_RULE,GROUP_TYPE,GET_INDEX_LATI,T_LATI_RESULT,AUTHOR,OP_TIME,SYSTEM,STATE,LONG_RESULT,LATI_RESULT)
+			
+			t.PROD_NAME prodName,
+			t.HOST host,
+			t.MATCH_TYPE matchType,
+			t.RULE_URL ruleUrl,
+			t.LONGITUDE_RULE longitudeRule,
+			t.URL url,
+			t.GET_INDEX_LONG getIndexLong,
+			t.T_LONG_RESULT tLongResult,
+			t.LATITUDE_RULE latitudeRule,
+			t.GROUP_TYPE groupType,
+			t.GET_INDEX_LATI getIndexLati,
+			t.T_LATI_RESULT tLatiResult,
+			t.AUTHOR author,
+			t.OP_TIME opTime,
+			t.SYSTEM system,
+			t.STATE state,
+			t.LONG_RESULT longResult,
+			t.LATI_RESULT latiResult
+			values
+			<foreach item="item" index="index" collection="list" open="" close="" separator=",">
+				(#{item.prodName,jdbcType=VARCHAR},
+				#{item.host,jdbcType=VARCHAR},
+				#{item.matchType,jdbcType=VARCHAR},
+				#{item.ruleUrl,jdbcType=VARCHAR},
+				#{item.longitudeRule,jdbcType=VARCHAR},
+				#{item.url,jdbcType=VARCHAR},
+				#{item.getIndexLong,jdbcType=VARCHAR})
+
+				#{item.tLongResult,jdbcType=VARCHAR},
+				#{item.latitudeRule,jdbcType=VARCHAR},
+				#{item.groupType,jdbcType=VARCHAR},
+				#{item.getIndexLati,jdbcType=VARCHAR},
+				#{item.tLatiResult,jdbcType=VARCHAR},
+				#{item.author,jdbcType=VARCHAR})
+
+				#{item.opTime,jdbcType=VARCHAR},
+				#{item.system,jdbcType=VARCHAR},
+				#{item.state,jdbcType=VARCHAR},
+				#{item.longResult,jdbcType=VARCHAR},
+				#{item.latiResult,jdbcType=VARCHAR})
+			</foreach>
+		</if>
+		<if test="database_type=='oracle'">
+			insert all
+			<foreach item="item" index="index" collection="list" open="" close="" separator="">
+				into DIM_IA_POSITION_RULE_CHK ( PROD_NAME, HOST, MATCH_TYPE, RULE_URL, LONGITUDE_RULE, URL,
+			      GET_INDEX_LONG,T_LONG_RESULT,LATITUDE_RULE,GROUP_TYPE,GET_INDEX_LATI,T_LATI_RESULT,AUTHOR,OP_TIME,SYSTEM,STATE,LONG_RESULT,LATI_RESULT)
+				values
+				(#{item.prodName,jdbcType=VARCHAR},
+				#{item.host,jdbcType=VARCHAR},
+				#{item.matchType,jdbcType=VARCHAR},
+				#{item.ruleUrl,jdbcType=VARCHAR},
+				#{item.longitudeRule,jdbcType=VARCHAR},
+				#{item.url,jdbcType=VARCHAR},
+				#{item.getIndexLong,jdbcType=VARCHAR},
+
+				#{item.tLongResult,jdbcType=VARCHAR},
+				#{item.latitudeRule,jdbcType=VARCHAR},
+				#{item.groupType,jdbcType=VARCHAR},
+				#{item.getIndexLati,jdbcType=VARCHAR},
+				#{item.tLatiResult,jdbcType=VARCHAR},
+				#{item.author,jdbcType=VARCHAR},
+
+				#{item.opTime,jdbcType=VARCHAR},
+				#{item.system,jdbcType=VARCHAR},
+				#{item.state,jdbcType=VARCHAR},
+				#{item.longResult,jdbcType=VARCHAR},
+				#{item.latiResult,jdbcType=VARCHAR})
+			</foreach>
+			select 1 from dual
+		</if>
+	</insert>
+
+</mapper>

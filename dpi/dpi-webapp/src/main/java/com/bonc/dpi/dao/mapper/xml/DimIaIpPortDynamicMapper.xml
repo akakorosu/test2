@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bonc.dpi.dao.mapper.DimIaIpPortDynamicMapper">
+	<resultMap id="ipPortResultMap" type="com.bonc.dpi.dao.entity.DimIaIpPortDynamic">
+		
+		<result column="IP_PORT" jdbcType="VARCHAR" property="ipPort" />		
+		<result column="IP" jdbcType="VARCHAR" property="ip" />
+		<result column="PORT" jdbcType="VARCHAR" property="port" />
+		<result column="PROD_ID" jdbcType="VARCHAR" property="prodid" />
+		
+		<result column="AUTHOR" jdbcType="VARCHAR" property="author" />
+		<result column="OP_TIME" jdbcType="DATE" property="opTime" />
+		<result column="ID" jdbcType="VARCHAR" property="id" />
+	</resultMap>
+	
+	<select id="selectDataNum" parameterType="com.bonc.dpi.dao.entity.DimIaIpPortDynamic"
+		resultType="int">
+		SELECT	count(*) 
+		<if test="prodName != null and prodName != ''">
+		FROM dim_ia_ip_port_dynamic t1 left join dim_ia_product_info t2 on t1.prod_id = t2.prod_id 
+		</if>
+		<if test="prodName == null or prodName == ''">
+		FROM dim_ia_ip_port_dynamic t1 
+		</if>		 
+		where 1=1 
+		<!-- <if test="opTime != null and opTime != ''">
+		    and t1.OP_TIME=#{opTime} 
+		</if>  -->
+		<if test="author != null and author != ''">
+		    <bind name="author" value="'%' + _parameter.getAuthor() + '%'" />
+		    and t1.author like #{author} 
+		</if>
+		<if test="startTime != null and startTime != ''">
+		    and t1.OP_TIME &gt;= #{startTime} 
+		</if>
+		<if test="endTime != null and endTime != ''">
+		    and t1.OP_TIME &lt;= #{endTime} 
+		</if>
+		<if test="ipPort != null and ipPort != ''">
+			<bind name="ipPort" value="'%' + _parameter.getIpPort() + '%'" />
+		    and t1.IP_PORT like  #{ipPort} 
+		</if>
+		<if test="prodName != null and prodName != ''">
+			<bind name="prodName" value="'%' + _parameter.getProdName() + '%'" />
+			and t2.PROD_NAME like  #{prodName}
+		</if>
+	</select>
+	
+	<select id="selectList" parameterType="com.bonc.dpi.dao.entity.DimIaIpPortDynamic"
+		resultMap="ipPortResultMap">
+		SELECT	
+					
+		t.IP_PORT as ipPort,
+		t.IP as ip,
+		t.PORT as port,
+		t.PROD_ID as prodid,
+		
+		t.AUTHOR as author,
+		t.OP_TIME as opTime,
+		t.ID as id
+
+		FROM dim_ia_ip_port_dynamic t 
+		order by OP_TIME DESC,t.IP_PORT DESC
+	</select>
+	<select id="selectListByPar" resultMap="ipPortResultMap">
+		SELECT t1.IP_PORT,t1.IP,t1.PORT,t1.PROD_ID,t1.AUTHOR,t1.OP_TIME,t1.ID,t2.PROD_NAME 
+		FROM dim_ia_ip_port_dynamic t1 left join dim_ia_product_info t2 on t1.prod_id = t2.prod_id 		 
+		where 1=1
+		<!-- <if test="opTime != null and opTime != ''">
+		    and t1.OP_TIME=#{opTime} 
+		</if>  -->
+		<if test="author != null and author != ''">
+		    <bind name="author" value="'%' + _parameter.getAuthor() + '%'" />
+		    and t1.author like #{author} 
+		</if>
+		<if test="startTime != null and startTime != ''">
+		    and t1.OP_TIME &gt;= #{startTime} 
+		</if>
+		<if test="endTime != null and endTime != ''">
+		    and t1.OP_TIME &lt;= #{endTime} 
+		</if>
+		<if test="ipPort != null and ipPort != ''">
+			<bind name="ipPort" value="'%' + _parameter.getIpPort() + '%'" />
+		    and t1.IP_PORT like  #{ipPort} 
+		</if>
+		<if test="prodName != null and prodName != ''">
+			<bind name="prodName" value="'%' + _parameter.getProdName() + '%'" />
+			and t2.PROD_NAME like  #{prodName}
+		</if>
+		order by OP_TIME desc
+	</select>
+
+	<delete id="delete" parameterType="com.bonc.dpi.dao.entity.DimIaIpPortDynamic">
+		delete from dim_ia_ip_port_dynamic where ID = #{id,jdbcType=VARCHAR}
+	</delete>
+
+	<insert id="insert" parameterType="com.bonc.dpi.dao.entity.DimIaIpPortDynamic">
+		insert into dim_ia_ip_port_dynamic (IP_PORT, IP, PORT, PROD_ID, AUTHOR, OP_TIME, id)
+		values 
+		(#{ipPortParam,jdbcType=VARCHAR},
+		#{ip,jdbcType=VARCHAR},
+		#{port,jdbcType=VARCHAR},
+		#{prodid,jdbcType=VARCHAR},		
+		#{author,jdbcType=VARCHAR},
+		#{opTime,jdbcType=VARCHAR},
+		#{id,jdbcType=VARCHAR})
+	</insert>
+
+	<select id="selectById" parameterType="com.bonc.dpi.dao.entity.DimIaIpPortDynamic"
+		resultType="com.bonc.dpi.dao.entity.DimIaIpPortDynamic">
+		select t1.ID,t1.IP_PORT,t1.PROD_ID,t2.PROD_NAME
+		from dim_ia_ip_port_dynamic t1 left join	dim_ia_product_info t2 on t1.PROD_ID=t2.PROD_ID
+		where t1.ID = #{id,jdbcType=VARCHAR} 
+	</select>
+
+	<update id="update" parameterType="com.bonc.dpi.dao.entity.DimIaIpPortDynamic">
+		update dim_ia_ip_port_dynamic
+		SET
+		IP_PORT=#{ipPortParam},
+		IP=#{ip},
+		PORT=#{port},
+		PROD_ID=#{prodid},
+		AUTHOR=#{author},
+		OP_TIME=#{opTime}
+		where ID=#{id}
+	</update>
+	
+
+	
+	<select id="check" parameterType="com.bonc.dpi.dao.entity.DimIaIpPortDynamic"
+    	resultType="int">
+    	select count(*) from dim_ia_ip_port_dynamic where 1=1
+    	<if test="id != null and id != ''">
+		    and ID!=#{id}
+		</if> 
+    	<if test="ipPortParam != null and ipPortParam != ''">
+		    and IP_PORT=#{ipPortParam}
+		</if>
+		<if test="prodid != null and prodid != ''">
+			and PROD_ID=#{prodid}
+		</if>
+  	</select>
+  	
+  	<select id="checkId" parameterType="com.bonc.dpi.dao.entity.DimIaIpPortDynamic"
+    	resultType="int">
+    	select count(*) from dim_ia_product_info t where t.PROD_NAME = #{prodName} 
+  	</select>
+  	
+  	<insert id="batchInsert" parameterType="com.bonc.dpi.dao.entity.DimIaIpPortDynamic">
+    	insert into dim_ia_ip_port_dynamic (ID, IP_PORT, IP, PORT, PROD_ID, AUTHOR, OP_TIME)
+		values 
+		<foreach item="item" index="index" collection="list" open="" close="" separator=",">         	
+		(
+		#{item.id,jdbcType=VARCHAR},
+		#{item.ipPort,jdbcType=VARCHAR},
+		#{item.ip,jdbcType=VARCHAR},
+		#{item.port,jdbcType=VARCHAR},
+		#{item.prodid,jdbcType=VARCHAR},		
+		#{item.author,jdbcType=VARCHAR},
+		#{item.opTime,jdbcType=VARCHAR}
+		)
+    	</foreach>
+  	</insert>
+  	
+  	<select id="getProdIdListByProdId" resultType="com.bonc.dpi.dao.entity.ProductInfo">
+		select PROD_ID prodId,PROD_NAME prodName from dim_ia_product_info 
+		where 1=1
+		<if test="prodid != null and prodid != ''">
+		and PROD_ID like concat('%',concat(#{prodid},'%'))
+		</if> 	
+		order by OP_TIME DESC
+	</select>
+	
+	<select id="getProdIdListByProdName" resultType="com.bonc.dpi.dao.entity.ProductInfo">
+		select PROD_ID prodId,PROD_NAME prodName from dim_ia_product_info 
+		where 1=1
+		<if test="prodName != null and prodName != ''">
+		and PROD_NAME like concat('%',concat(#{prodName},'%'))
+		</if> 	
+		order by OP_TIME DESC
+	</select>
+</mapper>

@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bonc.dpi.dao.mapper.BillBoardMapper">
+ 	<resultMap id="resultMap" type="com.bonc.dpi.dao.entity.BillBoard">
+		<result column="DATE_ID" jdbcType="VARCHAR" property="dateId" />
+		<result column="KEYWORD" jdbcType="VARCHAR" property="keyWord" />
+		<result column="AREA" jdbcType="VARCHAR" property="area" />
+		<result column="USER_TOTAL" jdbcType="VARCHAR" property="userTotal" />
+		<result column="PROD_ID" jdbcType="VARCHAR" property="prodid" />
+		<result column="PROD_NAME" jdbcType="VARCHAR" property="prodName" />
+
+		<result column="CONTENT_LABEL_LEVEL" jdbcType="VARCHAR" property="contentLabelLevel" />
+		<result column="CONTENT_LABEL_CODE" jdbcType="VARCHAR" property="contentLabelCode" />
+		<result column="CONTENT_LABEL_NAME" jdbcType="VARCHAR" property="contentLabelName" />
+		<result column="CONTENT_LABEL_CODE1" jdbcType="VARCHAR" property="contentLabelCode1" />
+		<result column="CONTENT_LABEL_CODE2" jdbcType="VARCHAR" property="contentLabelCode2" />
+		<result column="CONTENT_LABEL_NAME1" jdbcType="VARCHAR" property="contentLabelName1" />
+		<result column="CONTENT_LABEL_NAME2" jdbcType="VARCHAR" property="contentLabelName2" />
+		<result column="KEYWORD_CODE" jdbcType="VARCHAR" property="keyWordCode" />
+	</resultMap>
+
+	<resultMap id="wordcloud" type="com.bonc.dpi.entity.WordCloud">
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="value" property="value" jdbcType="VARCHAR" />
+	</resultMap>
+	<select id="queryHotData" resultMap="resultMap" parameterType="com.bonc.dpi.dao.entity.BillBoard">
+		select t1.KEYWORD,t1.AREA,t1.USER_TOTAL,t1.PROD_ID, rdt.PROD_NAME, t2.CONTENT_LABEL_NAME1,t2.CONTENT_LABEL_NAME2,t1.KEYWORD_CODE,content_label_code1,content_label_code2,date_id
+		from dm_d_ev_user_search_result_top t1
+		inner join DIM_IA_LABEL_TYPE t2 on t1.KEYWORD_CODE=t2.CONTENT_LABEL_CODE
+		INNER JOIN dim_rd_ia_product_info rdt ON t1.PROD_ID=rdt.PROD_ID
+		where t1.DATE_ID = #{monthId}
+              <if test="queryMapFlag != null and queryMapFlag != '' and queryMapFlag == '1'.toString() and cityId != '999'">
+              and t1.area = #{cityId}
+              </if>
+              <if test="queryMapFlag != null and queryMapFlag != '' and queryMapFlag == '1'.toString() and cityId == '999'">
+              and t1.area != '999'
+              </if>
+              <if test="queryMapFlag != null and queryMapFlag != '' and queryMapFlag == '0'.toString()">
+		      and t1.area = #{cityId}
+		      </if>
+			<if test="contentLabelName1!= null and contentLabelName1!= ''">
+				and t1.CONTENT_LABEL_NAME1 = #{contentLabelName1,jdbcType=VARCHAR}
+			</if>
+			<if test="contentLabelName2!= null and contentLabelName2!= ''">
+				and t1.CONTENT_LABEL_NAME2 = #{contentLabelName2,jdbcType=VARCHAR}
+			</if>
+			<if test="keyWord!= null and  keyWord!= ''">
+				and t1.keyword like concat('%',#{keyWord,jdbcType=VARCHAR},'%')
+			</if>
+		order by t1.USER_TOTAL desc
+		limit 1000
+	</select>
+
+	<select id="queryHotData4Export" resultMap="resultMap" parameterType="com.bonc.dpi.dao.entity.BillBoard">
+		SELECT
+		any_value (t1.KEYWORD) KEYWORD,
+		sum(t1.USER_TOTAL) USER_TOTAL,
+		any_value (t2.CONTENT_LABEL_NAME1) CONTENT_LABEL_NAME1,
+		any_value (t2.CONTENT_LABEL_NAME2) CONTENT_LABEL_NAME2,
+		any_value (t2.content_label_code1) content_label_code1,
+		any_value (t2.content_label_code2) content_label_code2,
+		any_value (date_id) date_id
+		FROM
+		dm_d_ev_user_search_result_top t1
+		INNER JOIN DIM_IA_LABEL_TYPE t2 ON t1.KEYWORD_CODE = t2.CONTENT_LABEL_CODE
+		INNER JOIN dim_rd_ia_product_info rdt ON t1.PROD_ID = rdt.PROD_ID
+		WHERE
+		1 = 1
+		<if test="contentLabelName1!= null and contentLabelName1!= ''">
+			and t2.CONTENT_LABEL_NAME1 = #{contentLabelName1,jdbcType=VARCHAR}
+		</if>
+		<if test="contentLabelName2!= null and contentLabelName2!= ''">
+			and t2.CONTENT_LABEL_NAME2 = #{contentLabelName2,jdbcType=VARCHAR}
+		</if>
+		<if test="keyWord!= null and  keyWord!= ''">
+			and t1.keyword like concat('%',#{keyWord,jdbcType=VARCHAR},'%')
+		</if>
+		GROUP BY
+		keyword
+		order by t1.USER_TOTAL desc
+	</select>
+
+	<insert id="insertHotData" parameterType="java.util.List">
+		insert into dm_d_ev_user_search_result_hot
+		(KEYWORD,
+		USER_TOTAL,
+		CONTENT_LABEL_NAME1,
+		CONTENT_LABEL_NAME2,
+		content_label_code1,
+		content_label_code2,
+		date_id,
+		user)
+		values
+		<foreach collection ="billBoards" item="list" index= "index" separator =",">
+			(#{list.keyWord}, #{list.userTotal},
+			#{list.contentLabelName1},#{list.contentLabelName2},
+			#{list.contentLabelCode1},#{list.contentLabelCode2},
+			#{list.dateId},#{user_id})
+		</foreach >
+	</insert>
+
+	<select id="selectCategoryLabel" resultMap="resultMap">
+		select CONTENT_LABEL_NAME1,CONTENT_LABEL_NAME2 from DIM_IA_LABEL_TYPE order by CONTENT_LABEL_NAME1 desc
+	</select>
+	<select id="getWordlist" resultMap="resultMap" parameterType="com.bonc.dpi.dao.entity.BillBoard">
+		select any_value(date_id) date_id,keyword,sum(user_total) user_total,any_value(prod_id) prod_id,any_value(keyword_code) keyword_code from dm_d_ev_user_search_result_top
+		where 1=1
+		<if test="startdate!=null and startdate.trim() neq ''">
+			and date_format(DATE_ID,'%Y%m%d') &gt;= str_to_date(#{startdate},'%Y-%m-%d')
+		</if>
+		<if test="enddate!=null and enddate.trim() neq ''">
+			and date_format(DATE_ID,'%Y%m%d') &lt;= str_to_date(#{enddate},'%Y-%m-%d')
+		</if>
+		group by keyword order by user_total desc
+	</select>
+	<select id="getSearchList" resultMap="resultMap" parameterType="com.bonc.dpi.dao.entity.BillBoard">
+		select sum(t1.user_total) user_total,any_value(t2.content_label_name1) content_label_name1,t2.content_label_name2
+		from dm_d_ev_user_search_result_top t1
+		inner join dim_ia_label_type t2 on t1.keyword_code=t2.content_label_code
+		INNER JOIN dim_rd_ia_product_info rdt ON t1.prod_id=rdt.prod_id
+		where 1=1
+		<if test="startdate!=null and startdate.trim() neq ''">
+			and date_format(DATE_ID,'%Y%m%d') &gt;= str_to_date(#{startdate},'%Y-%m-%d')
+		</if>
+		<if test="enddate!=null and enddate.trim() neq ''">
+			and date_format(DATE_ID,'%Y%m%d') &lt;= str_to_date(#{enddate},'%Y-%m-%d')
+		</if>
+		group by content_label_name2
+		order by user_total desc
+		</select>
+	<select id="getWordCloud" resultMap="wordcloud" parameterType="com.bonc.dpi.dao.entity.BillBoard">
+		select keyword as `name`,sum(user_total) as `value` from dm_d_ev_user_search_result_top
+		where 1=1
+		<if test="startdate!=null and startdate.trim() neq ''">
+			and date_format(DATE_ID,'%Y%m%d') &gt;= str_to_date(#{startdate},'%Y-%m-%d')
+		</if>
+		<if test="enddate!=null and enddate.trim() neq ''">
+			and date_format(DATE_ID,'%Y%m%d') &lt;= str_to_date(#{enddate},'%Y-%m-%d')
+		</if>
+		group by keyword order by value desc limit 110
+	</select>
+	<select id="getCategorylist" resultMap="resultMap">
+		select t2.CONTENT_LABEL_NAME1
+		from  DIM_IA_LABEL_TYPE t2
+		GROUP BY CONTENT_LABEL_NAME1
+	</select>
+	<select id="getClass2list" parameterType="com.bonc.dpi.dao.entity.BillBoard" resultMap="resultMap">
+		select t2.CONTENT_LABEL_NAME2,t2.CONTENT_LABEL_NAME1 from DIM_IA_LABEL_TYPE t2
+		where CONTENT_LABEL_NAME1 = #{contentLabelName1}
+		GROUP BY CONTENT_LABEL_NAME2
+	</select>
+
+	<select id="getHotWordAmount" parameterType="com.bonc.dpi.dao.entity.BillBoard" resultType="int">
+		select count(a.keyword) from (select any_value(t1.KEYWORD) KEYWORD,sum(t1.USER_TOTAL) USER_TOTAL,any_value(t2.CONTENT_LABEL_NAME1) CONTENT_LABEL_NAME1,any_value(t2.CONTENT_LABEL_NAME2) CONTENT_LABEL_NAME2
+		from dm_d_ev_user_search_result_top t1
+		inner join DIM_IA_LABEL_TYPE t2 on t1.KEYWORD_CODE=t2.CONTENT_LABEL_CODE
+		INNER JOIN dim_rd_ia_product_info rdt ON t1.PROD_ID=rdt.PROD_ID
+		where 1=1
+		<if test="contentLabelName1!= null and contentLabelName1!= ''">
+			and CONTENT_LABEL_NAME1 = #{contentLabelName1,jdbcType=VARCHAR}
+		</if>
+		<if test="contentLabelName2!= null and contentLabelName2!= ''">
+			and CONTENT_LABEL_NAME2 = #{contentLabelName2,jdbcType=VARCHAR}
+		</if>
+		<if test="keyWord!= null and  keyWord!= ''">
+			and keyword like concat('%',#{keyWord,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="startdate!=null and startdate.trim() neq ''">
+			and date_format(DATE_ID,'%Y%m%d') &gt;= str_to_date(#{startdate},'%Y-%m-%d')
+		</if>
+		<if test="enddate!=null and enddate.trim() neq ''">
+			and date_format(DATE_ID,'%Y%m%d') &lt;= str_to_date(#{enddate},'%Y-%m-%d')
+		</if>
+		group by keyword
+		order by USER_TOTAL desc) a
+	</select>
+	<select id="getHotWordList" parameterType="java.util.Map" resultMap="resultMap">
+		select any_value(t1.KEYWORD) KEYWORD,sum(t1.USER_TOTAL) USER_TOTAL,any_value(t2.CONTENT_LABEL_NAME1) CONTENT_LABEL_NAME1,any_value(t2.CONTENT_LABEL_NAME2) CONTENT_LABEL_NAME2
+		from dm_d_ev_user_search_result_top t1
+		inner join dim_ia_label_type t2 on t1.KEYWORD_CODE=t2.CONTENT_LABEL_CODE
+		INNER JOIN dim_rd_ia_product_info rdt ON t1.PROD_ID=rdt.PROD_ID
+		where 1=1
+		<if test="contentLabelName1!= null and contentLabelName1!= ''">
+			and CONTENT_LABEL_NAME1 = #{contentLabelName1,jdbcType=VARCHAR}
+		</if>
+		<if test="contentLabelName2!= null and contentLabelName2!= ''">
+			and CONTENT_LABEL_NAME2 = #{contentLabelName2,jdbcType=VARCHAR}
+		</if>
+		<if test="keyWord!= null and  keyWord!= ''">
+			and keyword like concat('%',#{keyWord,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="startdate!=null and startdate.trim() neq ''">
+			and date_format(DATE_ID,'%Y%m%d') &gt;= str_to_date(#{startdate},'%Y-%m-%d')
+		</if>
+		<if test="enddate!=null and enddate.trim() neq ''">
+			and date_format(DATE_ID,'%Y%m%d') &lt;= str_to_date(#{enddate},'%Y-%m-%d')
+		</if>
+		group by keyword
+		order by USER_TOTAL desc
+		limit #{limitnum,jdbcType=INTEGER} offset #{startrow,jdbcType=INTEGER}
+	</select>
+</mapper>

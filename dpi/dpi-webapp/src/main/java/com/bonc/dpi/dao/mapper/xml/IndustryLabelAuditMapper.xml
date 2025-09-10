@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bonc.dpi.dao.mapper.IndustryLabelAuditMapper">
+ 	<resultMap id="resultMap" type="com.bonc.dpi.dao.entity.IndustryLabelAudit">
+ 	    <result column="PROD_NAME" jdbcType="VARCHAR" property="prodName" />
+		<result column="prod_id" jdbcType="VARCHAR" property="prodId" />
+		<result column="prod_type" jdbcType="VARCHAR" property="prodType" />
+		<result column="prod_type_name" jdbcType="VARCHAR" property="prodTypeName" />
+		<result column="LABEL_NAME1" jdbcType="VARCHAR" property="labelName1" />
+		<result column="label_id1" jdbcType="VARCHAR" property="labelId1" />
+		<result column="LABEL_NAME2" jdbcType="VARCHAR" property="labelName2" />
+		<result column="label_id2" jdbcType="VARCHAR" property="labelId2" />
+		<result column="prod_rnk" jdbcType="INTEGER" property="prodRnk" />
+		<result column="is_check" jdbcType="VARCHAR" property="isCheck" />
+		<result column="USER_TOTAL" jdbcType="INTEGER" property="userTotal" />
+		<result column="USER_COUNT" jdbcType="INTEGER" property="userCount" />
+		<result column="FLOW" jdbcType="INTEGER" property="flow" />
+		<result column="MONTH_ID" jdbcType="VARCHAR" property="monthId" />
+		<result column="label_code1" jdbcType="INTEGER" property="labelCode1" />
+		<result column="label_code2" jdbcType="VARCHAR" property="labelCode2" />
+		
+	</resultMap>
+	<resultMap id="resultMap1" type="com.bonc.dpi.dao.entity.IndustryLabelAudit">
+ 	    <result column="PROD_NAME" jdbcType="VARCHAR" property="prodName" />
+		<result column="prod_id" jdbcType="VARCHAR" property="prodId" />
+		<result column="prod_type" jdbcType="VARCHAR" property="prodType" />
+		<result column="prod_type_name" jdbcType="VARCHAR" property="prodTypeName" />
+		<result column="LABEL_NAME1" jdbcType="VARCHAR" property="labelName1" />
+		<result column="label_id1" jdbcType="VARCHAR" property="labelId1" />
+		<result column="LABEL_NAME2" jdbcType="VARCHAR" property="labelName2" />
+		<result column="label_id2" jdbcType="VARCHAR" property="labelId2" />
+		<result column="prod_rnk" jdbcType="INTEGER" property="prodRnk" />
+		<result column="is_check" jdbcType="VARCHAR" property="isCheck" />
+		<result column="USERTOTAL" jdbcType="INTEGER" property="userTotal" />
+		<result column="USERCOUNT" jdbcType="INTEGER" property="userCount" />
+		<result column="FLOW" jdbcType="VARCHAR" property="flow" />
+		<result column="MONTH_ID" jdbcType="VARCHAR" property="monthId" />
+		<result column="label_code1" jdbcType="INTEGER" property="labelCode1" />
+		<result column="label_code2" jdbcType="VARCHAR" property="labelCode2" />
+		
+	</resultMap>
+	
+	<select id="selectList" parameterType="com.bonc.dpi.dao.entity.IndustryLabelAudit" resultMap="resultMap1">
+		select c.prod_id,c.prod_name,c.prod_type,c.prod_type_name,c.label_id1,c.label_name1,c.label_id2,c.label_name2,c.prod_rnk ,
+        p.label_check is_check,c.user_total usertotal,c.user_count usercount,round(c.flow,0) flow
+		from dm_d_ev_label_check c left join dim_ia_product_info p on c.prod_id=p.prod_id
+		where 1=1
+		<if test="monthId != null and monthId != ''">
+			and c.DATE_ID = #{monthId}  
+		</if>
+		<if test="labelName != null and labelName != ''">
+			and (c.LABEL_NAME1 = #{labelName} or c.LABEL_NAME2 = #{labelName}) 
+		</if>
+		<if test="isCheck != null and isCheck != ''">
+			and p.label_check = #{isCheck}  
+		</if>
+		<if test="prodRnk != null and prodRnk != ''">
+			and c.prod_rnk &lt;= #{prodRnk}  
+		</if>
+		<if test="sidx != null and sord!='' and sord != null and sidx != ''">
+             ORDER BY ${sidx} ${sord},c.prod_id ${sord}
+       </if> 
+	</select>
+	
+	<update id="updateLabelCheck" parameterType="String">
+    	update dm_d_ev_label_check a set a.is_check='1' where a.prod_id=#{prodId}
+  	</update>
+  	<update id="updateProdInfoCheck" parameterType="String">
+    	update dim_ia_product_info a set a.LABEL_CHECK='1' where a.prod_id=#{prodId}
+  	</update>
+
+  	<update id="batchUpdateLabelCheck" parameterType="java.util.Map" >
+    	update dm_d_ev_label_check a set a.is_check='1' where a.prod_id in 
+         <foreach collection="prodIds" item="obj" index="index" open="(" separator="," close=")">
+			#{obj}
+		</foreach> 
+  	</update>
+  	<update id="batchUpdateProdInfoCheck" parameterType="java.util.Map" >
+    	update dim_ia_product_info a set a.LABEL_CHECK='1' where a.prod_id in 
+         <foreach collection="prodIds" item="obj" index="index" open="(" separator="," close=")">
+			#{obj}
+		</foreach> 
+  	</update>
+	<select id="selectVoById" parameterType="String" resultMap="resultMap">
+		SELECT * from dm_d_ev_label_check  where 1=1 
+		<if test="monthId != null and monthId != ''">
+			 AND dm_d_ev_label_check.date_id=  #{monthId}  
+		</if>
+		<if test="prodId != null and prodId != ''">
+			and  dm_d_ev_label_check.prod_id= #{prodId}  
+		</if>
+		
+	</select>
+	<update id="updateLabel2" parameterType="com.bonc.dpi.dao.entity.IndustryLabelAudit">
+    	update dm_d_ev_label_check set dm_d_ev_label_check.is_check='1',
+        dm_d_ev_label_check.label_id1=#{labelCode1}, dm_d_ev_label_check.label_name1=#{labelName1},
+        dm_d_ev_label_check.label_id2=#{labelCode2}, dm_d_ev_label_check.label_name2=#{labelName2}
+        where dm_d_ev_label_check.prod_id=#{prodId} and  dm_d_ev_label_check.date_id= #{monthId}  
+  	</update>
+  	<update id="updateLabel2ProdInfo" parameterType="com.bonc.dpi.dao.entity.IndustryLabelAudit">
+    	update dim_ia_product_info set dim_ia_product_info.LABEL_CHECK='1',dim_ia_product_info.PROD_LABEL_CODE=#{labelCode2}
+        where dim_ia_product_info.PROD_ID= #{prodId} 
+  	</update>
+  	<update id="updateLabel1" parameterType="com.bonc.dpi.dao.entity.IndustryLabelAudit">
+    	update dm_d_ev_label_check set dm_d_ev_label_check.is_check='1',
+        dm_d_ev_label_check.label_id1=#{labelCode1} ,dm_d_ev_label_check.label_name1=#{labelName1},
+        dm_d_ev_label_check.label_id2=#{labelCode2}, dm_d_ev_label_check.label_name2=#{labelName2}
+        where dm_d_ev_label_check.prod_id=#{prodId} and  dm_d_ev_label_check.date_id=  #{monthId}  
+  	</update>
+  	<update id="updateLabel1ProdInfo" parameterType="com.bonc.dpi.dao.entity.IndustryLabelAudit">
+    	update dim_ia_product_info set dim_ia_product_info.LABEL_CHECK='1',dim_ia_product_info.PROD_LABEL_CODE=#{labelCode1}
+        where dim_ia_product_info.PROD_ID= #{prodId} 
+  	</update>
+  	<select id="getLabel1ByLabel2" parameterType="com.bonc.dpi.dao.entity.IndustryLabelAudit" resultMap="resultMap">
+		SELECT t.label_code1,t.label_name1 from dim_ia_product_label t where t.label_code2=#{labelCode2}
+		
+	</select>
+</mapper>

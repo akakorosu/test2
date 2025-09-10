@@ -1,0 +1,492 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bonc.dpi.dao.mapper.PositionRuleMapper">
+
+	<select id="selectListSimple" 
+		parameterType="com.bonc.dpi.dao.entity.PositionRule" 
+		resultType="com.bonc.dpi.dao.entity.PositionRule">
+		select 
+			t.id,
+			t.url, 
+			t.host, 
+			t.match_type matchType, 
+			t.longitude_rule longitudeRule, 
+			t.get_index_long getIndexLong,
+			t.latitude_rule latitudeRule, 
+			t.get_index_lati getIndexLati, 
+			t.system_rule systemRule, 
+			t.system,
+			t.get_index_sys getIndexSys,
+			t.group_type groupType,
+			t.author,
+			t.op_time opTime,
+			t.is_valid isValid,
+			t.num
+		from 
+			dim_ia_position_rule t 
+		where 1 = 1
+		order by t.num
+	</select>
+
+	<select id="selectDataNum" 
+		parameterType="com.bonc.dpi.dao.entity.PositionRule" 
+		resultType="java.lang.Integer">
+		select 
+			count(t.id)		
+		from 
+			dim_ia_position_rule t 
+		where 1 = 1
+		<if test="num != null and num != ''">
+			and t.num = #{num}
+		</if>
+		<if test="url != null and url != ''">
+			and t.url like concat('%',concat(#{url},'%'))
+		</if>
+		<if test="host != null and host != ''">
+			and t.host like concat('%',concat(#{host},'%'))
+		</if>
+		<if test="system != null and system != ''">
+			and t.system = #{system}
+		</if>
+		<if test="author != null and author != ''">
+			and t.author like concat('%',concat(#{author},'%'))
+		</if>
+		<if test="startTime != null and startTime != ''">
+			and t.op_time &gt;= #{startTime}
+		</if>
+		<if test="endTime != null and endTime != ''">
+			and t.op_time &lt;= #{endTime}
+		</if>
+	</select>
+	
+	<select id="selectList" 
+		parameterType="com.bonc.dpi.dao.entity.PositionRule" 
+		resultType="com.bonc.dpi.dao.entity.PositionRule">
+		select 
+			t.id,
+			t.url, 
+			t.host, 
+			t.match_type matchType, 
+			t.longitude_rule longitudeRule, 
+			t.get_index_long getIndexLong,
+			t.latitude_rule latitudeRule, 
+			t.get_index_lati getIndexLati, 
+			t.system_rule systemRule, 
+			t.system,
+			t.get_index_sys getIndexSys,
+			t.group_type groupType,
+			(select t2.group_name from dim_ia_keyword_group t2 where t2.group_type = t.group_type) groupName,
+			t.author,
+			t.op_time opTime,
+			t.is_valid isValid,
+			t.num
+		from 
+			dim_ia_position_rule t 
+		where 1 = 1
+		<if test="num != null and num != ''">
+			and t.num = #{num}
+		</if>
+		<if test="url != null and url != ''">
+			and t.url like concat('%',concat(#{url},'%'))
+		</if>
+		<if test="host != null and host != ''">
+			and t.host like concat('%',concat(#{host},'%'))
+		</if>
+		<if test="system != null and system != ''">
+			and t.system = #{system}
+		</if>
+		<if test="author != null and author != ''">
+			and t.author like concat('%',concat(#{author},'%'))
+		</if>
+		<if test="startTime != null and startTime != ''">
+			and t.op_time &gt;= #{startTime}
+		</if>
+		<if test="endTime != null and endTime != ''">
+			and t.op_time &lt;= #{endTime}
+		</if>
+		<choose>
+			<when test="groupName != null and groupName != ''">
+				and t.group_type in (select t3.group_type from dim_ia_keyword_group t3 where t3.group_name like '%'||#{groupName}||'%') 
+			</when>
+			<otherwise>
+				and t.group_type in (select t3.group_type from dim_ia_keyword_group t3 )
+			</otherwise>
+		</choose>
+		order by t.op_time desc ,t.host desc
+	</select>
+	
+	
+	<select id="selectVoById" 
+		parameterType="com.bonc.dpi.dao.entity.PositionRule"
+		resultType="com.bonc.dpi.dao.entity.PositionRule">
+		select 
+			t.id,
+			t.url, 
+			t.host, 
+			t.match_type matchType, 
+			t.longitude_rule longitudeRule, 
+			t.get_index_long getIndexLong,
+			t.latitude_rule latitudeRule, 
+			t.get_index_lati getIndexLati, 
+			t.system_rule systemRule, 
+			t.system,
+			t.get_index_sys getIndexSys,
+			t.group_type groupType,
+			(select t2.group_name from dim_ia_keyword_group t2 where t2.group_type = t.group_type) groupName,
+			t.author,
+			t.op_time opTime,
+			t.is_valid isValid,
+			t.num
+		from 
+			dim_ia_position_rule t 
+		where id = #{id}
+	</select>
+	
+	<insert id="insertVo" 
+		parameterType="com.bonc.dpi.dao.entity.PositionRule">
+		INSERT INTO dim_ia_position_rule 
+		 <trim prefix="(" suffix=")" suffixOverrides="," >
+			ID,			
+			<if test="url != null and url != ''">
+				URL, 
+			</if>
+			<if test="hostParam != null and hostParam != ''">
+				HOST, 
+			</if>
+			<if test="matchType != null and matchType != ''">
+				MATCH_TYPE, 
+			</if>
+			<if test="longitudeRule != null and longitudeRule != ''">
+				LONGITUDE_RULE, 
+			</if>
+			<if test="getIndexLong != null and getIndexLong != ''">
+				GET_INDEX_LONG,
+			</if>
+			<if test="latitudeRule != null and latitudeRule != ''">
+				LATITUDE_RULE,
+			</if>
+			<if test="getIndexLati != null and getIndexLati != ''">
+				GET_INDEX_LATI,
+			</if>
+			<if test="systemRule != null and systemRule != ''">
+				SYSTEM_RULE,
+			</if>
+			<if test="getIndexSys != null and getIndexSys != ''">
+				GET_INDEX_SYS,
+			</if>
+			<if test="system != null and system != ''">
+				SYSTEM,
+			</if>
+			<if test="groupType != null and groupType != ''">
+				GROUP_TYPE,
+			</if>
+			<if test="author != null and author != ''">
+				AUTHOR,
+			</if>
+			<if test="opTime != null and opTime != ''">
+				OP_TIME,
+			</if>
+			<if test="isValid != null and isValid != ''">
+				IS_VALID,
+			</if>
+			<if test="num != null and num != ''">
+				NUM,
+			</if>
+		</trim>
+		values 
+		<trim prefix="(" suffix=")" suffixOverrides="," >
+			#{id},
+			<if test="url != null and url != ''">
+				#{url},
+			</if>
+			<if test="hostParam != null and hostParam != ''">
+				#{hostParam},
+			</if>
+			<if test="matchType != null and matchType != ''">
+				#{matchType},
+			</if>
+			<if test="longitudeRule != null and longitudeRule != ''">
+				#{longitudeRule},
+			</if>
+			<if test="getIndexLong != null and getIndexLong != ''">
+				#{getIndexLong},
+			</if>
+			<if test="latitudeRule != null and latitudeRule != ''">
+				#{latitudeRule},
+			</if>
+			<if test="getIndexLati != null and getIndexLati != ''">
+				#{getIndexLati},
+			</if>
+			<if test="systemRule != null and systemRule != ''">
+				#{systemRule},
+			</if>
+			<if test="getIndexSys != null and getIndexSys != ''">
+				#{getIndexSys},
+			</if>
+			<if test="system != null and system != ''">
+				#{system},
+			</if>
+			<if test="groupType != null and groupType != ''">
+				#{groupType},
+			</if>
+			<if test="author != null and author != ''">
+				#{author},
+			</if>
+			<if test="opTime != null and opTime != ''">
+				#{opTime},
+			</if>
+			<if test="isValid != null and isValid != ''">
+				#{isValid},
+			</if>
+			<if test="num != null and num != ''">
+				#{num},
+			</if>
+		</trim>
+	</insert>
+	
+	<update id="updateVo" parameterType="com.bonc.dpi.dao.entity.PositionRule">
+		UPDATE dim_ia_position_rule set 
+			URL = #{url},
+			HOST = #{hostParam},
+			MATCH_TYPE = #{matchType},
+			LONGITUDE_RULE = #{longitudeRule},
+			GET_INDEX_LONG = #{getIndexLong},
+			LATITUDE_RULE = #{latitudeRule},
+			GET_INDEX_LATI = #{getIndexLati},
+			SYSTEM_RULE = #{systemRule},
+			GET_INDEX_SYS = #{getIndexSys},
+			SYSTEM =  #{system},
+			GROUP_TYPE = #{groupType},
+			AUTHOR = #{author},
+			OP_TIME = #{opTime},
+			IS_VALID = #{isValid},
+			NUM = #{num} 
+			where ID = #{id}
+	</update>
+	
+	<delete id="deleteVoById" parameterType="java.lang.String">
+		delete from dim_ia_position_rule where id = #{id}
+	</delete>
+	
+	<delete id="deleteVoByPrimaryKey" parameterType="com.bonc.dpi.dao.entity.PositionRule">
+		delete from dim_ia_position_rule where host = #{id} and longitude_rule = #{longitudeRule} and latitude_rule = #{latitudeRule}
+	</delete>
+	
+	<select id="selectVoByPrimaryKey" 
+		parameterType="com.bonc.dpi.dao.entity.PositionRule"
+		resultType="com.bonc.dpi.dao.entity.PositionRule">
+		select 
+			t.id,
+			t.url, 
+			t.host, 
+			t.match_type matchType, 
+			t.longitude_rule longitudeRule, 
+			t.get_index_long getIndexLong,
+			t.latitude_rule latitudeRule, 
+			t.get_index_lati getIndexLati, 
+			t.system_rule systemRule, 
+			t.system,
+			t.get_index_sys getIndexSys,
+			t.group_type groupType,
+			(select t2.group_name from dim_ia_keyword_group t2 where t2.group_type = t.group_type) groupName,
+			t.author,
+			t.op_time opTime,
+			t.is_valid isValid,
+			t.num
+		from 
+			dim_ia_position_rule t 
+		where t.host = #{host} and t.longitude_rule = #{longitudeRule} and t.latitude_rule = #{latitudeRule}
+	</select>
+	
+	<select id="checkRepeat" 
+		parameterType="com.bonc.dpi.dao.entity.PositionRule"
+		resultType="java.lang.Integer">
+		select 
+			count(t.id)
+		from 
+			dim_ia_position_rule t 
+		where 1=1 
+		<if test="id != null and id != ''">
+			and t.id = #{id}
+		</if>
+		<if test="hostParam != null and hostParam != ''">
+			and t.host = #{hostParam}
+		</if>
+		<if test="longitudeRule != null and longitudeRule != ''">
+			and t.longitude_rule = #{longitudeRule}
+		</if>
+		<if test="latitudeRule != null and latitudeRule != ''">
+			and t.latitude_rule = #{latitudeRule}
+		</if>
+		<if test="num != null and num != ''">
+			and t.num = #{num} 
+		</if>
+	</select>
+	
+	<select id="selectMaxNum" resultType="java.lang.Integer" databaseId="mysql">
+		select 
+			ifnull(max(num+0),0)
+		from 
+			dim_ia_position_rule t 
+		where 1=1 
+	</select>
+	
+	<select id="selectMaxNum" resultType="java.lang.Integer" databaseId="oracle">
+		select 
+			max(num+0)
+		from 
+			dim_ia_position_rule t 
+		where 1=1 
+	</select>
+	
+	
+	 <insert id="insertVoPl" >
+  	   <if test="map.database_type=='mysql'">
+	    	insert into dim_ia_position_rule  (
+		    	ID,
+				URL, 
+				HOST, 
+				MATCH_TYPE, 
+				LONGITUDE_RULE, 
+				GET_INDEX_LONG,
+				LATITUDE_RULE,
+				GET_INDEX_LATI,
+				SYSTEM_RULE,
+				GET_INDEX_SYS,
+				SYSTEM,
+				GROUP_TYPE,
+				AUTHOR,
+				OP_TIME,
+				IS_VALID,
+				NUM
+			)
+    		values 
+	    	<foreach item="data" index="index" collection="map.list" open="" close="" separator=",">
+		         	(
+		         	#{data.id},
+		         	#{data.url}, 
+		         	#{data.host}, 
+		         	#{data.matchType},
+		     		#{data.longitudeRule},
+		     		<choose>
+		     			<when test="data.getIndexLong == '' and data.getIndexLong == null">
+		     				0,
+		     			</when>
+		     			<otherwise>
+		     				#{data.getIndexLong}, 
+		     			</otherwise>
+		     		</choose>
+		     		#{data.latitudeRule}, 
+		     		<choose>
+		     			<when test="data.getIndexLati == '' and getIndexLati == null">
+		     				0,
+		     			</when>
+		     			<otherwise>
+		     				#{data.getIndexLati}, 
+		     			</otherwise>
+		     		</choose>
+		     		#{data.systemRule},
+		     		<choose>
+		     			<when test="data.getIndexSys == '' and data.getIndexSys == null">
+		     				0,
+		     			</when>
+		     			<otherwise>
+		     				#{data.getIndexSys}, 
+		     			</otherwise>
+		     		</choose>
+		     		#{data.system}, 
+		     		#{data.groupType}, 
+		     		#{data.author},      		
+		     		#{data.opTime},
+		     		#{data.isValid},  
+		     		(#{map.maxNum} + #{index} + 1)
+		     		)
+	       		</foreach>
+	    </if>
+	    <if test="map.database_type=='oracle'">
+		    insert all
+	    	<foreach item="data" index="index" collection="map.list" open="" close="" separator=" ">
+	           into dim_ia_position_rule (
+		           	ID,
+					URL, 
+					HOST, 
+					MATCH_TYPE, 
+					LONGITUDE_RULE, 
+					GET_INDEX_LONG,
+					LATITUDE_RULE,
+					GET_INDEX_LATI,
+					SYSTEM_RULE,
+					GET_INDEX_SYS,
+					SYSTEM,
+					GROUP_TYPE,
+					AUTHOR,
+					OP_TIME,
+					IS_VALID,
+					NUM
+				) 
+	    		values
+	    		(		
+	    				#{data.id,jdbcType=VARCHAR},
+			         	#{data.url,jdbcType=VARCHAR}, 
+			         	#{data.host,jdbcType=VARCHAR}, 
+			         	#{data.matchType,jdbcType=VARCHAR},
+			     		#{data.longitudeRule,jdbcType=VARCHAR}, 
+			     		<choose>
+			     			<when test="data.getIndexLong == '' and data.getIndexLong == null">
+			     				0,
+			     			</when>
+			     			<otherwise>
+			     				#{data.getIndexLong}, 
+			     			</otherwise>
+			     		</choose>
+			     		#{data.latitudeRule}, 
+			     		<choose>
+			     			<when test="data.getIndexLati == '' and data.getIndexLati == null">
+			     				0,
+			     			</when>
+			     			<otherwise>
+			     				#{data.getIndexLati}, 
+			     			</otherwise>
+			     		</choose>
+			     		#{data.systemRule},
+			     		<choose>
+			     			<when test="data.getIndexSys == '' and data.getIndexSys == null">
+			     				0,
+			     			</when>
+			     			<otherwise>
+			     				#{data.getIndexSys}, 
+			     			</otherwise>
+			     		</choose>
+			     		#{data.system,jdbcType=VARCHAR}, 
+			     		#{data.groupType,jdbcType=VARCHAR}, 
+			     		#{data.author,jdbcType=VARCHAR},      		
+			     		#{data.opTime,jdbcType=VARCHAR},
+			     		#{data.isValid,jdbcType=VARCHAR}, 
+			     		(#{map.maxNum} + #{index} + 1)
+			     	)
+	        </foreach>
+	        select 1 from dual
+	    </if>
+  </insert>
+
+	
+	<select id="checkGroupType" 
+		parameterType="com.bonc.dpi.dao.entity.PositionRule"
+		resultType="java.lang.Integer">
+		 select count(*) from dim_ia_keyword_group t where 1=1 
+		 <if test="groupType != null and groupType != ''">
+		 	and t.group_type = #{groupType} 
+		 </if>
+	</select>
+	
+	<select id="checkGroupName" 
+		parameterType="com.bonc.dpi.dao.entity.PositionRule"
+		resultType="java.lang.Integer">
+		 select count(*) from dim_ia_keyword_group t where 1=1 
+		 <if test="groupNameParam != null and groupNameParam != ''">
+		 	and t.group_name = #{groupNameParam} 
+		 </if>
+	</select>
+
+	
+</mapper>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bonc.system.dao.mapper.SystemMapper">
+
+	<resultMap id="BaseResultMap_getSysInterfaceInfo" type="com.bonc.system.dao.entity.SysInterfaceInfo">
+	    <result column="clazz_name" property="clazz_name" jdbcType="VARCHAR"/>
+	    <result column="method_name" property="method_name" jdbcType="VARCHAR"/>
+	    <result column="module_name" property="module_name" jdbcType="VARCHAR"/>
+	    <result column="func_code" property="func_code" jdbcType="VARCHAR"/>
+	    <result column="func_name" property="func_name" jdbcType="VARCHAR"/>
+	    
+	    <result column="point_code" property="point_code" jdbcType="VARCHAR"/>
+	    <result column="is_decrypt_userid" property="is_decrypt_userid" jdbcType="VARCHAR"/>
+	    <result column="is_write_log" property="is_write_log" jdbcType="VARCHAR"/>
+	</resultMap>
+
+	<select id="getSysInterfaceInfo" resultMap="BaseResultMap_getSysInterfaceInfo">
+        select clazz_name, method_name, module_name, func_code, func_name, point_code, is_decrypt_userid, is_write_log
+		from sys_interface_info
+		where is_write_log = '1'
+    </select>
+    
+    <insert id="insertSysOrg" 
+		parameterType="com.bonc.system.dao.entity.SysOrg">
+		insert into sys_org(ORG_ID,pid,tenant_id,name,memo,display_order,orglevel,tree_code) 
+		values(#{orgId},#{pid},#{tenantId},#{name},#{memo},#{displayOrder},#{orgLevel},#{treeCode})
+	</insert>
+	
+	<delete id="delRdAllProd">
+		truncate table dim_rd_ia_product_info
+	</delete>
+
+	<insert id="insertRdVoBatch" parameterType="java.util.List">
+		insert into dim_rd_ia_product_info
+	    (
+	    id, prod_id, prod_name, prod_label_code, add_label_list,
+		father_prod_id, prod_type_id, prod_type_name, prod_catagory, is_main_prod,
+		is_app, is_operator, sp_id, sp_name, short_name,
+		label_check, author, op_time, PROD_DESC, IOS_PROD_NAME,
+		IS_BOCE, BOCE_DATE
+	    )
+		values
+		<foreach collection="list" item="vo" index="index"
+			separator=",">
+			(
+			#{vo.id}, #{vo.prodId}, #{vo.prodName}, #{vo.prodLabelCode}, #{vo.addLabelList}, 
+			#{vo.fatherProdId}, #{vo.prodTypeId}, #{vo.prodTypeName}, #{vo.prodCatagory}, #{vo.isMainProd}, 
+			#{vo.isApp}, #{vo.isOperator}, #{vo.spId}, #{vo.spName}, #{vo.shortName}, 
+			#{vo.labelCheck}, #{vo.author},#{vo.opTime},#{vo.prodDesc},#{vo.iosProdName},
+			#{vo.isBoce},#{vo.boceDate}
+			)
+		</foreach>
+	</insert>
+</mapper>

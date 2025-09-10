@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bonc.dpi.dao.mapper.DimIaUserAgentNoiseMapper">
+  	<resultMap id="NoiseResultMap" type="com.bonc.dpi.dao.entity.DimIaUserAgentNoise">
+    	<result column="ID" jdbcType="VARCHAR" property="id" />
+    	<result column="NOISE_KEY" jdbcType="VARCHAR" property="noiseKey" />
+    	<result column="AUTHOR" jdbcType="VARCHAR" property="author" />
+    	<result column="OP_TIME" jdbcType="VARCHAR" property="opTime" />
+    </resultMap>
+	 
+  	<select id="selectDataNum" parameterType="com.bonc.dpi.dao.entity.DimIaUserAgentNoise"
+		resultType="int">
+		SELECT count(*) 
+		FROM dim_ia_useragent_noise t 
+		where 1=1 
+		<!-- <if test="opTime != null and opTime != ''">
+		    and t.OP_TIME=#{opTime} 
+		</if>  --> 
+		<if test="author != null and author != ''">
+		    <bind name="author" value="'%' + _parameter.getAuthor() + '%'" />
+		    and t.author like #{author} 
+		</if>
+		<if test="startTime != null and startTime != ''">
+		    and t.OP_TIME &gt;= #{startTime} 
+		</if>
+		<if test="endTime != null and endTime != ''">
+		    and t.OP_TIME &lt;= #{endTime} 
+		</if>
+		 <if test="noiseKey != null and noiseKey != ''">
+		 	<bind name="noiseKey" value="'%' + _parameter.getNoiseKey() + '%'" />
+			and t.NOISE_KEY like #{noiseKey}  
+		</if>
+	</select>
+  
+  	<select id="selectList" parameterType="com.bonc.dpi.dao.entity.DimIaUserAgentNoise"
+		resultMap="NoiseResultMap">
+		SELECT 
+		t.ID as id,
+		t.AUTHOR as author,
+		t.OP_TIME as opTime,
+		t.NOISE_KEY as noiseKey
+		FROM dim_ia_useragent_noise t 
+		where 1=1
+		<!-- <if test="opTime != null and opTime != ''">
+		    and t.OP_TIME=#{opTime} 
+		</if>  --> 
+		<if test="author != null and author != ''">
+		    <bind name="author" value="'%' + _parameter.getAuthor() + '%'" />
+		    and t.author like #{author} 
+		</if>
+		<if test="startTime != null and startTime != ''">
+		    and t.OP_TIME &gt;= #{startTime} 
+		</if>
+		<if test="endTime != null and endTime != ''">
+		    and t.OP_TIME &lt;= #{endTime} 
+		</if>
+		 <if test="noiseKey != null and noiseKey != ''">
+		 	<bind name="noiseKey" value="'%' + _parameter.getNoiseKey() + '%'" />
+			and t.NOISE_KEY like #{noiseKey}  
+		</if>
+		order by op_time desc,t.ID desc
+	</select>
+		
+	<delete id="delete" parameterType="com.bonc.dpi.dao.entity.DimIaUserAgentNoise">
+   		 delete from dim_ia_useragent_noise where id = #{id,jdbcType=VARCHAR} 
+  	</delete>
+	
+	
+	<select id="selectNoiseById"  parameterType="com.bonc.dpi.dao.entity.DimIaUserAgentNoise"
+    	resultType="com.bonc.dpi.dao.entity.DimIaUserAgentNoise">
+    	select *
+      	from dim_ia_useragent_noise
+     	where ID = #{id,jdbcType=VARCHAR} 
+  	</select>
+	
+	
+	
+  	<insert id="insertNoise" parameterType="com.bonc.dpi.dao.entity.DimIaUserAgentNoise">
+    	insert into dim_ia_useragent_noise (NOISE_KEY,ID,author,op_time)
+    	values (#{noiseKey,jdbcType=VARCHAR}, #{id,jdbcType=VARCHAR},#{author,jdbcType=VARCHAR}, #{opTime,jdbcType=VARCHAR})
+  	</insert>
+  
+  	<update id="updateNoise" parameterType="com.bonc.dpi.dao.entity.DimIaUserAgentNoise">
+    	update dim_ia_useragent_noise 
+<!--     	<set> -->
+
+<!-- 　　　　　　<if test="noiseKey != null "> -->
+<!--              NOISE_KEY = #{noiseKey}, -->
+<!--             </if> -->
+<!--             <if test="author != null "> -->
+<!--              author = #{author}, -->
+<!--             </if> -->
+<!--             <if test="opTime != null "> -->
+<!--              op_time = #{opTime} -->
+<!--             </if> -->
+
+<!-- 　　　　　　 -->
+
+<!-- 　　　　</set> -->
+    	 set 
+    	   NOISE_KEY = #{noiseKey},
+    	    author = #{author},
+    	     op_time = #{opTime}
+    	where ID = #{id}
+  	</update>
+  	<update id="updateNoiseUa" parameterType="com.bonc.dpi.dao.entity.DimIaUserAgentNoise">
+    	update dm_d_ia_unidentified_ua 
+    	set is_check='1'
+    
+		where date_id=#{dateId} and ua_key=#{uaKey} and USERAGENT=#{ua}
+  	</update>
+  	
+  	<select id="check" parameterType="com.bonc.dpi.dao.entity.DimIaUserAgentNoise"
+    	resultType="int">
+    	select count(*) from dim_ia_useragent_noise where 1=1
+    	<if test="id != null and id != ''">
+		    and ID!=#{id}
+		</if> 
+    	<if test="noiseKey != null and noiseKey != ''">
+		    and NOISE_KEY=#{noiseKey}
+		</if>
+  	</select>
+  	
+  	 <select id="selectVoByPrimaryKey" parameterType="com.bonc.dpi.dao.entity.DimIaUserAgentNoise" resultMap="NoiseResultMap">
+    SELECT ID,NOISE_KEY,AUTHOR,OP_TIME 
+		FROM dim_ia_useragent_noise 
+		where 1=1 
+		<if test="noiseKey != null and noiseKey != ''">
+		    and NOISE_KEY=#{noiseKey} 
+		</if>
+  </select>
+  
+   <select id="deleteVoByPrimaryKey" parameterType="com.bonc.dpi.dao.entity.DimIaUserAgentNoise" resultMap="NoiseResultMap">
+    delete from dim_ia_useragent_noise
+     where 1=1
+		<if test="noiseKey != null and noiseKey != ''">
+		    and NOISE_KEY=#{noiseKey} 
+		</if>
+  </select>
+  	
+  	<insert id="batchInsert">
+  		<if test="database_type=='mysql'">
+	    	insert into dim_ia_useragent_noise (NOISE_KEY,ID,AUTHOR,OP_TIME)
+	    	values 
+	    	<foreach item="item" index="index" collection="list" open="" close="" separator=",">
+	         	(#{item.noiseKey,jdbcType=VARCHAR}, #{item.id,jdbcType=VARCHAR},#{item.author,jdbcType=VARCHAR}, #{item.opTime,jdbcType=VARCHAR})
+	        </foreach>
+	    </if>
+	    <if test="database_type=='oracle'">
+		    insert all
+	    	<foreach item="item" index="index" collection="list" open="" close="" separator="">
+	           into dim_ia_useragent_noise (NOISE_KEY,ID,AUTHOR,OP_TIME)
+	    		values
+	         	(#{item.noiseKey,jdbcType=VARCHAR}, #{item.id,jdbcType=VARCHAR},#{item.author,jdbcType=VARCHAR}, #{item.opTime,jdbcType=VARCHAR})
+	        </foreach>
+	        select 1 from dual
+	    </if>
+  	</insert> 	
+</mapper>

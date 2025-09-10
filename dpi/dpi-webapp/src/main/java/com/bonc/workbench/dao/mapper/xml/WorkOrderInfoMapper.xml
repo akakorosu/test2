@@ -1,0 +1,509 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bonc.workbench.dao.mapper.WorkOrderInfoMapper">
+	<resultMap id="BaseResultMap" type="com.bonc.workbench.bean.WorkOrderInfo">
+		<id column="ID" jdbcType="VARCHAR" property="id" />
+		<result column="CREATE_TIME" jdbcType="VARCHAR" property="createTime" />
+		<result column="CREATOR_ID" jdbcType="VARCHAR" property="creatorId" />
+		<result column="CREATOR_NAME" jdbcType="VARCHAR" property="creatorName" />
+		<result column="NAME" jdbcType="VARCHAR" property="workOrderName" />
+		<result column="ASSIGNEE" jdbcType="VARCHAR" property="assignee" />
+		<result column="ASSIGNEE_ID" jdbcType="VARCHAR" property="assigneeId" />
+		<result column="CUR_ASSIGNEE" jdbcType="VARCHAR" property="curAssignee" />
+		<result column="CUR_ASSIGNEE_ID" jdbcType="VARCHAR" property="curAssigneeId" />
+		<result column="STATUS" jdbcType="VARCHAR" property="status" />
+		<result column="FILES" jdbcType="VARCHAR" property="files" />
+		<result column="PROC_INST_ID_" jdbcType="VARCHAR" property="procId" />
+		<result column="START_TIME" jdbcType="VARCHAR" property="startTime" />
+	</resultMap>
+	<update id="updateState" parameterType="com.bonc.workbench.bean.WorkOrderInfo">
+		update WF_WORKORDER
+		<set>
+			<if test="status!=null and status!=''">
+				status=#{status, jdbcType=VARCHAR},
+			</if>
+		</set>
+		where id=#{id, jdbcType=VARCHAR}
+	</update>
+	<select id="getProcInfofromHiProc" parameterType="java.util.Map"
+		resultType="java.util.Map">
+		select t.id_,
+		t.proc_inst_id_,
+		t.business_key_,
+		t.proc_def_id_,
+		to_char(t.start_time_,'yyyy-mm-dd hh24:mi:ss'),
+		to_char(t.end_time_,'yyyy-mm-dd hh24:mi:ss'),
+		t.duration_,
+		t.start_user_id_,
+		t.start_act_id_,
+		t.end_act_id_,
+		t.super_process_instance_id_,
+		t.delete_reason_ from act_hi_procinst t
+		where proc_inst_id_ = #{procId, jdbcType=VARCHAR}
+	</select>
+	<select id="selectPageList" parameterType="java.util.Map"
+		resultMap="BaseResultMap">
+		select distinct t1.id,
+		t1.create_time,
+		t1.creator_id,
+		t5.user_name as CREATOR_NAME,
+		t1.assignee_id,
+		t1.name,
+		t1.status,
+		t2.PROC_INST_ID_,
+		t4.CUR_ASSIGNEE_ID,
+		t4.CUR_ASSIGNEE,
+		t4.START_TIME
+		from WF_WORKORDER t1,
+		(
+		select PROC_INST_ID_, ID
+		from ((select
+		PROC_INST_ID_, EXECUTION_ID_,
+		NAME_, TEXT_
+		from act_hi_varinst
+		where
+		name_ in ('id'))
+		pivot(max(TEXT_)
+		for NAME_ in ('id' AS ID)))
+		) t2,
+		act_hi_taskinst t3,
+		(select t.proc_inst_id_,
+		listagg(to_char(t.assignee_), ',') within
+		group(order by t.assignee_) as CUR_ASSIGNEE_ID,
+		listagg(to_char(t2.user_name), ',') within group(order by
+		t2.user_name) as CUR_ASSIGNEE,
+		listagg(to_char(t4.name), ',') within
+		group(order by t4.name) as ORG,
+		to_char(min(t.create_time_),'yyyy-mm-dd hh24:mi:ss') as START_TIME
+		from act_ru_task t, sys_user t2,
+		 sys_org t4
+		where t.assignee_ = t2.user_id
+		and
+		t2.org_id = t4.org_id
+		group by
+		t.proc_inst_id_) t4, sys_user t5
+		where t1.id = t2.ID(+)
+		and t2.proc_inst_id_ =
+		t4.proc_inst_id_(+)
+		and t2.proc_inst_id_ = t3.proc_inst_id_
+		and t2.proc_inst_id_ in (select
+		t.proc_inst_id_ from
+		act_hi_taskinst t
+		where 1=1
+		and (delete_reason_ is
+		not null and
+		delete_reason_ != 'recall' or
+		delete_reason_ is null)
+		)
+		and t1.creator_id = t5.user_id
+		<if test="status!=null and status!=''">
+			and t1.status =#{status, jdbcType=VARCHAR}
+		</if>
+		<if test="workOrderName!=null and workOrderName!=''">
+			and t1.name like '%'||#{workOrderName, jdbcType=VARCHAR}||'%'
+		</if>
+		order by create_time desc
+	</select>
+	<select id="selectAll" parameterType="java.util.Map" resultMap="BaseResultMap">
+		select distinct t1.id,
+		t1.create_time,
+		t1.creator_id,
+		t1.creator_name,
+		t1.creator_org_id,
+		t1.data_id,
+		t1.assign_id,
+		t1.name,
+		t1.model,
+		t1.conclusion,
+		t1.org_id,
+		t1.contract_name,
+		t1.rectify_require,
+		t1.rectify_deadline,
+		t1.audit_cycle,
+		t1.status,
+		t1.type
+		from WF_WORKORDER
+		t1
+		where 1=1
+		<if test="status!=null and status!=''">
+			and t1.status =#{status, jdbcType=VARCHAR}
+		</if>
+		<!-- <if test="orgId!=null and orgId!=''"> and t1.org_id like '%'||#{orgId, 
+			jdbcType=VARCHAR}||'%' </if> -->
+		<!-- <if test="userId!=null and userId!=''"> and t1.assign_id like '%'||#{userId, 
+			jdbcType=VARCHAR}||'%' </if> -->
+		<if test="models!=null and models!=''">
+			and t1.model in #{models, jdbcType=VARCHAR}
+		</if>
+		<if test="workOrderName!=null and workOrderName!=''">
+			and t1.name like '%'||#{workOrderName,
+			jdbcType=VARCHAR}||'%'
+		</if>
+		<if
+			test="startAuditDate!=null and startAuditDate!='' and endAuditDate!=null and endAuditDate!=''">
+			and to_number(t1.audit_cycle) between #{startAuditDate,
+			jdbcType=VARCHAR} and #{endAuditDate, jdbcType=VARCHAR}
+		</if>
+		<if test="workOrderId!=null and workOrderId!=''">
+			and t1.ID = #{workOrderId, jdbcType=VARCHAR}
+		</if>
+		<if test="dataId!=null and dataId!=''">
+			and t1.DATA_ID = #{dataId, jdbcType=VARCHAR}
+		</if>
+		order by t1.create_time desc
+	</select>
+	<select id="selectSendPageList" parameterType="java.util.Map"
+		resultMap="BaseResultMap">
+		select distinct t1.id,
+		t1.create_time,
+		t1.creator_id,
+		t5.user_name as CREATOR_NAME,
+		t1.assignee_id,
+		t1.name,
+		t1.status,
+		t2.PROC_INST_ID_,
+		t4.CUR_ASSIGNEE_ID,
+		t4.CUR_ASSIGNEE,
+		t4.START_TIME
+		from
+		WF_WORKORDER t1,
+		(
+		select PROC_INST_ID_, ID
+		from ((select
+		PROC_INST_ID_,
+		EXECUTION_ID_, NAME_, TEXT_
+		from act_hi_varinst
+		where
+		name_ in ('id'))
+		pivot(max(TEXT_) for NAME_ in ('id' AS ID)))
+		) t2,
+		act_ru_task t3,
+		(select t.proc_inst_id_,
+		listagg(to_char(t.assignee_), ',') within
+		group(order by t.assignee_) as CUR_ASSIGNEE_ID,
+		listagg(to_char(t2.user_name), ',') within group(order by
+		t2.user_name) as CUR_ASSIGNEE,
+		listagg(to_char(t4.name), ',') within
+		group(order by t4.name) as ORG,
+		to_char(min(t.create_time_),'yyyy-mm-dd hh24:mi:ss') as START_TIME
+		from act_ru_task t, sys_user t2,
+		 sys_org t4
+		where t.assignee_ = t2.user_id
+		and
+		t2.org_id = t4.org_id
+		group by
+		t.proc_inst_id_) t4, sys_user t5
+		where t1.id = t2.ID(+)
+		and t2.proc_inst_id_ =
+		t4.proc_inst_id_(+)
+		and t2.proc_inst_id_ = t3.proc_inst_id_(+)
+		and t1.creator_id = t5.user_id
+		and t1.status = '0'
+		<if test="userId!=null and userId!=''">
+			and t1.creator_id=#{userId, jdbcType=VARCHAR}
+		</if>
+		<if test="status!=null and status!=''">
+			and t1.status =#{status, jdbcType=VARCHAR}
+		</if>
+		<if test="workOrderName!=null and workOrderName!=''">
+			and t1.name like '%'||#{workOrderName, jdbcType=VARCHAR}||'%'
+		</if>
+		order by create_time desc
+	</select>
+	<select id="selectHandlePageList" parameterType="java.util.Map"
+		resultMap="BaseResultMap">
+		select distinct t1.id,
+		t1.create_time,
+		t1.creator_id,
+		t5.user_name as CREATOR_NAME,
+		t1.assignee_id,
+		t1.name,
+		t1.status,
+		t2.PROC_INST_ID_,
+		t4.CUR_ASSIGNEE_ID,
+		t4.CUR_ASSIGNEE,
+		t4.START_TIME
+		from WF_WORKORDER t1,
+		(
+		select PROC_INST_ID_, ID
+		from ((select
+		PROC_INST_ID_, EXECUTION_ID_,
+		NAME_, TEXT_
+		from act_hi_varinst
+		where
+		name_ in ('id'))
+		pivot(max(TEXT_)
+		for NAME_ in ('id' AS ID)))
+		) t2,
+		act_ru_task t3,
+		(select t.proc_inst_id_,
+		listagg(to_char(t.assignee_), ',') within
+		group(order by t.assignee_) as CUR_ASSIGNEE_ID,
+		listagg(to_char(t2.user_name), ',') within group(order by
+		t2.user_name) as CUR_ASSIGNEE,
+		listagg(to_char(t4.name), ',') within
+		group(order by t4.name) as ORG,
+		to_char(min(t.create_time_),'yyyy-mm-dd hh24:mi:ss') as START_TIME
+		from act_ru_task t, sys_user t2,
+		 sys_org t4
+		where t.assignee_ = t2.user_id
+		and
+		t2.org_id = t4.org_id
+		group by
+		t.proc_inst_id_) t4, sys_user t5
+		where t1.id = t2.ID(+)
+		and t2.proc_inst_id_ =
+		t4.proc_inst_id_(+)
+		and t2.proc_inst_id_ = t3.proc_inst_id_
+		and t1.creator_id = t5.user_id
+		and t3.assignee_=#{userId, jdbcType=VARCHAR}
+		<if test="status!=null and status!=''">
+			and t1.status =#{status, jdbcType=VARCHAR}
+		</if>
+		<if test="workOrderName!=null and workOrderName!=''">
+			and t1.name like '%'||#{workOrderName, jdbcType=VARCHAR}||'%'
+		</if>
+		order by create_time desc
+	</select>
+	<select id="selectAssignByAssignId" parameterType="java.lang.String"
+		resultType="java.util.Map">
+		select user_name as "assign" from sys_user
+		where user_id =
+		#{assignId, jdbcType=VARCHAR}
+	</select>
+	<select id="selectOrgNameByAssignId" parameterType="java.lang.String"
+		resultType="java.util.Map">
+		select t2.name as "org" from sys_org_user t,sys_org t2
+		where t.org_id = t2.org_id
+		and t.user_id = #{assignId,
+		jdbcType=VARCHAR}
+	</select>
+	<select id="selectOrgNameByOrgId" parameterType="java.lang.String"
+		resultType="java.util.Map">
+		select t.name from sys_org t
+		where t.org_id=#{orgId,
+		jdbcType=VARCHAR}
+	</select>
+	<select id="getStartTimeByActIdAndProcId" parameterType="java.util.Map"
+		resultType="java.lang.String">
+		select to_char(t.start_time_,'yyyy-mm-dd hh24:mi:ss') from
+		act_hi_actinst t
+		where t.act_id_ like '%' ||#{actId,
+		jdbcType=VARCHAR}|| '%'
+		and t.proc_inst_id_ = #{procId,
+		jdbcType=VARCHAR}
+		order by t.start_time_ desc
+	</select>
+	<select id="selectByPrimaryKey" parameterType="java.lang.String"
+		resultMap="BaseResultMap">
+		select * from WF_WORKORDER t
+		where t.ID=#{id,
+		jdbcType=VARCHAR}
+	</select>
+	<select id="selectHiActinsts" parameterType="java.lang.String"
+		resultType="java.util.Map">
+		select distinct
+		t.id_,t.proc_inst_id_,t.act_id_,t2.user_name as
+		"ASSIGNEE_",to_char(t.end_time_,'yyyy-mm-dd hh24:mi:ss') as
+		"END_TIME_",t4.task_id_,t4.approval,t4.reason,t4.rectifyinfo,t4.improveinfo,t4.filename,t4.ignoreinfo,t4.auditinfo,t4.orgid,t4.rollbackinfo,t4.url
+		from act_hi_actinst t,sys_user t2,(
+		select proc_inst_id_,task_id_,
+		ID,APPROVAL,REASON,RECTIFYINFO,IMPROVEINFO,FILENAME,IGNOREINFO,AUDITINFO,ORGID,ROLLBACKINFO,URL
+		from ((select task_id_, proc_inst_id_, NAME_, TEXT_
+		from act_hi_varinst
+		where name_ in
+		('id','approval','reason','rectifyInfo','improveInfo','fileName','ignoreInfo','auditInfo','orgId','rollbackInfo','url'))
+		pivot(max(TEXT_) for NAME_ in (
+		'id' AS ID,'approval' AS
+		APPROVAL,'reason' AS REASON,
+		'rectifyInfo' AS RECTIFYINFO,'improveInfo'
+		AS IMPROVEINFO,'fileName' AS FILENAME,
+		'ignoreInfo' AS
+		IGNOREINFO,'auditInfo' AS AUDITINFO,'orgId' AS
+		ORGID,'rollbackInfo' AS
+		ROLLBACKINFO,'url' AS URL
+		)))
+		) t4
+		where t.assignee_ = t2.user_id
+		and
+		t.task_id_=t4.task_id_(+)
+		<if test="_parameter!=null and _parameter!=''">
+			and t.proc_inst_id_ = #{_parameter,jdbcType=VARCHAR}
+		</if>
+		order by
+		to_number(t.id_) desc
+	</select>
+	<select id="selectRunTimeTask" parameterType="java.util.Map"
+		resultType="java.util.Map">
+		select distinct t.act_id_,t2.user_name as
+		"ASSIGNEE_",to_char(t.start_time_,'yyyy-mm-dd hh24:mi:ss') as
+		"START_TIME_"
+		from act_hi_actinst t,sys_org_user t2
+		where t.assignee_
+		= t2.user_id
+		and t.end_time_ is null
+		and t.proc_inst_id_ = #{procId,
+		jdbcType=VARCHAR}
+	</select>
+	<select id="selectBackLogCount" parameterType="java.lang.String"
+		resultType="java.lang.Integer">
+		select count(*) from act_ru_task
+		where assignee_ = #{userId,
+		jdbcType=VARCHAR}
+		and task_def_key_ not like '%send%'
+	</select>
+	<select id="selectTaskIdByProcIdAndAssign" parameterType="java.util.Map"
+		resultType="java.lang.String">
+		select id_ from act_ru_task
+		where proc_inst_id_ = #{procId,
+		jdbcType=VARCHAR}
+		and assignee_ = #{userId, jdbcType=VARCHAR}
+	</select>
+	<select id="selectTaskNameById" parameterType="java.lang.String"
+		resultType="java.lang.String">
+		select act_id_ from act_hi_actinst
+		where task_id_ =
+		#{taskId, jdbcType=VARCHAR}
+	</select>
+	<select id="selectRunTasksCountByprocId" parameterType="java.lang.String"
+		resultType="java.lang.Integer">
+		select count(*) from act_ru_task
+		where task_def_key_ like
+		'%handl%'
+		and proc_inst_id_ = (select proc_inst_id_ from act_hi_actinst
+		where
+		task_id_ = #{taskId, jdbcType=VARCHAR})
+	</select>
+	<select id="selectAssignsByProcIdfromRunTask" parameterType="java.lang.String"
+		resultType="java.lang.String">
+		select assignee_ from act_ru_task
+		where proc_inst_id_ =
+		#{procId, jdbcType=VARCHAR}
+	</select>
+	<select id="getTaskDefKeyByProcIdandAssignfromRunTask"
+		parameterType="java.util.Map" resultType="java.lang.String">
+		select task_def_key_ from
+		act_ru_task
+		where proc_inst_id_ = #{procId, jdbcType=VARCHAR}
+		and
+		assignee_ = #{userId, jdbcType=VARCHAR}
+	</select>
+	<insert id="insert" parameterType="com.bonc.workbench.bean.WorkOrderInfo">
+		insert into WF_WORKORDER (ID,
+		CREATE_TIME,
+		CREATOR_ID,
+		NAME,
+		ASSIGNEE_ID,
+		COMMENTS,
+		STATUS)
+		values (
+		#{id, jdbcType=VARCHAR},
+		#{createTime, jdbcType=VARCHAR},
+		#{creatorId, jdbcType=VARCHAR},
+		#{workOrderName, jdbcType=VARCHAR},
+		#{assigneeId, jdbcType=VARCHAR},
+		#{comments, jdbcType=VARCHAR},
+		#{status, jdbcType=VARCHAR}
+		)
+	</insert>
+	<update id="update" parameterType="com.bonc.workbench.bean.WorkOrderInfo">
+		update WF_WORKORDER
+		<set>
+			<if test="comments!=null and comments!=''">
+				comments = #{comments, jdbcType=VARCHAR},
+			</if>
+			<if test="assigneeId!=null and assigneeId!=''">
+				assignee_id = #{assigneeId, jdbcType=VARCHAR},
+			</if>
+			<if test="workOrderName!=null and workOrderName!=''">
+				name = #{workOrderName, jdbcType=VARCHAR},
+			</if>
+		</set>
+		where id = #{id, jdbcType=VARCHAR}
+	</update>
+	<delete id="deleteInfo" parameterType="java.lang.String">
+		delete from WF_WORKORDER
+		where id=#{id, jdbcType=VARCHAR}
+	</delete>
+
+	<!-- 查询审计状态 -->
+	<select id="queryAuditState" resultType="java.lang.Integer"
+		parameterType="java.util.Map">
+		select count(*) as amount from WF_WORKORDER
+		where data_id = #{data_id}
+		and model = #{modelId}
+		and audit_cycle <![CDATA[>=]]>
+		#{startDate}
+		and audit_cycle <![CDATA[<=]]>
+		#{endDate}
+	</select>
+
+	<!-- 参与工单 -->
+	<select id="selectParticipatePageList" parameterType="java.util.Map"
+		resultMap="BaseResultMap">
+		select distinct t1.id,
+		t1.create_time,
+		t1.creator_id,
+		t5.user_name as CREATOR_NAME,
+		t1.assignee_id,
+		t1.name,
+		t1.status,
+		t2.PROC_INST_ID_,
+		t4.CUR_ASSIGNEE_ID,
+		t4.CUR_ASSIGNEE,
+		t4.START_TIME
+		from WF_WORKORDER t1,
+		(
+		select PROC_INST_ID_, ID
+		from ((select
+		PROC_INST_ID_, EXECUTION_ID_,
+		NAME_, TEXT_
+		from act_hi_varinst
+		where
+		name_ in ('id'))
+		pivot(max(TEXT_)
+		for NAME_ in ('id' AS ID)))
+		) t2,
+		act_hi_taskinst t3,
+		(select t.proc_inst_id_,
+		listagg(to_char(t.assignee_), ',') within
+		group(order by t.assignee_) as CUR_ASSIGNEE_ID,
+		listagg(to_char(t2.user_name), ',') within group(order by
+		t2.user_name) as CUR_ASSIGNEE,
+		listagg(to_char(t4.name), ',') within
+		group(order by t4.name) as ORG,
+		to_char(min(t.create_time_),'yyyy-mm-dd hh24:mi:ss') as START_TIME
+		from act_ru_task t, sys_user t2,
+		 sys_org t4
+		where t.assignee_ = t2.user_id
+		and
+		t2.org_id = t4.org_id
+		group by
+		t.proc_inst_id_) t4, sys_user t5
+		where t1.id = t2.ID(+)
+		and t2.proc_inst_id_ =
+		t4.proc_inst_id_(+)
+		and t2.proc_inst_id_ = t3.proc_inst_id_
+		and t2.proc_inst_id_ in (select
+		t.proc_inst_id_ from
+		act_hi_taskinst t
+		where t.end_time_ is not null
+		and (delete_reason_ is
+		not null and
+		delete_reason_ != 'recall' or
+		delete_reason_ is null)
+		<if test="userId!=null and userId!=''">
+			and t.assignee_= #{userId, jdbcType=VARCHAR}
+		</if>
+		)
+		and t1.creator_id = t5.user_id
+		and t3.assignee_=#{userId, jdbcType=VARCHAR}
+		<if test="status!=null and status!=''">
+			and t1.status =#{status, jdbcType=VARCHAR}
+		</if>
+		<if test="workOrderName!=null and workOrderName!=''">
+			and t1.name like '%'||#{workOrderName, jdbcType=VARCHAR}||'%'
+		</if>
+		order by create_time desc
+	</select>
+</mapper>

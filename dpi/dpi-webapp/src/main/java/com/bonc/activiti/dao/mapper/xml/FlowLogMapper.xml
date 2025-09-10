@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bonc.activiti.dao.mapper.FlowLogMapper">
+  <resultMap id="BaseResultMap" type="com.bonc.activiti.dao.entity.FlowLog">
+    <result column="ID" jdbcType="VARCHAR" property="id" />
+    <result column="USER_ID" jdbcType="VARCHAR" property="userId" />
+    <result column="CLASSNAME" jdbcType="VARCHAR" property="classname" />
+    <result column="STATE" jdbcType="VARCHAR" property="state" />
+    <result column="FLOW_ID" jdbcType="VARCHAR" property="flowId"/>
+  </resultMap>
+  <insert id="insert" parameterType="com.bonc.activiti.dao.entity.FlowLog">
+    insert into WF_FLOW_LOG (ID, USER_ID, CLASSNAME,
+      STATE, FLOW_ID)
+    values (#{id,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, #{classname,jdbcType=VARCHAR}, 
+      #{state,jdbcType=VARCHAR},#{flowId,jdbcType=VARCHAR})
+  </insert>
+  <select id="selectByPrimaryKey"
+    parameterType="com.bonc.activiti.dao.entity.FlowLog"
+    resultMap="BaseResultMap">
+    select ID, USER_ID, CLASSNAME, STATE, FLOW_ID
+      from WF_FLOW_LOG
+     where FLOW_ID = #{flowId,jdbcType=VARCHAR} 
+  </select>
+  <select id="selectByPrimaryKeyUserId"
+    parameterType="com.bonc.activiti.dao.entity.FlowLog"
+    resultMap="BaseResultMap">
+    select ID, USER_ID, CLASSNAME, STATE, FLOW_ID
+      from WF_FLOW_LOG
+     where ID = #{id,jdbcType=VARCHAR} 
+       and USER_ID = #{userId}
+       and CLASSNAME = #{classname}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.bonc.activiti.dao.entity.FlowLog">
+    delete from WF_FLOW_LOG
+     where ID = #{id,jdbcType=VARCHAR} 
+       and USER_ID = #{userId, jdbcType=VARCHAR}
+       <if test="classname!=null and classname!=''">
+       and CLASSNAME = #{classname, jdbcType=VARCHAR}
+       </if>
+  </delete>
+   <delete id="deleteByIdFlowId" parameterType="com.bonc.activiti.dao.entity.FlowLog">
+     delete from WF_FLOW_LOG
+     where ID = #{id,jdbcType=VARCHAR} 
+       and FLOW_ID = #{flowId, jdbcType=VARCHAR}
+  </delete>
+  <update id="updateApiFlowState" parameterType="com.bonc.activiti.dao.entity.FlowLog">
+    update WF_FLOW_LOG
+       set STATE=#{state}
+     where FLOW_ID=#{flowId}
+  </update>
+</mapper>

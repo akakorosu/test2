@@ -1,0 +1,14 @@
+$(function(){
+    $("#time1").datepicker({
+        autoclose:true,
+        format:"yyyymmdd",
+    })
+    //切换性别
+    $(".pic-person").click(function(){
+        if($(this).hasClass("pic-woman")){
+            $(this).removeClass("pic-woman").addClass("pic-man")
+        }else{
+            $(this).removeClass("pic-man").addClass("pic-woman")
+        }
+    })
+})

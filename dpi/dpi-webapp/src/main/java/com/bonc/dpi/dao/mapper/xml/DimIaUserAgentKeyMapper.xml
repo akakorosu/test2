@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bonc.dpi.dao.mapper.DimIaUserAgentKeyMapper">
+	<resultMap id="keyResultMap" type="com.bonc.dpi.dao.entity.DimIaUserAgentKey">
+		<result column="ID" jdbcType="VARCHAR" property="id" />
+		<result column="UA_KEY" jdbcType="VARCHAR" property="uaKey" />
+		<result column="PROD_ID" jdbcType="VARCHAR" property="prodId" />
+		<result column="UA_EXAMPLE" jdbcType="VARCHAR" property="uaExample" />
+		<result column="COMMENTS" jdbcType="VARCHAR" property="comments" />
+		<result column="AUTHOR" jdbcType="VARCHAR" property="author" />
+		<result column="OP_TIME" jdbcType="DATE" property="opTime" />
+		<result column="PROD_NAME" jdbcType="DATE" property="prodName" />
+	</resultMap>
+	
+	<select id="selectDataNum" parameterType="com.bonc.dpi.dao.entity.DimIaUserAgentKey"
+		resultType="int">
+		SELECT count(*)  
+		<if test="prodName != null and prodName != ''">
+		FROM dim_ia_useragent_key t1 left join dim_ia_product_info t2 on t1.prod_id = t2.prod_id 
+		</if>
+		<if test="prodName == null or prodName == ''">
+		FROM dim_ia_useragent_key t1 
+		</if>
+		where 1=1 
+		<!-- <if test="opTime != null and opTime != ''">
+		    and t1.OP_TIME=#{opTime} 
+		</if>  -->
+		<if test="author != null and author != ''">
+		    <bind name="author" value="'%' + _parameter.getAuthor() + '%'" />
+		    and t1.author like #{author} 
+		</if>
+		<if test="startTime != null and startTime != ''">
+		    and t1.OP_TIME &gt;= #{startTime} 
+		</if>
+		<if test="endTime != null and endTime != ''">
+		    and t1.OP_TIME &lt;= #{endTime} 
+		</if>
+		<if test="uaKey != null and uaKey != ''">
+			<bind name="uaKey" value="'%' + _parameter.getUaKey() + '%'" />
+		    and t1.UA_KEY like  #{uaKey} 
+		</if>
+		<if test="prodName != null and prodName != ''">
+			<bind name="prodName" value="'%' + _parameter.getProdName() + '%'" />
+			and t2.PROD_NAME like  #{prodName}
+		</if>		 
+	</select>
+	
+	<select id="selectList" resultType="com.bonc.dpi.dao.entity.DimIaUserAgentKey">
+		SELECT
+		
+		t.UA_KEY as uaKey,
+		t.PROD_ID as prodId,
+		t.UA_EXAMPLE as uaExample,
+
+		t.COMMENTS as comments,
+		t.AUTHOR as author,
+		t.OP_TIME as opTime,
+		t.ID as id
+		FROM dim_ia_useragent_key t 
+		order by t.OP_TIME DESC,t.PROD_ID DESC
+	</select>
+	<select id="selectListByPar" resultMap="keyResultMap">
+		SELECT 
+			t1.UA_KEY,
+			t1.PROD_ID,
+			t1.UA_EXAMPLE,
+			t1.COMMENTS,
+			t1.AUTHOR,
+			t1.OP_TIME,
+			t1.ID,
+			t2.PROD_NAME 
+		FROM dim_ia_useragent_key t1 left join dim_ia_product_info t2 on t1.prod_id = t2.prod_id 		 
+		where 1=1
+		<!-- <if test="opTime != null and opTime != ''">
+		    and t1.OP_TIME=#{opTime} 
+		</if>  -->
+		<if test="author != null and author != ''">
+		    <bind name="author" value="'%' + _parameter.getAuthor() + '%'" />
+		    and t1.author like #{author} 
+		</if>
+		<if test="startTime != null and startTime != ''">
+		    and t1.OP_TIME &gt;= #{startTime} 
+		</if>
+		<if test="endTime != null and endTime != ''">
+		    and t1.OP_TIME &lt;= #{endTime} 
+		</if>
+		<if test="uaKey != null and uaKey != ''">
+			<bind name="uaKey" value="'%' + _parameter.getUaKey() + '%'" />
+		    and t1.UA_KEY like  #{uaKey} 
+		</if>
+		<if test="prodName != null and prodName != ''">
+			<bind name="prodName" value="'%' + _parameter.getProdName() + '%'" />
+			and t2.PROD_NAME like  #{prodName}
+		</if>
+		order by t1.OP_TIME desc
+	</select>
+	
+	<delete id="delete" parameterType="com.bonc.dpi.dao.entity.DimIaUserAgentKey">
+		delete from dim_ia_useragent_key where ID = #{id,jdbcType=VARCHAR}
+	</delete>
+
+	<insert id="insertKey" parameterType="com.bonc.dpi.dao.entity.DimIaUserAgentKey">
+		insert into dim_ia_useragent_key (UA_KEY, PROD_ID, UA_EXAMPLE, COMMENTS, AUTHOR, OP_TIME, id)
+		values 
+		(#{uaKeyParam,jdbcType=VARCHAR},
+		#{prodIdParam,jdbcType=VARCHAR},
+		#{uaExample,jdbcType=VARCHAR},		
+		#{comments,jdbcType=VARCHAR},
+		#{author,jdbcType=VARCHAR},
+		#{opTime,jdbcType=VARCHAR},
+		#{id,jdbcType=VARCHAR})
+	</insert>
+
+	<select id="selectKeyById" parameterType="com.bonc.dpi.dao.entity.DimIaUserAgentKey"
+		resultMap="keyResultMap">
+		select t1.UA_KEY,t1.PROD_ID,t1.UA_EXAMPLE,t1.COMMENTS,t1.AUTHOR,t1.OP_TIME,t1.ID,t2.PROD_NAME
+		from dim_ia_useragent_key t1 left join dim_ia_product_info t2 on t1.PROD_ID=t2.PROD_ID
+		where t1.ID = #{id,jdbcType=VARCHAR}
+	</select>
+
+	<update id="updateKey" parameterType="com.bonc.dpi.dao.entity.DimIaUserAgentKey">
+		update dim_ia_useragent_key
+		SET
+		UA_KEY=#{uaKeyParam},
+		PROD_ID=#{prodIdParam},
+		UA_EXAMPLE=#{uaExample},
+		COMMENTS=#{comments},
+		AUTHOR=#{author},
+		OP_TIME=#{opTime}
+		where ID=#{id}
+	</update>
+	<update id="updateUa" parameterType="com.bonc.dpi.dao.entity.DimIaUserAgentKey">
+		update dm_d_ia_unidentified_ua
+		SET
+		is_check='1'
+		where date_id=#{dateId} and ua_key=#{uaKey} and USERAGENT=#{ua}
+	</update>
+	
+	<select id="check" parameterType="com.bonc.dpi.dao.entity.DimIaUserAgentKey"
+    	resultType="int">
+    	select count(*) from dim_ia_useragent_key where  1=1
+    	<if test="id != null and id != ''">
+		    and ID!=#{id}
+		</if> 
+    	<if test="uaKeyParam != null and uaKeyParam != ''">
+		    and UA_KEY=#{uaKeyParam}
+		</if>
+		<if test="prodIdParam != null and prodIdParam != ''">
+			and PROD_ID=#{prodIdParam}
+		</if>
+  	</select>
+  	
+  	<select id="checkId" parameterType="com.bonc.dpi.dao.entity.DimIaUserAgentKey"
+    	resultType="int">
+    	select count(*) from dim_ia_product_info t where t.PROD_NAME = #{prodName} 
+  	</select>
+  	 <select id="selectVoByPrimaryKey" parameterType="com.bonc.dpi.dao.entity.DimIaUserAgentKey" resultMap="keyResultMap">
+    SELECT ID,UA_KEY,PROD_ID,UA_EXAMPLE,COMMENTS,AUTHOR,OP_TIME 
+		FROM dim_ia_useragent_key 
+		where 1=1 
+		<if test="uaKey != null and uaKey != ''">
+		    and UA_KEY=#{uaKey} 
+		</if>
+		<if test="prodId != null and prodId != ''">
+		    and PROD_ID=#{prodId} 
+		</if>
+  </select>
+  
+   <select id="deleteVoByPrimaryKey" parameterType="com.bonc.dpi.dao.entity.DimIaUserAgentKey" resultMap="keyResultMap">
+    delete from dim_ia_useragent_key
+     where 1=1
+		<if test="uaKey != null and uaKey != ''">
+		    and UA_KEY= #{uaKey} 
+		</if>
+		<if test="prodId != null and prodId != ''">
+		    and PROD_ID=#{prodId} 
+		</if>
+  </select>
+  
+  	<insert id="batchInsert" >
+  		<if test="database_type=='mysql'">
+	    	insert into dim_ia_useragent_key (UA_KEY, PROD_ID, UA_EXAMPLE, COMMENTS, AUTHOR, OP_TIME, ID)
+			values 
+			<foreach item="item" index="index" collection="list" open="" close="" separator=",">         	
+			(#{item.uaKey,jdbcType=VARCHAR},
+			#{item.prodId,jdbcType=VARCHAR},
+			#{item.uaExample,jdbcType=VARCHAR},		
+			#{item.comments,jdbcType=VARCHAR},
+			#{item.author,jdbcType=VARCHAR},
+			#{item.opTime,jdbcType=VARCHAR},
+			#{item.id,jdbcType=VARCHAR})
+	    	</foreach>
+	    </if>
+	    <if test="database_type=='oracle'">
+		    insert all
+	    	<foreach item="item" index="index" collection="list" open="" close="" separator="">
+	            into dim_ia_useragent_key (UA_KEY, PROD_ID, UA_EXAMPLE, COMMENTS, AUTHOR, OP_TIME, ID)
+	    		values
+	         	(#{item.uaKey,jdbcType=VARCHAR},
+				#{item.prodId,jdbcType=VARCHAR},
+				#{item.uaExample,jdbcType=VARCHAR},		
+				#{item.comments,jdbcType=VARCHAR},
+				#{item.author,jdbcType=VARCHAR},
+				#{item.opTime,jdbcType=VARCHAR},
+				#{item.id,jdbcType=VARCHAR})
+	        </foreach>
+	        select 1 from dual
+	    </if>
+  	</insert>
+</mapper>

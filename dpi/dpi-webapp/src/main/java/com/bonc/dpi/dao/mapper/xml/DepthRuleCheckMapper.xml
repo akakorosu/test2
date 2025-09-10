@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bonc.dpi.dao.mapper.DepthRuleCheckMapper">
+	
+	<select id="selectDataNum" parameterType="com.bonc.dpi.dao.entity.DepthRuleCheck"
+		resultType="int">
+		SELECT	count(*) 
+		<if test="prodName != null and prodName != ''">
+		FROM DIM_IA_KEYWORD_SEARCH_RULE_CHK t1 left join dim_ia_product_info t2 on t1.prod_id = t2.prod_id
+		</if>
+		<if test="prodName == null or prodName == ''">
+		FROM DIM_IA_KEYWORD_SEARCH_RULE_CHK t1
+		</if>		 
+		where 1=1
+		<if test="startTime != null and startTime != ''">
+		    and t1.OP_TIME &gt;= #{startTime} 
+		</if>
+		<if test="endTime != null and endTime != ''">
+		    and t1.OP_TIME &lt;= #{endTime} 
+		</if>
+		<if test="prodName != null and prodName != ''">
+			<bind name="prodName" value="'%' + _parameter.getProdName() + '%'" />
+			and t2.PROD_NAME like  #{prodName}
+		</if>
+	</select>
+	
+	<select id="selectList" parameterType="com.bonc.dpi.dao.entity.DepthRuleCheck"
+		resultType="com.bonc.dpi.dao.entity.DepthRuleCheck">
+		SELECT
+		t.PROD_ID prodid,
+		t.PROD_NAME prodName,
+		t.HOST host,
+		t.MATCH_TYPE matchType,
+		t.RULE_TYPE ruleType,
+		t.CHANNEL_NAME channelName,
+		t.URL url,
+		t.PARSE_RULE parseRule,
+		t.GET_INDEX getIndex,
+		t.TEST_RESULT testResult,
+		t.GROUP_TYPE groupType,
+		t.GROUP_NAME groupName,
+		t.CRAWLER_URL crawlerUrl,
+		t.AUTHOR author,
+		t.OP_TIME opTime,
+		t.PARSE_RESULT parseResult,
+		t.PARSE_RESULT_DEC parseResultDec,
+		t.STATE state,
+		t.ID id
+		FROM DIM_IA_KEYWORD_SEARCH_RULE_CHK t
+		WHERE 1=1
+		<if test="startTime != null and startTime != ''">
+			and t.OP_TIME &gt;= #{startTime}
+		</if>
+		<if test="endTime != null and endTime != ''">
+			and t.OP_TIME &lt;= #{endTime}
+		</if>
+		<if test="prodName != null and prodName != ''">
+			<bind name="prodName" value="'%' + _parameter.getProdName() + '%'" />
+			and t.PROD_NAME like  #{prodName}
+		</if>
+		order by t.OP_TIME DESC
+	</select>
+
+	<delete id="deleteById" parameterType="java.lang.String">
+		delete from DIM_IA_KEYWORD_SEARCH_RULE_CHK where ID=#{id}
+	</delete>
+
+	<insert id="insert" parameterType="com.bonc.dpi.dao.entity.DepthRuleCheck">
+		insert into DIM_IA_KEYWORD_SEARCH_RULE
+			(ID,HOST,MATCH_TYPE,PROD_ID,RULE_TYPE,CHANNEL_NAME,PARSE_RULE_ANDRIOD,GET_INDEX_ANDRIOD,GROUP_TYPE,
+			 AUTHOR,OP_TIME,NUM
+			)
+		values
+			(#{id},#{host},#{matchType},#{prodid},#{ruleType},#{channelName},#{parseRule},#{getIndex}, #{groupType},
+			 #{author},#{opTime},#{num}
+			)
+	</insert>
+
+	<select id="selectById" parameterType="java.lang.String"
+			resultType="com.bonc.dpi.dao.entity.DepthRuleCheck">
+		SELECT
+		t.PROD_ID prodid,
+		t.PROD_NAME prodName,
+		t.HOST host,
+		t.MATCH_TYPE matchType,
+		t.RULE_TYPE ruleType,
+		t.CHANNEL_NAME channelName,
+		t.URL url,
+		t.PARSE_RULE parseRule,
+		t.GET_INDEX getIndex,
+		t.TEST_RESULT testResult,
+		t.GROUP_TYPE groupType,
+		t.GROUP_NAME groupName,
+		t.CRAWLER_URL crawlerUrl,
+		t.AUTHOR author,
+		t.OP_TIME opTime,
+		t.PARSE_RESULT parseResult,
+		t.STATE state,
+		t.ID id
+		FROM DIM_IA_KEYWORD_SEARCH_RULE_CHK t
+		WHERE t.ID = #{id}
+	</select>
+
+	<select id="selectMaxNum" resultType="int">
+		SELECT max(NUM+0) FROM DIM_IA_KEYWORD_SEARCH_RULE
+	</select>
+
+
+	<select id="selectVoByPrimaryKey" parameterType="com.bonc.dpi.dao.entity.DepthRuleCheck" resultType="com.bonc.dpi.dao.entity.DepthRuleCheck">
+		SELECT
+		t.PROD_ID prodid,
+		t.PROD_NAME prodName,
+		t.HOST host,
+		t.MATCH_TYPE matchType,
+		t.RULE_TYPE ruleType,
+		t.CHANNEL_NAME channelName,
+		t.URL url,
+		t.PARSE_RULE parseRule,
+		t.GET_INDEX getIndex,
+		t.TEST_RESULT testResult,
+		t.GROUP_TYPE groupType,
+		t.GROUP_NAME groupName,
+		t.CRAWLER_URL crawlerUrl,
+		t.AUTHOR author,
+		t.OP_TIME opTime,
+		t.PARSE_RESULT parseResult,
+		t.STATE state,
+		t.ID id
+		FROM DIM_IA_KEYWORD_SEARCH_RULE_CHK t
+		where 1=1
+		<if test="url != null and url != ''">
+			and t.URL=#{url}
+		</if>
+		<if test="parseRule != null and parseRule != ''">
+			and t.PARSE_RULE=#{parseRule}
+		</if>
+	</select>
+
+	<select id="deleteVoByPrimaryKey" parameterType="com.bonc.dpi.dao.entity.DepthRuleCheck" >
+		delete from DIM_IA_KEYWORD_SEARCH_RULE_CHK
+		where 1=1
+		<if test="parseRule != null and parseRule != ''">
+			and PARSE_RULE=#{parseRule}
+		</if>
+		<if test="url != null and url != ''">
+			and URL=#{url}
+		</if>
+	</select>
+
+
+	<insert id="insertVoPl" >
+		<if test="database_type=='mysql'">
+			insert into DIM_IA_KEYWORD_SEARCH_RULE_CHK (PROD_ID, PROD_NAME, HOST, MATCH_TYPE, RULE_TYPE, CHANNEL_NAME, URL,
+			      PARSE_RULE,GET_INDEX,TEST_RESULT,GROUP_TYPE,GROUP_NAME,CRAWLER_URL,AUTHOR,OP_TIME,PARSE_RESULT,PARSE_RESULT_DEC,STATE,ID)
+			t.PROD_ID prodid,
+			t.PROD_NAME prodName,
+			t.HOST host,
+			t.MATCH_TYPE matchType,
+			t.RULE_TYPE ruleType,
+			t.CHANNEL_NAME channelName,
+			t.URL url,
+			t.PARSE_RULE parseRule,
+			t.GET_INDEX getIndex,
+			t.TEST_RESULT testResult,
+			t.GROUP_TYPE groupType,
+			t.GROUP_NAME groupName,
+			t.CRAWLER_URL crawlerUrl,
+			t.AUTHOR author,
+			t.OP_TIME opTime,
+			t.PARSE_RESULT parseResult,
+			t.STATE state,
+			t.ID id
+			values
+			<foreach item="item" index="index" collection="list" open="" close="" separator=",">
+				(#{item.prodid,jdbcType=VARCHAR},
+				#{item.prodName,jdbcType=VARCHAR},
+				#{item.host,jdbcType=VARCHAR},
+				#{item.matchType,jdbcType=VARCHAR},
+				#{item.ruleType,jdbcType=VARCHAR},
+				#{item.channelName,jdbcType=VARCHAR},
+				#{item.url,jdbcType=VARCHAR})
+
+				#{item.parseRule,jdbcType=VARCHAR},
+				#{item.getIndex,jdbcType=VARCHAR},
+				#{item.testResult,jdbcType=VARCHAR},
+				#{item.groupType,jdbcType=VARCHAR},
+				#{item.groupName,jdbcType=VARCHAR},
+				#{item.crawlerUrl,jdbcType=VARCHAR})
+
+				#{item.author,jdbcType=VARCHAR},
+				#{item.opTime,jdbcType=VARCHAR},
+				#{item.parseResult,jdbcType=VARCHAR},
+				#{item.parseResultDec,jdbcType=VARCHAR},
+				#{item.state,jdbcType=VARCHAR},
+				#{item.id,jdbcType=VARCHAR})
+			</foreach>
+		</if>
+		<if test="database_type=='oracle'">
+			insert all
+			<foreach item="item" index="index" collection="list" open="" close="" separator="">
+				into DIM_IA_KEYWORD_SEARCH_RULE_CHK (PROD_ID, PROD_NAME, HOST, MATCH_TYPE, RULE_TYPE, CHANNEL_NAME, URL,
+				PARSE_RULE,GET_INDEX,TEST_RESULT,GROUP_TYPE,GROUP_NAME,CRAWLER_URL,AUTHOR,OP_TIME,PARSE_RESULT,PARSE_RESULT_DEC,STATE,ID)
+				values
+				(#{item.prodid,jdbcType=VARCHAR},
+				#{item.prodName,jdbcType=VARCHAR},
+				#{item.host,jdbcType=VARCHAR},
+				#{item.matchType,jdbcType=VARCHAR},
+				#{item.ruleType,jdbcType=VARCHAR},
+				#{item.channelName,jdbcType=VARCHAR},
+				#{item.url,jdbcType=VARCHAR},
+
+				#{item.parseRule,jdbcType=VARCHAR},
+				#{item.getIndex,jdbcType=VARCHAR},
+				#{item.testResult,jdbcType=VARCHAR},
+				#{item.groupType,jdbcType=VARCHAR},
+				#{item.groupName,jdbcType=VARCHAR},
+				#{item.crawlerUrl,jdbcType=VARCHAR},
+
+				#{item.author,jdbcType=VARCHAR},
+				#{item.opTime,jdbcType=VARCHAR},
+				#{item.parseResult,jdbcType=VARCHAR},
+				#{item.parseResultDec,jdbcType=VARCHAR},
+				#{item.state,jdbcType=VARCHAR},
+				#{item.id,jdbcType=VARCHAR})
+			</foreach>
+			select 1 from dual
+		</if>
+	</insert>
+
+</mapper>

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bonc.dpi.dao.mapper.OperationsCenterMapper">
+ 	<resultMap id="resultMap" type="com.bonc.dpi.dao.entity.OperationsCenter">
+		<result column="MONTH_ID" jdbcType="VARCHAR" property="monthId" />
+		<result column="FLOW" jdbcType="VARCHAR" property="flow" />
+		<result column="FLOW_TOTAL" jdbcType="DECIMAL" property="flowTotal" />
+		<result column="TYPE_ID" jdbcType="DECIMAL" property="typeId" />
+		<result column="COUNT" jdbcType="VARCHAR" property="count" />
+		<result column="NUMBER_TOTAL" jdbcType="DECIMAL" property="numberTotal" />
+	</resultMap>
+	<resultMap id="resultMapIncrease" type="com.bonc.dpi.dao.entity.IncreaseProdName">
+		<result column="host" jdbcType="VARCHAR" property="host" />
+		<result column="prod_name" jdbcType="VARCHAR" property="prodName" />
+		<result column="label_code" jdbcType="DECIMAL" property="labelCode" />
+		<result column="table_type" jdbcType="DECIMAL" property="tableType" />
+		<result column="is_export" jdbcType="VARCHAR" property="isExport" />
+		<result column="op_time" jdbcType="DECIMAL" property="opTime" />
+		<result column="author" jdbcType="DECIMAL" property="author" />
+	</resultMap>
+	
+	<!-- 查询稽核错误数量 -->
+	<select id="selectAuditErrorCount" resultType="java.lang.String">
+		select count(*) from dm_d_data_error 
+	</select>
+	
+	<!-- 未识别UA数量 -->
+	<select id="selectUnidentifiedUaCount" resultType="java.lang.String">
+	    SELECT count(*)
+        FROM dm_d_ia_unidentified_ua t1 
+        left join DIM_IA_USERAGENT_KEY t2 on t1.UA_KEY=t2.UA_KEY 
+        left join DIM_IA_USERAGENT_NOISE t3 on t1.UA_KEY=t3.NOISE_KEY 
+        where t2.UA_KEY is null and t3.NOISE_KEY is null
+		
+			and DATE_ID= #{time}  
+		
+		
+	</select>
+	
+	<!-- 一级域名识别数量 -->
+	<select id="selectTopLevelDomainCount" resultType="java.lang.String">
+		select count(*) from dm_d_ia_top_level_domain where DATE_ID=#{time}
+	</select>
+	
+	<!-- 查询总记录和总流量 -->
+	<select id="selectRecordAndFlowTotal" resultMap="resultMap">
+		select FLOW_TOTAL,NUMBER_TOTAL 
+		from dm_d_identified_pandect 
+		where  identified_type ='1' and DATE_ID=#{time}
+	</select>
+	
+	<!-- 查询记录和流量 -->
+	<select id="selectRecordAndFlow" resultMap="resultMap">
+		select count(*) COUNT,sum(FLOW) FLOW 
+		from dm_d_ev_unidentified_host_top 
+		where DATE_ID=#{time}
+	</select>
+	
+	<!-- 自动匹配 -->
+	<select id="selectAutomaticMatching" resultMap="resultMap">
+		select count(*) COUNT,TYPE_ID 
+		from dm_d_ev_unidentified_host_top 
+		where DATE_ID=#{time} and  
+			(PROD_ID is not null  and PROD_NAME is not null ) and TYPE_ID in 
+			<foreach collection="typeList" item="data"  index="index" open="(" close=")" separator="," >
+	  			#{data} 
+	    	</foreach>
+	    group by TYPE_ID
+	</select>
+	
+	<!-- 需要新增 -->
+	<select id="selectNeedAdd" resultMap="resultMap">
+		select count(*) COUNT,TYPE_ID 
+		from dm_d_ev_unidentified_host_top 
+		where DATE_ID=#{time} and 
+			(PROD_ID  is  null  or PROD_NAME is  null ) and TYPE_ID in 
+			<foreach collection="typeList" item="data"  index="index" open="(" close=")" separator=",">
+	  			#{data} 
+	    	</foreach>
+	    group by TYPE_ID
+	</select>
+	<!-- 获取行业稽核数量 -->
+	<select id="getInNum" resultType="java.util.Map">
+		select count(*) num from dm_d_ev_label_check where 1=1
+		<if test="time != null and time != ''">
+			and date_id= #{time}  
+		</if>
+		
+	</select>
+	<!-- 获取行业标签稽核数量 -->
+	<select id="substanceNum" resultType="java.util.Map">
+		
+		SELECT COUNT(*) "substancenum" from 
+        (SELECT * from dim_ia_content_label_GOODS
+          UNION ALL 
+            SELECT * from dim_ia_content_label_VIDEO
+          UNION ALL  
+        SELECT * from dim_ia_content_label_NOVEL) t
+	</select>
+	<!-- 获取URL模糊识别数量 -->
+	<select id="getUrlNum" resultType="java.util.Map">
+		SELECT COUNT(*) num from dm_d_ia_unidentified_url where date_id=#{date_id} 
+		
+	</select>
+	<!-- 更新导出表的状态 -->
+	<update id="updateExport" >
+		update DM_HOST_URL_EXPORT set DM_HOST_URL_EXPORT.is_export='1' where is_export='0'
+		
+	</update>
+	<!-- 获取导出数据 -->
+	<select id="getExportList" resultMap="resultMapIncrease">
+		SELECT host,prod_name,label_code,op_time,author,bak1 from DM_HOST_URL_EXPORT where is_export='0'
+		
+	</select>
+</mapper>

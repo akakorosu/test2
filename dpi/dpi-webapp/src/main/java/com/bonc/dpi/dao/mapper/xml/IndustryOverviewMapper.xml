@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bonc.dpi.dao.mapper.IndustryOverviewMapper">
+ 	<resultMap id="resultMap" type="com.bonc.dpi.dao.entity.IndustryOverview">
+		<result column="month_id" jdbcType="VARCHAR" property="monthId" />
+		<result column="city_id" jdbcType="VARCHAR" property="cityId" />
+		<result column="area_id" jdbcType="VARCHAR" property="areaId" />
+		<result column="prod_id" jdbcType="VARCHAR" property="prodId" />
+		<result column="prod_name" jdbcType="VARCHAR" property="prodName" />
+		<result column="prod_type" jdbcType="VARCHAR" property="prodType" />
+		<result column="prod_type_name" jdbcType="VARCHAR" property="prodTypeName" />
+		<result column="label_id1" jdbcType="VARCHAR" property="labelId1" />
+		<result column="label_name1" jdbcType="VARCHAR" property="labelName1" />
+		<result column="label_id2" jdbcType="VARCHAR" property="labelId2" />
+		<result column="label_name2" jdbcType="VARCHAR" property="labelName2" />
+		<result column="sex" jdbcType="VARCHAR" property="sex" />
+		<result column="age" jdbcType="VARCHAR" property="age" />
+		<result column="user_total" jdbcType="DECIMAL" property="userTotal" />
+		<result column="user_count" jdbcType="DECIMAL" property="userCount" />
+		<result column="flow" jdbcType="DECIMAL" property="flow" />
+		<result column="all_user_total" jdbcType="DECIMAL" property="allUserTotal" />
+		<result column="all_user_count" jdbcType="DECIMAL" property="allUserCount" />
+		<result column="all_flow" jdbcType="DECIMAL" property="allFlow" />
+		<result column="label_name" jdbcType="VARCHAR" property="labelName" />
+		<result column="hour_id" jdbcType="VARCHAR" property="hourId" />
+		<result column="city_id" jdbcType="DECIMAL" property="city" />
+		<result column="area_id" jdbcType="VARCHAR" property="area" />
+		<result column="percentUser" jdbcType="VARCHAR" property="percentUser" />
+	</resultMap>
+	<!-- 分类数据 -->
+	
+	<select id="selectCategoricalData" resultMap="resultMap">
+		select  
+		level_name prod_type_name,sum(user_total) all_user_total,ROUND(sum(flow)/1024/1024/1024, 2) all_flow
+		from st_sig_user_ev_label_info_mm 
+		where  label_level = '1' and level_code != '1009'
+		<if test="monthId != null and monthId != ''">
+			and date_id= #{monthId}  
+		</if>
+		<if test="city != null and city != ''">
+			and area_id= #{city}
+		</if>
+		<if test="orderFlag == '1' ">
+			order by all_user_total
+		</if>
+		<if test="orderFlag == '2' ">
+			order by all_flow
+		</if>
+		group by level_name
+	</select>
+	
+	<!-- 查找top10APP  不选标签时 -->
+	<select id="selectTopList" resultMap="resultMap">
+     select 
+     prod_name,
+     user_total,
+     round(user_total/(select sum(user_total)user_total_t2 from st_sig_user_ev_label_info_mm where label_level = '0' 
+     <if test="monthId != null and monthId != ''">
+			and date_id= #{monthId}  
+     </if>
+     <if test="cityId != null and cityId != ''">
+			and area_id= #{cityId}
+     </if>
+	  ),8) percentUser
+	   from (
+	   select 
+	     prod_name,
+	     user_total
+	   from st_sig_user_ev_app_top_mm 
+	   where 1=1 
+	   <if test="monthId != null and monthId != ''">
+				and date_id= #{monthId}  
+	   </if>
+	   <if test="cityId != null and cityId != ''">
+				and area_id= #{cityId}
+	  </if>
+	  ) t1
+	order by user_total desc 
+	</select>
+	
+	<!-- 查找top10APP  选标签时 -->
+	<select id="selectTopListChoose" resultMap="resultMap">
+	
+     select 
+     prod_name,
+     user_total,
+      round(user_total/(select sum(user_total)user_total_t2 from st_sig_user_ev_label_info_mm where label_level = '2' 
+     <if test="monthId != null and monthId != ''">
+			and date_id= #{monthId}  
+    </if>
+     <if test="cityId != null and cityId != ''">
+			and area_id= #{cityId}
+    </if>
+       <if test="labelCode != null and labelCode != ''">
+			and level_code= #{labelCode}
+    </if>
+	  ),8) percentUser
+	   from (
+	   select 
+	     prod_name,
+	     sum(USER_TOTAL) user_total
+	   from st_sig_user_ev_app_top_mm 
+	   where 1=1 
+	   <if test="monthId != null and monthId != ''">
+				and date_id= #{monthId}  
+	    </if>
+	   <if test="cityId != null and cityId != ''">
+				and area_id= #{cityId}
+	  </if>
+	  <if test="labelCode != null and labelCode != ''">
+			and (label_id1= #{labelCode} or label_id2= #{labelCode})
+    </if>
+	   group by prod_name )t1
+	order by user_total desc 
+	</select>
+	
+	
+	
+	
+	<select id="selectTopTotal" resultMap="resultMap">
+		
+		select sum(user_total) all_user_total,sum(user_count) all_user_count,sum(flow) all_flow
+		from dm_d_ev_app_top  p LEFT JOIN dim_area_info a on p.area_id=a.area_id where 1=1 
+	
+		<if test="monthId != null and monthId != ''">
+			and date_id= #{monthId}  
+		</if>
+		<if test="labelName1 != null and labelName1 != ''">
+			and p.label_name1= #{labelName1}  
+		</if>
+		<if test="labelName2 != null and labelName2 != ''">
+			and p.label_name2= #{labelName2}  
+		</if>
+		<if test="city != null and city != ''">
+			and a.area_name= #{city}
+		</if>
+	</select>
+	<select id="selectTopTotalByLabelList" resultMap="resultMap">
+		select sum(user_total) all_user_total,sum(user_count) all_user_count,sum(flow) all_flow,label_name 
+		from dm_d_ev_app_top 
+		where 1=1 and date_id= #{monthId} 
+		<!-- and label_name in
+		<foreach collection="list" item="data" separator="," close=")" open="(">
+		#{data}
+		</foreach>
+		group by label_name -->
+	</select>
+	
+	
+	<!-- 查询map数据 -->
+	<!-- <select id="selectMapDataList" resultMap="resultMap">
+		select  sum(user_total) user_total,sum(flow) flow, a.area_name as city_id
+		from DM_D_INDUSTRY_PANDECT  p LEFT JOIN dim_area_info a on p.area_id=a.area_id where 1=1 
+		<if test="monthId != null and monthId != ''">
+			and date_id= #{monthId}  
+		</if>
+		<if test="labelName1 != null and labelName1 != ''">
+			and p.label_name1= #{labelName1}  
+		</if>
+		<if test="labelName2 != null and labelName2 != ''">
+			and p.label_name2= #{labelName2}  
+		</if>
+		<if test="city != null and city != ''">
+			and a.area_name= #{city}
+		</if>
+		<if test="prodId != null and prodId != ''">
+		
+			and p.prod_id= #{prodId}
+		</if>
+		group by p.area_id,a.area_name
+		order by user_total desc 
+	</select>  -->
+	
+	
+	
+	<!-- 更多APP排名 -->
+	<select id="getMoreAppList" resultMap="resultMap">
+		select user_total user_total, user_count user_count, ROUND(flow/1024/1024/1024, 2) flow, prod_name
+		from st_sig_user_ev_app_top_mm  p  where 1=1 
+		<if test="monthId != null and monthId != ''">
+			and date_id= #{monthId}  
+		</if>
+		<if test="labelName1 != null and labelName1 != ''">
+			and p.label_name1= #{labelName1}  
+		</if>
+		<if test="labelName2 != null and labelName2 != ''">
+			and p.label_name2= #{labelName2}  
+		</if>
+		<if test="city != null and city != ''">
+			and p.area_id= #{city}
+		</if>
+		order by user_total desc
+	</select>
+	<!-- 折线图数据 -->
+	<select id="selectLineChartList" parameterType="com.bonc.dpi.dao.entity.IndustryOverview" resultMap="resultMap">
+		select date_id as hour_id,
+		       sum(user_count) all_user_count,
+		       ROUND(sum(flow)/1024/1024/1024, 2) all_flow
+		from st_sig_user_ev_app_top_mm p
+		where 1 = 1
+		<if test="labelName1 != null and labelName1 != ''">
+			and p.label_name1= #{labelName1}  
+		</if>
+		<if test="labelName2 != null and labelName2 != ''">
+			and p.label_name2= #{labelName2}  
+		</if>
+		<if test="city != null and city != ''">
+			and p.area_id= #{city}
+		</if>
+		    and date_id BETWEEN SUBSTR(date_format(date_sub(STR_TO_DATE(CONCAT(#{monthId}, '01'), '%Y%m%d'), interval 11 month),'%Y%m%d'), 1, 6) and #{monthId}
+		group by date_id asc
+	</select>
+    <!-- 柱形数据（用户占比）(流量占比) -->
+	<select id="getInitMaxValue" parameterType="com.bonc.dpi.dao.entity.IndustryOverview" resultMap="resultMap">
+		select 
+        prod_type_name label_name1,
+        all_user_total,
+        ROUND(all_flow/1024/1024/1024, 2) as all_flow
+        from 
+        (select 
+		   level_code,level_name prod_type_name,sum(user_total) all_user_total,sum(flow) all_flow
+		   from st_sig_user_ev_label_info_mm where  label_level = '2'
+           <if test="monthId != null and monthId != ''">
+			and date_id= #{monthId}  
+		    </if>
+		    <if test="areaId != null and areaId != ''">
+			and area_id= #{areaId}
+		     </if>
+           group by level_code,level_name) t1 ,
+            (select distinct label_code1 from dim_ia_product_label where  1 = 1 
+            
+            <if test="prodTypeName != null and prodTypeName != ''">
+			and label_name= #{prodTypeName}  
+		     </if>
+            ) t2
+           where t1.level_code = t2.label_code1 
+           <if test="orderFlag == 1 ">
+			order by all_user_total desc
+		   </if>
+		   <if test="orderFlag == 2 ">
+			order by all_flow desc
+		   </if> 
+		  
+	</select>
+    <!-- 地图某标签数据 -->
+	<select id="selectMapDataList" resultType="com.bonc.dpi.dao.entity.IndustryOverview">
+	SELECT	a.area_name city,a.area_id,t.userTotal,t.userTotalPer,t.totalFlow,t.totalFlowPer,t.perCapitaFlow from
+		(SELECT t1.AREA_ID areaId,
+		t1.total1 userTotal, 
+		round(100*t1.total1/t2.total2,2) userTotalPer,
+		round(t1.flow1/1024/1024/1024,2) totalFlow,
+		round(100*t1.flow1/t2.flow2,2) totalFlowPer,
+		round(t1.flow1/t1.total1/1024/1024 ,2) perCapitaFlow 
+		from
+			(SELECT AREA_ID,SUM(USER_TOTAL) total1,sum(FLOW) flow1 from
+				st_sig_user_ev_label_info_mm
+				where LABEL_LEVEL=2
+				<if test="dateId != null and dateId != ''">
+					and DATE_ID = #{dateId}  
+				</if>
+				<if test="city != null and city != '' and city != '999'">
+					and area_id = #{city}  
+				</if>
+				<if test="city != null and city != '' and city == '999'">
+					and area_id != '999'
+				</if>
+				<if test="labelName1 != null and labelName1 != ''">
+				and trim(LEVEL_NAME)=#{labelName1}
+				</if>
+				<if test="labelName2 != null and labelName2 != ''">
+				and trim(LEVEL_NAME)=#{labelName2}
+				</if>
+				group by AREA_ID
+			)t1,
+			(SELECT AREA_ID,SUM(USER_TOTAL) total2,sum(FLOW) flow2 from
+				st_sig_user_ev_label_info_mm
+				where
+				LABEL_LEVEL=0
+				<if test="dateId != null and dateId != ''">
+					and DATE_ID = #{dateId}  
+				</if>
+				<if test="city != null and city != ''">
+					and area_id = #{city}  
+				</if>
+				group by AREA_ID
+			)t2 
+		<!-- where t1.AREA_ID=t2.AREA_ID  order by t.userTotal desc-->
+		)t LEFT JOIN dim_area_info a on t.areaId=a.area_id  
+	
+		ORDER BY FIELD(AREA_ID,240,411,412,413,414,415,416,417,418,419,410,421,427,429)
+	</select>
+	<!-- 地图所有标签的数据 -->
+	<select id="selectMapAllData" resultType="com.bonc.dpi.dao.entity.IndustryOverview">
+	SELECT	a.area_name city,a.area_id,t.userTotal,t.userTotalPer,t.totalFlow,t.totalFlowPer,t.perCapitaFlow from
+		(SELECT t1.AREA_ID areaId,t1.total1 userTotal, 
+		round(100*t1.total1/t2.total2,2) userTotalPer,
+		round(t1.flow1/1024/1024/1024,2) totalFlow,
+		round(100*t1.flow1/t2.flow2,2) totalFlowPer,
+		round(t1.flow1/t1.total1/1024/1024,2) perCapitaFlow 
+		from
+			(
+				SELECT AREA_ID,SUM(USER_TOTAL) total1,SUM(FLOW) flow1 from
+				st_sig_user_ev_label_info_mm
+				where LABEL_LEVEL=0
+				<if test="dateId != null and dateId != ''">
+					and DATE_ID = #{dateId}  
+				</if>
+				<if test="city != null and city != '' and city != '999'">
+					and area_id = #{city}  
+				</if>
+				<if test="city != null and city != '' and city == '999'">
+					and area_id != '999'
+				</if>
+				group by AREA_ID
+			)t1,
+			(
+				SELECT SUM(USER_TOTAL) total2,sum(FLOW) flow2 from
+				st_sig_user_ev_label_info_mm
+				where LABEL_LEVEL=0
+				<if test="dateId != null and dateId != ''">
+					and DATE_ID = #{dateId}  
+				</if>
+				<if test="city != null and city != ''">
+					and area_id = #{city}  
+				</if>
+			)t2
+	) t LEFT JOIN dim_area_info a on t.areaId=a.area_id 
+	<!--order by t.userTotal desc--> 
+	ORDER BY FIELD(AREA_ID,240,411,412,413,414,415,416,417,418,419,410,421,427,429)
+	</select>
+    
+
+</mapper>

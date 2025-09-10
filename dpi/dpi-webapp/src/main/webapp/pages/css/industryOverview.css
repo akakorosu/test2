@@ -1,0 +1,29 @@
+.num-main{
+    position:relative;
+    padding:20px;
+}
+.num-main .col-xs-2{
+    height:160px;
+}
+.num-main .table th,.num-main .table td{
+    text-align: center;
+    border:1px solid #ddd !important;
+    color:#999;
+}
+.num-main .table th{
+    background:#fff;
+    color:#333;
+}
+.btn-group .btn{
+    background:#fff !important;
+    border:1px solid #0066cc;
+    color:#26A1FF !important;
+    margin:0 !important;
+    border-radius:0;
+    padding:6px 10px;
+}
+.btn-group .btn.active{
+    color:#fff !important;
+    background:#0066cc !important;
+    border:1px solid #0066cc;
+}

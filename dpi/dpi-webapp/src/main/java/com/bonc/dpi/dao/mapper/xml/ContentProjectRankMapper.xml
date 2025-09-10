@@ -1,0 +1,398 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bonc.dpi.dao.mapper.ContentProjectRankMapper">
+     <resultMap id="resultMap" type="com.bonc.dpi.dao.entity.ContentProjectRank">
+        <result column="date_id" jdbcType="VARCHAR" property="monthId" />
+        <result column="prod_name" jdbcType="VARCHAR" property="prodName" />
+        <result column="prod_id" jdbcType="VARCHAR" property="prodId" />
+        <result column="label_name1" jdbcType="VARCHAR" property="labelName1" />
+        <result column="user_total" jdbcType="VARCHAR" property="userTotal" />
+        <result column="user_count" jdbcType="VARCHAR" property="userCount" />
+        <result column="total_flow" jdbcType="VARCHAR" property="totalFlow" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="content_label_name" jdbcType="VARCHAR" property="contentLabelName" />
+        <result column="hour_id" jdbcType="VARCHAR" property="hourId" />
+        <result column="catagory" jdbcType="VARCHAR" property="catagory" />    
+        <result column="total_centent" jdbcType="VARCHAR" property="totalCentent" />
+    </resultMap>
+    <!-- 获取分类App top10 -->
+    <select id="selectCategoricalAppList" resultMap="resultMap">
+        select prod_name,prod_id, sum(user_total) user_total,sum(user_count) user_count,
+        ROUND(sum(flow)/1024/1024/1024, 2) total_flow,
+        label_name1
+        from st_sig_user_ev_product_info_mm 
+        where 1=1 
+        <if test="monthId != null and monthId != ''">
+            and date_id= #{monthId}  
+        </if>
+        and area_id = #{cityId}
+        <if test="labelName1 != null and labelName1 != ''">
+            and label_name1= #{labelName1}  
+        </if>
+        group by prod_name,prod_id,label_name1 
+         <if test="labelName1 =='影视' ">
+            order by total_flow desc  
+        </if>
+        <if test="labelName1 !='影视' ">
+            order by user_total desc
+        </if>
+    </select>
+    
+    <!-- 查询用户统计用户数，流量数，次数 -->
+    <select id="selectUserData" resultMap="resultMap">
+        select  sum(user_total) user_total,sum(user_count) user_count,
+        ROUND(sum(flow)/1024/1024, 2) total_flow	
+        from
+        <if test="prodId == null or prodId == ''">
+              st_sig_user_ev_label_info_mm 
+              where LABEL_LEVEL=2     
+           	  and DATE_ID= #{monthId}       		
+              and LEVEL_NAME= #{labelName1}
+              and area_id = #{cityId}
+        </if>
+        <if test="prodId != null and prodId != ''">
+             st_sig_user_ev_product_info_mm  
+             where 
+             date_id= #{monthId} 
+             and label_name1= #{labelName1}
+             and prod_id=#{prodId}
+             and area_id = #{cityId}
+        </if>
+    </select>
+    <!-- 查询用户统计总用户数，总流量数，总次数 -->
+    <select id="selectAllUserData" resultMap="resultMap">
+        select  sum(user_total) user_total,sum(user_count) user_count,
+        ROUND(sum(flow)/1024/1024, 2) total_flow
+        from st_sig_user_ev_label_info_mm 
+        where 1=1
+        <if test="monthId != null and monthId != ''">
+            and DATE_ID= #{monthId}  
+        </if>
+        and area_id = #{cityId}
+      	<if test="prodId==null or prodId ==''">
+            and LABEL_LEVEL=0
+        </if>
+        <if test="prodId!=null and prodId!=''">
+           and LABEL_LEVEL=2 and LEVEL_NAME= #{labelName1}
+        </if>
+    </select>
+    
+    <!-- 查询用户统计内容数 -->
+    <select id="selectContentCount" resultType="java.lang.String">
+    select
+    <if test="labelName1=='影视'">
+        count(distinct VIDEO_ID) content_nu from st_sig_user_ev_video_info_mm
+        where 1=1
+        <if test="monthId != null and monthId != ''">
+            and DATE_ID= #{monthId}
+        </if>
+        and area_id = #{cityId}
+    </if>
+    <if test="labelName1=='小说阅读'">
+        count(distinct NOVEL_ID) content_num from st_sig_user_ev_novel_info_mm
+        where 1=1
+        <if test="monthId != null and monthId != ''">
+            and DATE_ID= #{monthId}
+        </if>
+        and area_id = #{cityId}
+    </if>
+    <if test="prodId != null and prodId != ''">
+        and PROD_ID=#{prodId}
+    </if>
+    </select>
+      
+    <!-- 获取视频 top10 -->
+    <select id="selectVideoTopList" resultMap="resultMap">
+	    select t.video_id, t.video_name as name, t.content_label_name2 as content_label_name, 
+	    ROUND(t.total_flow/1024/1024, 2) as total_flow, 
+	    t.user_total
+		from st_sig_ev_content_videotop10_mm t
+		where 1=1
+		<if test="monthId != null and monthId != ''">
+	        and date_id = #{monthId}
+	    </if>
+	    and area_id = #{cityId}
+	    <if test="prodId != null and prodId != ''">
+	         and prod_id = #{prodId}
+	    </if>
+		order by total_flow desc
+    </select>
+    
+    <!-- 获取小说 top10 -->
+    <select id="selectNovelTopList" resultMap="resultMap">
+    select t.novel_id, t.novel_name as name, t.content_label_name2 as content_label_name, 
+    ROUND(t.total_flow/1024/1024, 2) as total_flow, 
+    t.user_total
+    from st_sig_ev_content_noveltop10_mm t
+    where 1=1
+    <if test="prodId != null and prodId != ''">
+        and PROD_ID=#{prodId}
+    </if>
+    <if test="monthId != null and monthId != ''">
+        and DATE_ID= #{monthId}
+    </if>
+    and area_id = #{cityId}
+    order by user_total desc 
+    </select>
+    
+    <!-- 获取内容 分类用户数,流量 -->
+    <select id="selectContentCountList"  resultMap="resultMap">
+        select sum(user_total) user_total, 
+        ROUND(sum(flow)/1024/1024/1024, 2) total_flow, 
+        level_name content_label_name
+        from st_sig_user_ev_content_info_mm
+        where 1=1
+        <if test="labelName1=='影视'">
+            and content_type = '1' 
+        </if>
+        <if test="labelName1=='小说阅读'">
+            and content_type = '2'
+        </if>
+        <if test="prodId != null and prodId != ''">
+            and PROD_ID=#{prodId}  
+        </if>
+        <if test="monthId != null and monthId != ''">
+            and DATE_ID= #{monthId}
+        </if>
+        and area_id = #{cityId}
+        and label_level = '2'
+        group  by level_name    
+        <if test="labelName1 =='影视' ">
+            order by total_flow desc  
+        </if>
+        <if test="labelName1 !='影视' ">
+            order by user_total desc
+        </if>
+    </select>
+    <!-- 获取分类 用户数数,流量 -->
+    <select id="selectCatagoryCountList"  resultMap="resultMap">
+    	select sum(user_total) user_total, 
+    	ROUND(sum(flow)/1024/1024/1024, 2) total_flow, 
+    	level_name catagory
+    	from st_sig_user_ev_content_info_mm
+        where 1=1
+        <if test="labelName1=='影视'">
+            and content_type = '1' 
+        </if>
+        <if test="labelName1=='小说阅读'">
+            and content_type = '2'
+        </if>
+        <if test="prodId != null and prodId != ''">
+            and PROD_ID=#{prodId}  
+        </if>
+        <if test="monthId != null and monthId != ''">
+            and DATE_ID= #{monthId}
+        </if>
+        and area_id = #{cityId}
+        and label_level = '3'
+        group  by level_name   
+        <if test="labelName1 =='影视' ">
+            order by total_flow desc  
+        </if>
+        <if test="labelName1 !='影视' ">
+            order by user_total desc
+        </if>
+    </select>
+    
+    <!-- 折线图数据 -->
+    <select id="selectLineChartList" parameterType="com.bonc.dpi.dao.entity.ContentProjectRank" resultMap="resultMap">
+        select date_id as hour_id,
+		       sum(user_count) user_count,
+		       ROUND(sum(flow)/1024/1024/1024, 2) total_flow
+        from st_sig_user_ev_app_top_mm where 1=1
+        and date_id BETWEEN SUBSTR(date_format(date_sub(STR_TO_DATE(CONCAT(#{monthId}, '01'), '%Y%m%d'), interval 11 month),'%Y%m%d'), 1, 6) and #{monthId}
+        <if test="labelName1 != null and labelName1 != ''">
+            and label_name1= #{labelName1}  
+        </if>
+        <if test="prodId != null and prodId != ''">
+            and prod_id=#{prodId}  
+        </if>
+        and area_id= #{cityId}
+        group by date_id 
+        order by date_id asc
+    </select>
+    
+    <!-- 查询某标签map数据 -->
+    <select id="selectMapDataList" resultType="com.bonc.dpi.dao.entity.ContentProjectRank">
+    SELECT	a.area_name areaName,t.userTotal,t.userPercent,
+            ROUND(t.totalFlow/1024/1024/1024, 2) as totalFlow,
+            t.flowPercent,
+            ROUND(t.perCapitaFlow/1024/1024, 2) as perCapitaFlow 
+            from
+		(SELECT t1.AREA_ID areaId,t1.total1 userTotal, round(100*t1.total1/t2.total2,2) userPercent,
+		t1.flow1 totalFlow,round(100*t1.flow1/t2.flow2,2) flowPercent,round(t1.flow1/t1.total1 ,2) perCapitaFlow from
+			(SELECT AREA_ID,SUM(USER_TOTAL) total1,sum(FLOW) flow1 from
+				st_sig_user_ev_label_info_mm
+				where LABEL_LEVEL=2
+				and DATE_ID = #{monthId}  
+				and trim(LEVEL_NAME)=#{labelName1}
+				<if test="cityId != null and cityId != '' and cityId != '999'">
+					and area_id = #{cityId}  
+				</if>
+				<if test="cityId != null and cityId != '' and cityId == '999'">
+					and area_id != '999'
+				</if>			
+				group by AREA_ID
+			)t1,
+			(SELECT AREA_ID,SUM(USER_TOTAL) total2,sum(FLOW) flow2 from
+				st_sig_user_ev_label_info_mm
+				where
+				LABEL_LEVEL=0
+				and DATE_ID = #{monthId}  
+				<if test="cityId != null and cityId != ''">
+					and area_id = #{cityId}
+				</if>	
+				group by AREA_ID
+			)t2 
+		<!-- where t1.AREA_ID=t2.AREA_ID order by t.userTotal desc-->
+		)t LEFT JOIN dim_area_info a on t.areaId=a.area_id  
+	ORDER BY FIELD(AREA_ID,240,411,412,413,414,415,416,417,418,419,410,421,427,429)
+    </select>
+    
+       
+    <!-- 查询某应用map数据 -->
+	<select id="selectMapDataListById" resultType="com.bonc.dpi.dao.entity.ContentProjectRank">
+		 SELECT	a.area_name areaName,t.userTotal,t.userPercent,t.totalFlow,t.flowPercent,t.perCapitaFlow from
+		(SELECT t1.area_id areaId,t1.total1 userTotal, round(100*t1.total1/t2.total2,2) userPercent,
+		t1.flow1 totalFlow,round(100*t1.flow1/t2.flow2,2) flowPercent,round(t1.flow1/t1.total1 ,2) perCapitaFlow from
+			(SELECT area_id,SUM(user_total) total1,sum(flow) flow1 from
+				st_sig_user_ev_product_info_mm
+				where
+				date_id = #{monthId}  
+				and trim(label_name1)=#{labelName1}
+				and prod_id=#{prodId}
+				<if test="cityId != null and cityId != '' and cityId != '999'">
+					and area_id = #{cityId}  
+				</if>
+				<if test="cityId != null and cityId != '' and cityId == '999'">
+					and area_id != '999'
+				</if>				
+				group by area_id
+			)t1,
+			(SELECT AREA_ID,SUM(USER_TOTAL) total2,sum(FLOW) flow2 from
+				st_sig_user_ev_label_info_mm
+				where
+				LABEL_LEVEL=2
+				and DATE_ID = #{monthId}
+				and trim(LEVEL_NAME)=#{labelName1}  
+				<if test="cityId != null and cityId != ''">
+					and area_id = #{cityId}
+				</if>	
+				group by AREA_ID
+			)t2 
+		<!-- where t1.area_id=t2.AREA_ID -->
+		)t LEFT JOIN dim_area_info a on t.areaId=a.area_id  
+	order by t.userTotal desc
+	</select>
+
+    <!-- 关联APP top10 -->	
+	<select id="selectReleVanceAPP"  resultMap="resultMap">
+		SELECT 
+		prod_name,sum(user_total) user_total,sum(flow) total_flow 
+		FROM st_sig_user_ev_app_top_mm  
+		where  
+		date_id = #{monthId}  
+		and area_id = #{cityId}
+		and label_name1 = #{labelName1}  
+		group by prod_name
+		<if test="labelName1 =='影视' ">
+            order by total_flow desc  
+        </if>
+        <if test="labelName1 !='影视' ">
+            order by user_total desc
+        </if> 		
+	</select>
+	<select id="selectTopTotal" resultMap="resultMap">	
+		select sum(user_total) user_total,sum(flow) total_flow
+		from st_sig_user_ev_label_info_mm 
+		where LABEL_LEVEL=2 
+		and date_id= #{monthId}  
+		and area_id = #{cityId}
+		and trim(LEVEL_NAME)= #{labelName1}  
+	</select>
+	
+	<!-- 某应用的性别比例 -->
+	<select id="selectSexById"  resultType="com.bonc.dpi.dao.entity.ContentProjectRank">
+	select round(100*t1.total1/t2.total2,2) userPercent,t1.SEX sex from
+		 (select sum(USER_TOTAL) total1, SEX from st_sig_user_ev_product_info_mm 
+  			where SEX in (1,2) 
+			and LABEL_NAME1 = #{labelName1}  
+			and DATE_ID = #{monthId}  		
+			and prod_id= #{prodId}	
+			and area_id = #{cityId}
+  		 	group by SEX) t1,
+  		 (select sum(USER_TOTAL) total2 from st_sig_user_ev_product_info_mm 
+  		 	where SEX in (1,2)
+			and LABEL_NAME1 = #{labelName1}  
+			and DATE_ID = #{monthId}  	
+			and prod_id= #{prodId}		
+			and area_id = #{cityId}
+  		)t2
+  		order by t1.SEX asc
+	</select>
+	
+	<!-- 某标签的性别比例 -->
+	<select id="selectSex"  resultType="com.bonc.dpi.dao.entity.ContentProjectRank">
+	SELECT round(100*t1.total1/t2.total2,2) userPercent,t1.SEX sex from
+	(
+		SELECT SUM(USER_TOTAL) total1,SEX from st_sig_user_ev_label_info_mm
+		where LABEL_LEVEL=2
+		and SEX in(1,2) 
+		and DATE_ID = #{monthId}
+		and trim(LEVEL_NAME)=#{labelName1}
+		and area_id = #{cityId}
+		group by SEX
+	)t1,
+	(
+		SELECT SUM(USER_TOTAL) total2 from st_sig_user_ev_label_info_mm
+		where LABEL_LEVEL=2 
+		and SEX in(1,2)
+		and DATE_ID = #{monthId}
+		and trim(LEVEL_NAME)=#{labelName1}
+		and area_id = #{cityId}
+	)t2
+	order by t1.SEX asc
+	</select>
+	
+	<!-- 某应用的年龄比例 -->
+	<select id="selectAgeById"  resultType="com.bonc.dpi.dao.entity.ContentProjectRank">
+	select round(100*t1.total1/t2.total2,2) userPercent,t1.AGE age from
+		 (select sum(USER_TOTAL) total1, AGE from st_sig_user_ev_product_info_mm 
+  			where 
+		    LABEL_NAME1 = #{labelName1}  
+			and DATE_ID = #{monthId}  		
+			and prod_id= #{prodId}	
+			and area_id = #{cityId}
+  		 	group by AGE
+  		 ) t1,
+  		 (select sum(USER_TOTAL) total2 from st_sig_user_ev_product_info_mm 
+  		 	where 
+		    LABEL_NAME1 = #{labelName1}  
+			and DATE_ID = #{monthId}  	
+			and prod_id= #{prodId}	
+			and area_id = #{cityId}	
+  		)t2
+  		order by t1.AGE asc
+	</select>
+	
+	<!-- 某标签的年龄比例 -->
+	<select id="selectAge"  resultType="com.bonc.dpi.dao.entity.ContentProjectRank">
+	SELECT round(100*t1.total1/t2.total2,2) userPercent,t1.AGE age from
+	(
+		SELECT SUM(USER_TOTAL) total1,AGE from st_sig_user_ev_label_info_mm
+		where LABEL_LEVEL=2
+		and DATE_ID = #{monthId}
+		and trim(LEVEL_NAME)=#{labelName1}
+		and area_id = #{cityId}
+		group by AGE
+	)t1,
+	(
+		SELECT SUM(USER_TOTAL) total2 from st_sig_user_ev_label_info_mm
+		where LABEL_LEVEL=2 
+		and DATE_ID = #{monthId}
+		and trim(LEVEL_NAME)=#{labelName1}
+		and area_id = #{cityId}
+	)t2
+	order by t1.AGE asc
+	</select>
+</mapper>

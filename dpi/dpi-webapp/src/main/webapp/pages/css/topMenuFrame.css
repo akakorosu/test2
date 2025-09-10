@@ -1,0 +1,88 @@
+.nav-list > li.active > a {
+    font-weight: bold;
+    color: #2b7dbc;
+}
+.sidebar.h-sidebar .nav-list > li.active, .sidebar.h-sidebar .nav-list > li.active + li, .sidebar.h-sidebar .nav-list > li:hover + li.active{
+	border-color:#f0f0f0;
+}
+   .nav-list > li > a {
+    background-color: #fff;
+    color: #585858;
+}
+.sidebar.h-sidebar .nav-list > li.hover > .submenu{
+    border:1px solid #e5e5e5;
+    padding:0px;
+}
+.nav-list > li .submenu > li > a {
+    border-top-color: #e4e4e4;
+    background-color: #ffffff;
+    color: #616161;
+}
+.nav-list > li:hover > a{
+	background:#fff;
+	color:#266cad;
+}
+.nav-list > li .submenu > li:hover > a{
+	color:#266cad;
+}
+.sidebar.h-sidebar .nav-list>li{
+	border-color:#e5e5e5;
+}
+.sidebar.h-sidebar{
+	margin-top:0px;
+}
+.nav-list > li .submenu > li a > .menu-icon{
+	left:3px;
+}
+.nav-list li.hover > .submenu > li > a{
+	margin-top:0px;
+	margin-bottom:0px;
+}
+.sidebar.h-sidebar .nav-list > li.hover > .arrow:before{
+	border-bottom-color:#B8B8B8;
+    right: auto !important;
+    left: -10px !important;
+    top: -1px !important;
+}
+.sidebar.h-sidebar .nav-list > li.hover > .arrow:after{
+	border-bottom-color:#fff;
+}
+.nav > li > a{
+	padding:8px;
+}
+/* �Ƴ���������Сͼ�� */
+.sidebar.h-sidebar .nav-list > li > a > .menu-icon{
+	display:none;
+}
+.footer .footer-inner .footer-content{
+	line-height:19px;
+}
+.sidebar.h-sidebar .nav-list > li.active > a:after{
+	border-width: 0 0 2px 0;
+    border-color: transparent;
+    border-bottom-color: #eaeaea; 
+    left: 0;
+    right: 0;
+    top: auto;
+    bottom: -2px;
+}
+.sidebar.h-sidebar .nav-list > li > a{
+    height: auto;
+    padding: 10px 40px;
+    font-size:14px;
+}
+.sidebar.h-sidebar:before{
+	border-color:#ccc;
+}
+.breadcrumbs {
+    border-width: 0 !important;
+    background-color: #fff;
+    margin: 0 !important;
+    border-bottom:1px solid #eee !important;
+}
+.main-content .page-content{
+    padding-top:0 !important;
+}
+.ace-nav > li.transparent > a:hover, .ace-nav > li.transparent > a:focus, .ace-nav > li.open.transparent > a{
+    background:none !important;
+}

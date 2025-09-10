@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bonc.dpi.dao.mapper.AuditRuleErrorMapper">
+ 	<resultMap id="resultMap" type="com.bonc.dpi.dao.entity.AuditRuleError">
+		
+		<result column="PROD_ID" jdbcType="VARCHAR" property="prodId" />
+		<result column="PROD_NAME" jdbcType="VARCHAR" property="prodName" />
+		<result column="ERROR_CODE" jdbcType="VARCHAR" property="errorCode" />
+		<result column="TABLE_NAME" jdbcType="VARCHAR" property="tableName" />
+		<result column="check_object" jdbcType="VARCHAR" property="checkObject" />
+		<result column="check_column" jdbcType="VARCHAR" property="checkColumn" />
+		<result column="errorDesc" jdbcType="VARCHAR" property="errorDesc" />
+	</resultMap>
+	
+	<select id="selectList" resultMap="resultMap">
+		select *
+		from dm_d_data_error 
+		where 1=1
+		<if test="tableName != null and tableName != ''">
+			and check_object =#{tableName}    <!-- like   '%' ||  #{tableName} || '%' -->
+		</if>
+		order by prod_id
+	</select>
+	<select id="getTableName" resultType="java.util.Map">
+		select distinct check_object from DM_D_DATA_ERROR
+	</select>
+	<select id="getExportList"  resultMap="resultMap">
+		select *
+		from dm_d_data_error 
+		where 1=1
+		<if test="tableName != null and tableName != ''">
+			and check_object =#{tableName}   
+		</if>
+		order by prod_id
+	</select>
+</mapper>

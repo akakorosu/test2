@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bonc.dpi.dao.mapper.DimIaUserAgentRuleMapper">
+  <resultMap id="ruleResultMap" type="com.bonc.dpi.dao.entity.DimIaUserAgentRule">
+    <result column="ID" jdbcType="VARCHAR" property="id" />
+    <result column="PROD_ID" jdbcType="VARCHAR" property="prodId" />
+    <result column="UA_KEY_RULE" jdbcType="VARCHAR" property="uaKeyRule" />   
+    <result column="GET_INDEX" jdbcType="VARCHAR" property="getIndex" />   
+    <result column="UA_EXAMPLE" jdbcType="VARCHAR" property="uaExample" />   
+    <result column="COMMENTS" jdbcType="VARCHAR" property="comments" />
+    <result column="AUTHOR" jdbcType="VARCHAR" property="author" />
+    <result column="OP_TIME" jdbcType="DATE" property="opTime" />
+    <result column="PROD_NAME" jdbcType="DATE" property="prodName" />
+  </resultMap>
+  
+  <select id="selectDataNum" parameterType="com.bonc.dpi.dao.entity.DimIaUserAgentRule"
+		resultType="int">
+		SELECT 	count(*) 	
+		<if test="prodName != null and prodName != ''">
+		FROM dim_ia_useragent_rule t1 left join dim_ia_product_info t2 on t1.prod_id = t2.prod_id 
+		</if>
+		<if test="prodName == null or prodName == ''">
+		FROM dim_ia_useragent_rule t1 
+		</if>
+		where 1=1 
+		<!-- <if test="opTime != null and opTime != ''">
+		    and t1.OP_TIME=#{opTime} 
+		</if>  -->
+		<if test="author != null and author != ''">
+		    <bind name="author" value="'%' + _parameter.getAuthor() + '%'" />
+		    and t1.author like #{author} 
+		</if>
+		<if test="startTime != null and startTime != ''">
+		    and t1.OP_TIME &gt;= #{startTime} 
+		</if>
+		<if test="endTime != null and endTime != ''">
+		    and t1.OP_TIME &lt;= #{endTime} 
+		</if>
+		<if test="uaKeyRule != null and uaKeyRule != ''">
+			<bind name="uaKeyRule" value="'%' + _parameter.getUaKeyRule() + '%'" />
+		    and t1.UA_KEY_RULE like  #{uaKeyRule} 
+		</if>
+		<if test="prodName != null and prodName != ''">
+			<bind name="prodName" value="'%' + _parameter.getProdName() + '%'" />
+			and t2.PROD_NAME like  #{prodName}
+		</if>
+	</select>
+  
+  <select id="selectList" parameterType="com.bonc.dpi.dao.entity.DimIaUserAgentRule"
+		resultType="com.bonc.dpi.dao.entity.DimIaUserAgentRule">
+		SELECT 		
+		t.PROD_ID as prodId,
+		t.UA_KEY_RULE as uaKeyRule,	
+		t.GET_INDEX as getIndex,	
+		t.UA_EXAMPLE as uaExample,		
+		t.COMMENTS as comments,
+		t.AUTHOR as author,
+		t.OP_TIME as opTime,
+		t.ID as id
+		FROM dim_ia_useragent_rule t
+		order by t.OP_TIME DESC,t.PROD_ID DESC
+	</select>
+	<select id="selectListByPar" resultMap="ruleResultMap">
+		SELECT t1.PROD_ID,t1.UA_KEY_RULE,t1.GET_INDEX,t1.UA_EXAMPLE,t1.COMMENTS,t1.AUTHOR,t1.OP_TIME,t1.ID,t2.PROD_NAME 
+		FROM dim_ia_useragent_rule t1 left join dim_ia_product_info t2 on t1.prod_id = t2.prod_id 		 
+		where 1=1
+		<!-- <if test="opTime != null and opTime != ''">
+		    and t1.OP_TIME=#{opTime} 
+		</if>  -->
+		<if test="author != null and author != ''">
+		    <bind name="author" value="'%' + _parameter.getAuthor() + '%'" />
+		    and t1.author like #{author} 
+		</if>
+		<if test="startTime != null and startTime != ''">
+		    and t1.OP_TIME &gt;= #{startTime} 
+		</if>
+		<if test="endTime != null and endTime != ''">
+		    and t1.OP_TIME &lt;= #{endTime} 
+		</if>
+		<if test="uaKeyRule != null and uaKeyRule != ''">
+			<bind name="uaKeyRule" value="'%' + _parameter.getUaKeyRule() + '%'" />
+		    and t1.UA_KEY_RULE like  #{uaKeyRule} 
+		</if>
+		<if test="prodName != null and prodName != ''">
+			<bind name="prodName" value="'%' + _parameter.getProdName() + '%'" />
+			and t2.PROD_NAME like  #{prodName}
+		</if>
+		order by t1.OP_TIME desc
+	</select>
+	
+	
+	<delete id="delete" parameterType="com.bonc.dpi.dao.entity.DimIaUserAgentRule">
+    	delete from dim_ia_useragent_rule
+    	where ID = #{id,jdbcType=VARCHAR} 
+  	</delete>
+	
+	<insert id="insert" parameterType="com.bonc.dpi.dao.entity.DimIaUserAgentRule">
+   		insert into dim_ia_useragent_rule (PROD_ID, UA_KEY_RULE,GET_INDEX,
+      	UA_EXAMPLE, COMMENTS ,AUTHOR,OP_TIME,ID)
+   		values (#{prodIdParam,jdbcType=VARCHAR},
+   				#{uaKeyRuleParam,jdbcType=VARCHAR},
+   				#{getIndex,jdbcType=VARCHAR},
+   				#{uaExample,jdbcType=VARCHAR},
+   				#{comments,jdbcType=VARCHAR},
+      			#{author,jdbcType=VARCHAR},
+      			#{opTime,jdbcType=VARCHAR},
+      			#{id,jdbcType=VARCHAR})
+  	</insert>
+
+  	
+  	<select id="selectById"  parameterType="com.bonc.dpi.dao.entity.DimIaUserAgentRule"
+   	 	resultMap="ruleResultMap">
+     	select t1.ID,t1.PROD_ID,t1.UA_KEY_RULE,t1.GET_INDEX,t1.UA_EXAMPLE,t1.COMMENTS,t1.AUTHOR,t1.OP_TIME,t2.PROD_NAME
+		from dim_ia_useragent_rule t1 left join	dim_ia_product_info t2 on t1.PROD_ID=t2.PROD_ID 
+		where t1.ID = #{id,jdbcType=VARCHAR}  
+  	</select>
+	
+  	<update id="update" parameterType="com.bonc.dpi.dao.entity.DimIaUserAgentRule">
+    	update dim_ia_useragent_rule set 
+    		PROD_ID=#{prodIdParam},
+  			UA_KEY_RULE=#{uaKeyRuleParam},	
+    		GET_INDEX=#{getIndex},
+    		UA_EXAMPLE=#{uaExample},
+    		COMMENTS=#{comments},
+    		AUTHOR=#{author},
+    		OP_TIME=#{opTime}
+    	where ID=#{id}
+  	</update>
+  	
+  	<select id="check" parameterType="com.bonc.dpi.dao.entity.DimIaUserAgentRule"
+    	resultType="int">
+    	select count(*) from dim_ia_useragent_rule where 1=1
+    	<if test="id != null and id != ''">
+		    and ID!=#{id}
+		</if> 
+    	<if test="prodIdParam != null and prodIdParam != ''">
+    	and PROD_ID = #{prodIdParam} 
+    	</if>
+    	<if test="uaKeyRuleParam != null and uaKeyRuleParam != ''">
+    	and UA_KEY_RULE = #{uaKeyRuleParam}
+    	</if>
+  	</select>
+  	<update id="updateUaRule" parameterType="com.bonc.dpi.dao.entity.DimIaUserAgentNoise">
+    	update dm_d_ia_unidentified_ua 
+    	set is_check='1'
+    
+		where date_id=#{dateId} and ua_key=#{uaKey} and USERAGENT=#{ua}
+  	</update>
+  	<select id="checkId" parameterType="com.bonc.dpi.dao.entity.DimIaUserAgentRule"
+    	resultType="int">
+    	select count(*) from dim_ia_product_info t where t.PROD_NAME = #{prodName}
+  	</select>
+  	
+  	<select id="selectVoByPrimaryKey" parameterType="com.bonc.dpi.dao.entity.DimIaUserAgentRule" resultMap="ruleResultMap">
+    SELECT ID,PROD_ID,UA_KEY_RULE,GET_INDEX,UA_EXAMPLE,COMMENTS,AUTHOR,OP_TIME 
+		FROM dim_ia_useragent_rule 
+		where 1=1 
+		<if test="prodId != null and prodId != ''">
+		    and PROD_ID=#{prodId} 
+		</if>
+		<if test="uaKeyRule != null and uaKeyRule != ''">
+		    and UA_KEY_RULE=#{uaKeyRule} 
+		</if>
+  </select>
+  
+   <select id="deleteVoByPrimaryKey" parameterType="com.bonc.dpi.dao.entity.DimIaUserAgentRule" resultMap="ruleResultMap">
+    delete from dim_ia_useragent_rule
+     where 1=1
+		<if test="prodId != null and prodId != ''">
+		    and PROD_ID=#{prodId} 
+		</if>
+		<if test="uaKeyRule != null and uaKeyRule != ''">
+		    and UA_KEY_RULE=#{uaKeyRule} 
+		</if>
+  </select>
+  
+  	<insert id="batchInsert" >
+  		<if test="database_type=='mysql'">
+	    	insert into dim_ia_useragent_rule
+	    	(PROD_ID, UA_KEY_RULE,GET_INDEX
+	    	,UA_EXAMPLE, COMMENTS ,AUTHOR,OP_TIME,ID)
+	      	values 
+			<foreach item="item" index="index" collection="list" open="" close="" separator=",">         	
+			(#{item.prodId,jdbcType=VARCHAR},
+	   		#{item.uaKeyRule,jdbcType=VARCHAR},
+	   		#{item.getIndex,jdbcType=VARCHAR},
+	   		#{item.uaExample,jdbcType=VARCHAR},
+	   		#{item.comments,jdbcType=VARCHAR},
+	      	#{item.author,jdbcType=VARCHAR},
+	      	#{item.opTime,jdbcType=VARCHAR},
+	      	#{item.id,jdbcType=VARCHAR})
+	    	</foreach>
+	    </if>
+	    <if test="database_type=='oracle'">
+		    insert all
+	    	<foreach item="item" index="index" collection="list" open="" close="" separator="">
+	            into dim_ia_useragent_rule 
+	            (PROD_ID, UA_KEY_RULE,GET_INDEX,UA_EXAMPLE, COMMENTS ,AUTHOR,OP_TIME,ID)
+	    		values
+	         	(#{item.prodId,jdbcType=VARCHAR},
+		   		#{item.uaKeyRule,jdbcType=VARCHAR},
+		   		#{item.getIndex,jdbcType=VARCHAR},
+		   		#{item.uaExample,jdbcType=VARCHAR},
+		   		#{item.comments,jdbcType=VARCHAR},
+		      	#{item.author,jdbcType=VARCHAR},
+		      	#{item.opTime,jdbcType=VARCHAR},
+		      	#{item.id,jdbcType=VARCHAR})
+	        </foreach>
+	        select 1 from dual
+	    </if>
+  	</insert>
+  
+</mapper>

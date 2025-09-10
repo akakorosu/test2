@@ -1,0 +1,21 @@
+# Mac default file
+*.DS_Store
+
+#Eclipse generate files
+.project
+.classpath
+.settings
+*.launch
+
+#Intellij generate files
+.idea
+*.iml
+
+#maven generate files
+target
+bin
+
+#.gitignore for java
+*.class
+/.metadata/
+*.war

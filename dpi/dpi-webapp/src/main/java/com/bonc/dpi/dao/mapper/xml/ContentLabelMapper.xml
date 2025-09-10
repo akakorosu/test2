@@ -1,0 +1,491 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bonc.dpi.dao.mapper.ContentLabelMapper">
+  <resultMap id="BaseResultMap" type="com.bonc.dpi.dao.entity.ContentLabel">
+    <result column="CONTENT_LABEL_LEVEL" jdbcType="VARCHAR" property="contentLabelLevel" />
+    <result column="CONTENT_LABEL_CODE" jdbcType="VARCHAR" property="contentLabelCode" />
+    <result column="CONTENT_LABEL_NAME" jdbcType="VARCHAR" property="contentLabelName" />
+    <result column="CONTENT_LABEL_CODE1" jdbcType="VARCHAR" property="contentLabelCode1" />
+    <result column="CONTENT_LABEL_CODE2" jdbcType="VARCHAR" property="contentLabelCode2" />
+    <result column="CONTENT_LABEL_CODE3" jdbcType="VARCHAR" property="contentLabelCode3" />
+    <result column="CONTENT_LABEL_CODE4" jdbcType="VARCHAR" property="contentLabelCode4" />
+    <result column="CONTENT_LABEL_CODE5" jdbcType="VARCHAR" property="contentLabelCode5" />
+    <result column="CONTENT_LABEL_CODE6" jdbcType="VARCHAR" property="contentLabelCode6" />
+    <result column="CONTENT_LABEL_NAME1" jdbcType="VARCHAR" property="contentLabelName1" />
+    <result column="CONTENT_LABEL_NAME2" jdbcType="VARCHAR" property="contentLabelName2" />
+    <result column="CONTENT_LABEL_NAME3" jdbcType="VARCHAR" property="contentLabelName3" />
+    <result column="CONTENT_LABEL_NAME4" jdbcType="VARCHAR" property="contentLabelName4" />
+    <result column="CONTENT_LABEL_NAME5" jdbcType="VARCHAR" property="contentLabelName5" />
+    <result column="CONTENT_LABEL_NAME6" jdbcType="VARCHAR" property="contentLabelName6" />
+    <result column="AUTHOR" jdbcType="DATE" property="author" />
+    <result column="OP_TIME" jdbcType="DATE" property="opTime" />
+    <result column="ID" jdbcType="DATE" property="id" />
+	  <result column="CONTENT_LABEL_NAME_RELEVANCE" jdbcType="VARCHAR" property="contentLabelNameRelevance" />
+  </resultMap>
+  
+  <select id="selectContentLabelName1" resultType="java.lang.String">
+  	SELECT 
+		distinct CONTENT_LABEL_NAME1
+	FROM DIM_IA_CONTENT_LABEL 
+  </select>
+  
+  <select id="selectDataNum" resultType="int">
+		SELECT count(*) 
+		FROM DIM_IA_CONTENT_LABEL 
+		where 1=1 
+		<if test="contentLabelName1 != null and contentLabelName1 != ''">
+			and CONTENT_LABEL_NAME1=#{contentLabelName1}
+			<!-- <bind name="contentLabelName1" value="'%' + _parameter.getContentLabelName1() + '%'" />
+		    and CONTENT_LABEL_NAME1 like #{contentLabelName1}  -->
+		</if>
+		<if test="contentLabelName != null and contentLabelName != ''">
+			<bind name="contentLabelName" value="'%' + _parameter.getContentLabelName() + '%'" />
+		    and CONTENT_LABEL_NAME like #{contentLabelName} 
+		</if>
+		<if test="contentLabelCode1 != null and contentLabelCode1 != ''">
+		    and CONTENT_LABEL_CODE1 = #{contentLabelCode1} 
+		</if>
+		<if test="label != null and label != ''">
+			<bind name="label" value="'%' + _parameter.getLabel() + '%'" />
+			and( 
+				CONTENT_LABEL_NAME1 like  #{label} 
+				or CONTENT_LABEL_NAME2 like  #{label}
+				or CONTENT_LABEL_NAME3 like  #{label}
+				or CONTENT_LABEL_NAME4 like  #{label}
+				or CONTENT_LABEL_NAME5 like  #{label}
+				or CONTENT_LABEL_NAME6 like  #{label}
+			)
+		</if>
+		<if test="author != null and author != ''">
+		    and author like #{author} 
+		</if>
+		<if test="startTime != null and startTime != ''">
+		    and OP_TIME &gt;= #{startTime} 
+		</if>
+		<if test="endTime != null and endTime != ''">
+		    and OP_TIME &lt;= #{endTime} 
+		</if>
+	</select>
+  
+  <select id="selectList" resultMap="BaseResultMap">
+		SELECT
+	  t1.ID,
+	  t1.CONTENT_LABEL_CODE,t1.CONTENT_LABEL_NAME,t1.CONTENT_LABEL_LEVEL,
+	  t1.CONTENT_LABEL_CODE1,t1.CONTENT_LABEL_NAME1,t1.CONTENT_LABEL_CODE2,t1.CONTENT_LABEL_NAME2,t1.CONTENT_LABEL_CODE3,t1.CONTENT_LABEL_NAME3,
+	  t1.CONTENT_LABEL_CODE4,t1.CONTENT_LABEL_NAME4,t1.CONTENT_LABEL_CODE5,t1.CONTENT_LABEL_NAME5,t1.CONTENT_LABEL_CODE6,t1.CONTENT_LABEL_NAME6,
+	  t1.AUTHOR,t1.OP_TIME,t2.CONTENT_LABEL_NAME CONTENT_LABEL_NAME_RELEVANCE
+		FROM DIM_IA_CONTENT_LABEL t1
+		left join DIM_IA_CONTENT_LABEL_RELEVANCE t2 on t1.CONTENT_LABEL_CODE=t2.CONTENT_LABEL_CODE
+		where 1=1 		
+		<if test="contentLabelName1 != null and contentLabelName1 != ''">
+			and t1.CONTENT_LABEL_NAME1=#{contentLabelName1}
+			<!-- <bind name="contentLabelName1" value="'%' + _parameter.getContentLabelName1() + '%'" />
+		    and CONTENT_LABEL_NAME1 like #{contentLabelName1}  -->
+		</if>
+		<if test="contentLabelName != null and contentLabelName != ''">
+			<bind name="contentLabelName" value="'%' + _parameter.getContentLabelName() + '%'" />
+		    and t1.CONTENT_LABEL_NAME like #{contentLabelName}
+		</if>
+		<if test="contentLabelCode1 != null and contentLabelCode1 != ''">
+		    and t1.CONTENT_LABEL_CODE1 = #{contentLabelCode1}
+		</if>
+		<if test="label != null and label != ''">
+			<bind name="label" value="'%' + _parameter.getLabel() + '%'" />
+			and(
+			t1.CONTENT_LABEL_NAME1 like  #{label}
+				or t1.CONTENT_LABEL_NAME2 like  #{label}
+				or t1.CONTENT_LABEL_NAME3 like  #{label}
+				or t1.CONTENT_LABEL_NAME4 like  #{label}
+				or t1.CONTENT_LABEL_NAME5 like  #{label}
+				or t1.CONTENT_LABEL_NAME6 like  #{label}
+			)
+		</if>
+		<if test="author != null and author != ''">
+		    and t1.author like #{author}
+		</if>
+		<if test="startTime != null and startTime != ''">
+		    and t1.OP_TIME &gt;= #{startTime}
+		</if>
+		<if test="endTime != null and endTime != ''">
+		    and t1.OP_TIME &lt;= #{endTime}
+		</if>
+		order by t1.OP_TIME,t1.ID desc
+	</select>
+	
+  <insert id="insert" parameterType="com.bonc.dpi.dao.entity.ContentLabel">
+    insert into DIM_IA_CONTENT_LABEL  (CONTENT_LABEL_LEVEL ,CONTENT_LABEL_CODE,CONTENT_LABEL_NAME,
+       CONTENT_LABEL_CODE1,CONTENT_LABEL_CODE2,CONTENT_LABEL_CODE3,CONTENT_LABEL_CODE4,CONTENT_LABEL_CODE5,CONTENT_LABEL_CODE6,
+       CONTENT_LABEL_NAME1,CONTENT_LABEL_NAME2,CONTENT_LABEL_NAME3,CONTENT_LABEL_NAME4,CONTENT_LABEL_NAME5,CONTENT_LABEL_NAME6,
+       AUTHOR,OP_TIME,ID)
+    values (#{contentLabelLevel,jdbcType=VARCHAR},#{contentLabelCode,jdbcType=VARCHAR}, #{contentLabelName,jdbcType=VARCHAR},
+       #{contentLabelCode1,jdbcType=VARCHAR},#{contentLabelCode2,jdbcType=VARCHAR},#{contentLabelCode3,jdbcType=VARCHAR},
+       #{contentLabelCode4,jdbcType=VARCHAR},#{contentLabelCode5,jdbcType=VARCHAR},#{contentLabelCode6,jdbcType=VARCHAR},
+       #{contentLabelName1Param,jdbcType=VARCHAR},#{contentLabelName2,jdbcType=VARCHAR},#{contentLabelName3,jdbcType=VARCHAR},
+       #{contentLabelName4,jdbcType=VARCHAR},#{contentLabelName5,jdbcType=VARCHAR},#{contentLabelName6,jdbcType=VARCHAR},
+       #{author,jdbcType=VARCHAR}, #{opTime,jdbcType=VARCHAR}, #{id,jdbcType=DATE})
+  </insert>
+  
+  <select id="checkData" parameterType="com.bonc.dpi.dao.entity.ContentLabel" resultType="int">
+    	select count(*) from DIM_IA_CONTENT_LABEL where 1=1
+    	<if test="id != null and id != ''">
+		    and ID=#{id}
+		</if> 
+		<if test="contentLabelName1 != null and contentLabelName1 != ''">
+			and CONTENT_LABEL_NAME1=#{contentLabelName1}
+		</if>
+		<if test="contentLabelName2 != null and contentLabelName2 != ''">
+		    and CONTENT_LABEL_NAME2=#{contentLabelName2}
+		</if>
+		<if test="contentLabelName3 != null and contentLabelName3 != ''">
+			and CONTENT_LABEL_NAME3=#{contentLabelName3}
+		</if>
+		<if test="contentLabelName4 != null and contentLabelName4 != ''">
+		    and CONTENT_LABEL_NAME4=#{contentLabelName4}
+		</if>
+		<if test="contentLabelName5 != null and contentLabelName5 != ''">
+			and CONTENT_LABEL_NAME5=#{contentLabelName5}
+		</if>
+		<if test="contentLabelName6 != null and contentLabelName6 != ''">
+		    and CONTENT_LABEL_NAME6=#{contentLabelName6}
+		</if>
+		<if test="contentLabelCode != null and contentLabelCode != ''">
+		    and CONTENT_LABEL_CODE=#{contentLabelCode}
+		</if>
+		<if test="contentLabelCode1 != null and contentLabelCode1  != ''">
+			and CONTENT_LABEL_CODE1=#{contentLabelCode1}
+		</if>
+		<if test="contentLabelCode2 != null and contentLabelCode2 != ''">
+		    and CONTENT_LABEL_CODE2=#{contentLabelCode2}
+		</if>
+		<if test="contentLabelCode3 != null and contentLabelCode3 != ''">
+			and CONTENT_LABEL_CODE3=#{contentLabelCode3}
+		</if>
+		<if test="contentLabelCode4 != null and contentLabelCode4 != ''">
+		    and CONTENT_LABEL_CODE4=#{contentLabelCode4}
+		</if>
+		<if test="contentLabelCode5 != null and contentLabelCode5 != ''">
+			and CONTENT_LABEL_CODE5=#{contentLabelCode5}
+		</if>
+		<if test="contentLabelCode6 != null and contentLabelCode6 != ''">
+		    and CONTENT_LABEL_CODE6=#{contentLabelCode6}
+		</if>
+		<if test="contentLabelLevel != null and contentLabelLevel != ''">
+		    and CONTENT_LABEL_LEVEL=#{contentLabelLevel}
+		</if>
+  </select>
+  
+  
+  
+  <select id="selectById"  parameterType="com.bonc.dpi.dao.entity.ContentLabel" resultMap="BaseResultMap">
+    select t1.CONTENT_LABEL_LEVEL ,t1.CONTENT_LABEL_CODE,t1.CONTENT_LABEL_NAME,
+       t1.CONTENT_LABEL_CODE1,t1.CONTENT_LABEL_CODE2,t1.CONTENT_LABEL_CODE3,t1.CONTENT_LABEL_CODE4,t1.CONTENT_LABEL_CODE5,t1.CONTENT_LABEL_CODE6,
+       t1.CONTENT_LABEL_NAME1,t1.CONTENT_LABEL_NAME2,t1.CONTENT_LABEL_NAME3,t1.CONTENT_LABEL_NAME4,t1.CONTENT_LABEL_NAME5,t1.CONTENT_LABEL_NAME6,
+       t1.AUTHOR,t1.OP_TIME,t1.ID,t2.CONTENT_LABEL_NAME CONTENT_LABEL_NAME_RELEVANCE
+    from DIM_IA_CONTENT_LABEL t1
+    left join DIM_IA_CONTENT_LABEL_RELEVANCE t2 on t1.CONTENT_LABEL_CODE=t2.CONTENT_LABEL_CODE
+    where t1.ID=#{id}
+  </select>
+  <delete id="delete" parameterType="java.lang.String">
+    delete from DIM_IA_CONTENT_LABEL
+     where 1=1
+     <if test="contentLabelName1 != null and contentLabelName1  != ''">
+			and CONTENT_LABEL_NAME1=#{contentLabelName1}
+		</if>
+		<if test="contentLabelName2 != null and contentLabelName2 != ''">
+		    and CONTENT_LABEL_NAME2=#{contentLabelName2}
+		</if>
+		<if test="contentLabelName3 != null and contentLabelName3 != ''">
+			and CONTENT_LABEL_NAME3=#{contentLabelName3}
+		</if>
+		<if test="contentLabelName4 != null and contentLabelName4 != ''">
+		    and CONTENT_LABEL_NAME4=#{contentLabelName4}
+		</if>
+		<if test="contentLabelName5 != null and contentLabelName5 != ''">
+			and CONTENT_LABEL_NAME5=#{contentLabelName5}
+		</if>
+		<if test="contentLabelName6 != null and contentLabelName6 != ''">
+		    and CONTENT_LABEL_NAME6=#{contentLabelName6}
+		</if>
+  </delete>
+  <update id="update" parameterType="com.bonc.dpi.dao.entity.ContentLabel">
+    update DIM_IA_CONTENT_LABEL
+    <set>   	
+    	<if test="contentLabelLevel != null">
+    		CONTENT_LABEL_LEVEL=#{contentLabelLevel},
+    	</if>
+    	<if test="contentLabelCode != null">
+    		CONTENT_LABEL_CODE=#{contentLabelCode},
+    	</if> 	
+    	<if test="contentLabelCode1 != null">
+    		CONTENT_LABEL_CODE1=#{contentLabelCode1},
+    	</if>
+    	<if test="contentLabelCode2 != null">
+    		CONTENT_LABEL_CODE2=#{contentLabelCode2},
+    	</if>
+    	<if test="contentLabelCode3 != null">
+    		CONTENT_LABEL_CODE3=#{contentLabelCode3},
+    	</if>
+    	<if test="contentLabelCode4 != null">
+    		CONTENT_LABEL_CODE4=#{contentLabelCode4},
+    	</if>
+    	<if test="contentLabelCode5 != null">
+    		CONTENT_LABEL_CODE5=#{contentLabelCode5},
+    	</if>  	
+    	<if test="contentLabelCode6 != null">
+    		CONTENT_LABEL_CODE6=#{contentLabelCode6},
+    	</if>
+    	<if test="contentLabelName1Param != null">
+    		CONTENT_LABEL_NAME1=#{contentLabelName1Param},
+    	</if>
+    	<if test="contentLabelName2 != null">
+    		CONTENT_LABEL_NAME2=#{contentLabelName2},
+    	</if>      	   
+    	<if test="contentLabelName3 != null">
+    		CONTENT_LABEL_NAME3=#{contentLabelName3},
+    	</if>
+    	<if test="contentLabelName4 != null">
+    		CONTENT_LABEL_NAME4=#{contentLabelName4},
+    	</if>  	
+    	<if test="contentLabelName5 != null">
+    		CONTENT_LABEL_NAME5=#{contentLabelName5},
+    	</if>
+    	<if test="contentLabelName6 != null">
+    		CONTENT_LABEL_NAME6=#{contentLabelName6},
+    	</if>
+    	<if test="author != null">
+    		AUTHOR=#{author},
+    	</if> 
+    	<if test="opTime != null">
+    		OP_TIME=#{opTime},
+    	</if>      	         	   	
+    </set> 
+     where ID=#{id}
+  </update>
+  
+  <update id="updateContentLabelName" parameterType="com.bonc.dpi.dao.entity.ContentLabel">
+    update DIM_IA_CONTENT_LABEL  
+    <set>   	
+    	<if test="contentLabelLevel==1">
+    		CONTENT_LABEL_NAME1=#{contentLabelName1Param},
+    	</if>
+    	<if test="contentLabelLevel==2">
+    		CONTENT_LABEL_NAME2=#{contentLabelName2},
+    	</if>      	   
+    	<if test="contentLabelLevel==3">
+    		CONTENT_LABEL_NAME3=#{contentLabelName3},
+    	</if>
+    	<if test="contentLabelLevel==4">
+    		CONTENT_LABEL_NAME4=#{contentLabelName4},
+    	</if>  	
+    	<if test="contentLabelLevel==5">
+    		CONTENT_LABEL_NAME5=#{contentLabelName5},
+    	</if>
+    	<if test="contentLabelLevel==6">
+    		CONTENT_LABEL_NAME6=#{contentLabelName6},
+    	</if>     	         	   	
+    </set> 
+    where 
+    	<if test="contentLabelLevel==1">
+    		CONTENT_LABEL_NAME1=#{contentLabelName}
+    	</if>
+    	<if test="contentLabelLevel==2">
+    		CONTENT_LABEL_NAME2=#{contentLabelName}
+    	</if>      	   
+    	<if test="contentLabelLevel==3">
+    		CONTENT_LABEL_NAME3=#{contentLabelName}
+    	</if>
+    	<if test="contentLabelLevel==4">
+    		CONTENT_LABEL_NAME4=#{contentLabelName}
+    	</if>  	
+    	<if test="contentLabelLevel==5">
+    		CONTENT_LABEL_NAME5=#{contentLabelName}
+    	</if>
+    	<if test="contentLabelLevel==6">
+    		CONTENT_LABEL_NAME6=#{contentLabelName}
+    	</if>   	      
+  </update>
+  
+  <select id="check" parameterType="com.bonc.dpi.dao.entity.ContentLabel" resultType="int">
+    	select count(*) from DIM_IA_CONTENT_LABEL where 1=1
+    	<if test="id != null and id != ''">
+		    and ID!=#{id}
+		</if> 
+		<if test="contentLabelName1Param != null and contentLabelName1Param  != ''">
+			and CONTENT_LABEL_NAME1=#{contentLabelName1Param}
+		</if>
+		<if test="contentLabelName2 != null and contentLabelName2 != ''">
+		    and CONTENT_LABEL_NAME2=#{contentLabelName2}
+		</if>
+		<if test="contentLabelName3 != null and contentLabelName3 != ''">
+			and CONTENT_LABEL_NAME3=#{contentLabelName3}
+		</if>
+		<if test="contentLabelName4 != null and contentLabelName4 != ''">
+		    and CONTENT_LABEL_NAME4=#{contentLabelName4}
+		</if>
+		<if test="contentLabelName5 != null and contentLabelName5 != ''">
+			and CONTENT_LABEL_NAME5=#{contentLabelName5}
+		</if>
+		<if test="contentLabelName6 != null and contentLabelName6 != ''">
+		    and CONTENT_LABEL_NAME6=#{contentLabelName6}
+		</if>
+		<if test="contentLabelLevel != null and contentLabelLevel  != ''">
+			<if test="contentLabelLevel==1">
+				 and CONTENT_LABEL_NAME2 is null
+			</if>
+			<if test="contentLabelLevel==2">
+				 and CONTENT_LABEL_NAME3 is null
+			</if>
+			<if test="contentLabelLevel==3">
+				 and CONTENT_LABEL_NAME4 is null
+			</if>
+			<if test="contentLabelLevel==4">
+				 and CONTENT_LABEL_NAME5 is null
+			</if>
+			<if test="contentLabelLevel==5">
+				 and CONTENT_LABEL_NAME6 is null
+			</if>
+		</if>
+  </select>
+  
+  <select id="selectLabelList" resultMap="BaseResultMap">
+    	SELECT
+    		<if test="contentLabelLevel==1">
+				distinct CONTENT_LABEL_NAME1,CONTENT_LABEL_CODE1 
+			</if>
+			<if test="contentLabelLevel==2">
+				distinct CONTENT_LABEL_NAME2,CONTENT_LABEL_CODE2 
+			</if>
+			<if test="contentLabelLevel==3">
+				distinct CONTENT_LABEL_NAME3,CONTENT_LABEL_CODE3 
+			</if>
+			<if test="contentLabelLevel==4">
+				distinct CONTENT_LABEL_NAME4,CONTENT_LABEL_CODE4 
+			</if>
+			<if test="contentLabelLevel==5">
+				distinct CONTENT_LABEL_NAME5,CONTENT_LABEL_CODE5 
+			</if>
+		FROM DIM_IA_CONTENT_LABEL 
+		where 1=1
+			<if test="contentLabelLevel==2">
+				and CONTENT_LABEL_NAME1=#{contentLabelName1} and CONTENT_LABEL_NAME3 is null
+			</if>
+			<if test="contentLabelLevel==3">
+				and CONTENT_LABEL_NAME1=#{contentLabelName1} and CONTENT_LABEL_NAME2=#{contentLabelName2} and CONTENT_LABEL_NAME4 is null
+			</if>
+			<if test="contentLabelLevel==4">
+				and CONTENT_LABEL_NAME1=#{contentLabelName1} and CONTENT_LABEL_NAME2=#{contentLabelName2} and CONTENT_LABEL_NAME3=#{contentLabelName3} and CONTENT_LABEL_NAME5 is null
+			</if>
+			<if test="contentLabelLevel==5">
+				and CONTENT_LABEL_NAME1=#{contentLabelName1} and CONTENT_LABEL_NAME2=#{contentLabelName2} and CONTENT_LABEL_NAME3=#{contentLabelName3}  and CONTENT_LABEL_NAME4=#{contentLabelName4} and CONTENT_LABEL_NAME6 is null
+			</if>
+  </select>
+  
+  <select id="selectVoByPrimaryKey" parameterType="com.bonc.dpi.dao.entity.ContentLabel" resultMap="BaseResultMap">
+		SELECT
+			ID, 
+			CONTENT_LABEL_CODE,CONTENT_LABEL_NAME,CONTENT_LABEL_LEVEL,
+       		CONTENT_LABEL_CODE1,CONTENT_LABEL_NAME1,CONTENT_LABEL_CODE2,CONTENT_LABEL_NAME2,CONTENT_LABEL_CODE3,CONTENT_LABEL_NAME3,
+       		CONTENT_LABEL_CODE4,CONTENT_LABEL_NAME4,CONTENT_LABEL_CODE5,CONTENT_LABEL_NAME5,CONTENT_LABEL_CODE6,CONTENT_LABEL_NAME6,
+      		AUTHOR,OP_TIME
+		FROM DIM_IA_CONTENT_LABEL 
+		where 1=1 
+		<if test="contentLabelLevel != null and contentLabelLevel != ''">
+		    and CONTENT_LABEL_LEVEL=#{contentLabelLevel} 
+		</if>
+		<if test="contentLabelName != null and contentLabelName != ''">
+		    and CONTENT_LABEL_NAME=#{contentLabelName} 
+		</if>
+		<if test="contentLabelName1 != null and contentLabelName1 != ''">
+		    and CONTENT_LABEL_NAME1=#{contentLabelName1} 
+		</if>
+		<if test="contentLabelName2 != null and contentLabelName2 != ''">
+		    and CONTENT_LABEL_NAME2=#{contentLabelName2} 
+		</if>
+		<if test="contentLabelName3 != null and contentLabelName3 != ''">
+		    and CONTENT_LABEL_NAME3=#{contentLabelName3} 
+		</if>
+		<if test="contentLabelName4 != null and contentLabelName4 != ''">
+		    and CONTENT_LABEL_NAME4=#{contentLabelName4} 
+		</if>
+		<if test="contentLabelName5 != null and contentLabelName5 != ''">
+		    and CONTENT_LABEL_NAME5=#{contentLabelName5} 
+		</if>
+		<if test="contentLabelName6 != null and contentLabelName6 != ''">
+		    and CONTENT_LABEL_NAME6=#{contentLabelName6} 
+		</if>
+		order by OP_TIME desc
+  </select>
+  
+  <delete id="deleteVoByPrimaryKey" parameterType="com.bonc.dpi.dao.entity.ContentLabel">
+		DELETE
+		FROM DIM_IA_CONTENT_LABEL 
+		where 1=1 
+		<if test="contentLabelLevel != null and contentLabelLevel != ''">
+		    and CONTENT_LABEL_LEVEL=#{contentLabelLevel} 
+		</if>
+		<if test="contentLabelName != null and contentLabelName != ''">
+		    and CONTENT_LABEL_NAME=#{contentLabelName} 
+		</if>
+		<if test="contentLabelName1 != null and contentLabelName1 != ''">
+		    and CONTENT_LABEL_NAME1=#{contentLabelName1} 
+		</if>
+		<if test="contentLabelName2 != null and contentLabelName2 != ''">
+		    and CONTENT_LABEL_NAME2=#{contentLabelName2} 
+		</if>
+		<if test="contentLabelName3 != null and contentLabelName3 != ''">
+		    and CONTENT_LABEL_NAME3=#{contentLabelName3} 
+		</if>
+		<if test="contentLabelName4 != null and contentLabelName4 != ''">
+		    and CONTENT_LABEL_NAME4=#{contentLabelName4} 
+		</if>
+		<if test="contentLabelName5 != null and contentLabelName5 != ''">
+		    and CONTENT_LABEL_NAME5=#{contentLabelName5} 
+		</if>
+		<if test="contentLabelName6 != null and contentLabelName6 != ''">
+		    and CONTENT_LABEL_NAME6=#{contentLabelName6} 
+		</if>
+  </delete>
+  
+  <insert id="insertVoPl" >
+  	<if test="database_type=='mysql'">
+	    	insert into DIM_IA_CONTENT_LABEL (CONTENT_LABEL_LEVEL ,CONTENT_LABEL_CODE,CONTENT_LABEL_NAME,
+	       CONTENT_LABEL_CODE1,CONTENT_LABEL_CODE2,CONTENT_LABEL_CODE3,CONTENT_LABEL_CODE4,CONTENT_LABEL_CODE5,CONTENT_LABEL_CODE6,
+	       CONTENT_LABEL_NAME1,CONTENT_LABEL_NAME2,CONTENT_LABEL_NAME3,CONTENT_LABEL_NAME4,CONTENT_LABEL_NAME5,CONTENT_LABEL_NAME6,
+	       AUTHOR,OP_TIME,ID)
+	   	   values 
+	    	<foreach collection="list" item="data" index="index"  open="" close="" separator=",">
+	         (#{data.contentLabelLevel,jdbcType=VARCHAR},#{data.contentLabelCode,jdbcType=VARCHAR}, #{data.contentLabelName,jdbcType=VARCHAR},
+	       		#{data.contentLabelCode1,jdbcType=VARCHAR},#{data.contentLabelCode2,jdbcType=VARCHAR},#{data.contentLabelCode3,jdbcType=VARCHAR},
+	      	    #{data.contentLabelCode4,jdbcType=VARCHAR},#{data.contentLabelCode5,jdbcType=VARCHAR},#{data.contentLabelCode6,jdbcType=VARCHAR},
+	            #{data.contentLabelName1,jdbcType=VARCHAR},#{data.contentLabelName2,jdbcType=VARCHAR},#{data.contentLabelName3,jdbcType=VARCHAR},
+	            #{data.contentLabelName4,jdbcType=VARCHAR},#{data.contentLabelName5,jdbcType=VARCHAR},#{data.contentLabelName5,jdbcType=VARCHAR},
+	            #{data.author,jdbcType=VARCHAR}, #{data.opTime,jdbcType=VARCHAR}, #{data.id,jdbcType=DATE})
+	        </foreach>
+	    </if>
+	    <if test="database_type=='oracle'">
+		    insert all
+	    	<foreach item="data" index="index" collection="list" open="" close="" separator="">
+	           into DIM_IA_CONTENT_LABEL (CONTENT_LABEL_LEVEL ,CONTENT_LABEL_CODE,CONTENT_LABEL_NAME,
+	       			CONTENT_LABEL_CODE1,CONTENT_LABEL_CODE2,CONTENT_LABEL_CODE3,CONTENT_LABEL_CODE4,CONTENT_LABEL_CODE5,CONTENT_LABEL_CODE6,
+	      			 CONTENT_LABEL_NAME1,CONTENT_LABEL_NAME2,CONTENT_LABEL_NAME3,CONTENT_LABEL_NAME4,CONTENT_LABEL_NAME5,CONTENT_LABEL_NAME6,
+	      			 AUTHOR,OP_TIME,ID)
+	    		values
+	         	(#{data.contentLabelLevel,jdbcType=VARCHAR},#{data.contentLabelCode,jdbcType=VARCHAR}, #{data.contentLabelName,jdbcType=VARCHAR},
+	       		#{data.contentLabelCode1,jdbcType=VARCHAR},#{data.contentLabelCode2,jdbcType=VARCHAR},#{data.contentLabelCode3,jdbcType=VARCHAR},
+	      	    #{data.contentLabelCode4,jdbcType=VARCHAR},#{data.contentLabelCode5,jdbcType=VARCHAR},#{data.contentLabelCode6,jdbcType=VARCHAR},
+	            #{data.contentLabelName1,jdbcType=VARCHAR},#{data.contentLabelName2,jdbcType=VARCHAR},#{data.contentLabelName3,jdbcType=VARCHAR},
+	            #{data.contentLabelName4,jdbcType=VARCHAR},#{data.contentLabelName5,jdbcType=VARCHAR},#{data.contentLabelName5,jdbcType=VARCHAR},
+	            #{data.author,jdbcType=VARCHAR}, #{data.opTime,jdbcType=VARCHAR}, #{data.id,jdbcType=DATE})
+	        </foreach>
+	        select 1 from dual
+	    </if>
+  </insert>
+  
+  
+  <select id="selectAllList" resultType="java.lang.String">
+		SELECT
+		concat(CONTENT_LABEL_CODE,concat('~',CONTENT_LABEL_NAME)) 
+		FROM DIM_IA_CONTENT_LABEL 
+		order by OP_TIME desc
+  </select>
+</mapper>

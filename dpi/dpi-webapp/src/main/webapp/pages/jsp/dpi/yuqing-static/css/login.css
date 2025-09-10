@@ -1,0 +1,640 @@
+body {
+	position: relative;
+}
+
+
+/****************title的样式*****************/
+
+.title {
+	position: absolute;
+	top: 8%;
+	left: 35%;
+	z-index: 100;
+	vertical-align: middle;
+}
+
+.title img {
+	display: inline-block;
+	width: 30%;
+}
+
+.title span {
+	font-family: "微软雅黑";
+	font-weight: bold;
+	font-size: 2em;
+	display: inline-block;
+	height: 60px;
+	line-height: 60px;
+	margin-left: 20px;
+	color:#E8DB10;
+}
+
+
+/****************轮播图的样式*****************/
+.slides {
+	width: 100%;
+	height: 100%;
+	position: relative;
+	overflow: hidden;
+}
+
+.slideInner {
+	height: 100%;
+	position: relative;
+	top: 0;
+	left: 0;
+}
+
+.slideInner div.slide {
+	display: block;
+	height: 100%;
+	background-size: cover;
+	background-position: center center;
+	position: relative;
+	z-index: 10;
+}
+
+/*亮点0*/
+.slideInner div.slide  div.functionImg {
+	width: 50%;
+	position: absolute;
+	left: 20%;
+	top:40%;
+}
+.slideInner div.slide  div.functionImg img{
+	width:80%;
+}
+
+.slideInner div.slide  div.functionTitle1 {
+	width: 20%;
+	position: absolute;
+	left: 15%;
+	top:25%;
+}
+.slideInner div.slide  div.functionTitle1 span{
+	color:#CACACA;
+	font-size: 18px;
+	font-family: arial;
+}
+
+.slideInner div.slide  div.functionTitle2 {
+	width: 20%;
+	position: absolute;
+	left: 15%;
+	top:28%;
+}
+.slideInner div.slide  div.functionTitle2 span{
+	color:#FFFFFF;
+	font-size: 24px;
+	font-family: arial;
+}
+
+/*亮点1*/
+.slideInner div.slide  div.functionImg1 {
+	width: 50%;
+	position: absolute;
+	left: 36%;
+	top:63%;
+}
+.slideInner div.slide  div.functionImg1 img{
+	width:20%;
+}
+.slideInner div.slide  div.functionImg11 {
+	width:15%;
+	position:absolute;
+	left:25%;
+	top:45%;
+}
+.slideInner div.slide  div.functionImg11 img{
+	width:40%;
+}
+.slideInner div.slide  div.functionImg12 {
+	width:15%;
+	position:absolute;
+	left:38%;
+	top:30%;
+}
+.slideInner div.slide  div.functionImg12 img{
+	width:40%;
+}
+.slideInner div.slide  div.functionImg13 {
+	width:15%;
+	position:absolute;
+	left:51%;
+	top:45%;
+}
+.slideInner div.slide  div.functionImg13 img{
+	width:40%;
+}
+.slideInner div.slide  p{
+	width:8%;
+	text-align: center;
+	color:#fff;	
+	position:absolute;
+	font-family: arial;
+}
+.slideInner div.slide  p.functionP11{
+	font-weight: bold;
+	font-size: 14px;
+	top:59%;
+	left:24%;
+}
+.slideInner div.slide  p.functionP12{
+	font-size: 12px;
+	top:65%;
+	left:24%;
+}
+
+.slideInner div.slide  p.functionP21{
+	font-weight: bold;
+	font-size: 14px;
+	top:44%;
+	left:37%;
+}
+.slideInner div.slide  p.functionP22{
+	font-size: 12px;
+	top:50%;
+	left:37%;
+}
+
+.slideInner div.slide  p.functionP31{
+	font-weight: bold;
+	font-size: 14px;
+	top:59%;
+	left:50%;
+}
+.slideInner div.slide  p.functionP32{
+	font-size: 12px;
+	top:65%;
+	left:50%;
+}
+
+/*亮点2*/
+/*亮点3*/
+/*亮点4*/
+
+/*轮播指示器*/
+.navListBox {
+	position: absolute;
+	left: 50%;
+	bottom: 40px;
+	z-index: 20;
+	width:320px !important;
+	margin-left:-160px !important;
+}
+
+.navListBox li {
+	width: 60px;
+	height: 10px;
+	float: left;
+	margin-left: 5px;
+	border-radius: 5px;
+	overflow: hidden;
+}
+
+.navListBox li:first-child {
+	margin-left: 0;
+}
+
+.navListBox li a {
+	display: block;
+	width: 100%;
+	height: 100%;
+	border-radius: 5px;
+	background-color: #fff;
+	box-shadow: 0 0 5px #666 inset;
+}
+
+.navListBox li a.active {
+	background-color: #EBBD27;
+}
+
+
+/****************登录框的样式*****************/
+.login {
+	position: absolute;
+	top: 30%;
+	right: 15%;
+	z-index: 10;
+	width: 300px;
+	height: 360px;
+	background: rgba(14,23,57,0.6);
+}
+
+.login_title {
+	color: #fff;
+	height: 45px;
+	line-height: 45px;
+	text-align: left;
+	font-size: 1em;
+	font-weight: bold;
+	border-bottom: 1px solid #122B40;
+}
+
+.login_fields {
+	width:100%;
+	height: 315px;
+	padding:25px 35px;
+}
+
+.login_user,.login_password,.div_msg{
+	position:relative;
+}
+
+.login_fields .icon {
+	position: absolute;
+	z-index: 10;
+	left: 0;
+	top: 10px;
+	padding:0 20px;
+	border-right:1px solid #9D9D9D;
+}
+
+.login_fields .yzm {
+    position: absolute;
+    z-index: 10;
+    left: 0;
+    top: 10px;
+    height: 20px;
+    padding:0 5px;
+    border-right: 1px solid #9D9D9D;
+}
+.login_fields .icon img{
+	width:80%;
+}
+
+.login_fields input{
+	color: #000;
+	width: 100%;;
+	background: #fff;
+	left: 0;
+	padding: 10px 75px;
+	border-top: 1px solid #393d52;
+	border-bottom: 1px solid #393d52;
+	outline: none;
+	font-size: 12px;
+}
+
+.login_submit {
+	width:100%;
+	margin:10px auto;
+}
+
+.login_submit input {
+	border-radius: 5px;
+	background: transparent;
+	padding: 10px 50px;
+	border: 2px solid #EBBD27;
+	color: #EBBD27;
+	text-transform: uppercase;
+	font-size: 12px;
+	-webkit-transition-property: background, color;
+	transition-property: background, color;
+	-webkit-transition-duration: .2s;
+	transition-duration: .2s;
+}
+
+.login_submit input:hover {
+	color: #fff;
+	background: #EBBD27;
+	cursor: pointer;
+	-webkit-transition-property: background, color;
+	transition-property: background, color;
+	-webkit-transition-duration: .2s;
+	transition-duration: .2s;
+}
+
+.login_submit .forgot {
+	color:#fff;
+	text-align: center;
+	font-size: 10px;
+	margin-top: 15px;
+	text-decoration: none;
+}
+
+.login_submit .forgot a {
+	color: #fff;
+}
+
+
+/****************系统亮点动画的样式*****************/
+div.function1{
+	width:50%;
+	position:absolute;
+	top:30%;
+	left:20%;
+}
+div.function1 img{
+	width:80%;
+}
+
+
+
+@charset "UTF-8";
+@-webkit-keyframes animateBaseIn {
+    0% {
+        opacity: 0;
+    }
+    90% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes animateBaseIn {
+    0% {
+        opacity: 0;
+    }
+    90% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+.animateBaseIn {
+    -webkit-animation: animateBaseIn 0.6s;
+    animation: animateBaseIn 0.6s;
+    -webkit-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
+}
+
+@-webkit-keyframes animateBaseOut {
+    0% {
+        opacity: 1;
+    }
+    90% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+@keyframes animateBaseOut {
+    0% {
+        opacity: 1;
+    }
+    90% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+.animateBaseOut {
+    -webkit-animation: animateBaseOut 0.4s;
+    animation: animateBaseOut 0.4s;
+    -webkit-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
+}
+
+@-webkit-keyframes animateTextTitleIn {
+    0% {
+        -webkit-transform: translateX(-250px);
+        transform: translateX(-250px);
+        opacity: 0;
+    }
+    90% {
+        opacity: 1;
+    }
+    100% {
+        -webkit-transform: translateX(0px);
+        transform: translateX(0px);
+        opacity: 1;
+    }
+}
+
+@keyframes animateTextTitleIn {
+    0% {
+        -webkit-transform: translateX(-250px);
+        transform: translateX(-250px);
+        opacity: 0;
+    }
+    90% {
+        opacity: 1;
+    }
+    100% {
+        -webkit-transform: translateX(0px);
+        transform: translateX(0px);
+        opacity: 1;
+    }
+}
+
+.animateTextTitleIn {
+    -webkit-animation: animateTextTitleIn 0.6s;
+    animation: animateTextTitleIn 0.6s;
+    -webkit-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
+    -webkit-animation-timing-function: ease;
+    animation-timing-function: ease;
+}
+
+@-webkit-keyframes animateTextSubIn {
+    0% {
+        -webkit-transform: translateX(-50px);
+        transform: translateX(-50px);
+        opacity: 0;
+    }
+    90% {
+        opacity: 1;
+    }
+    100% {
+        -webkit-transform: translateX(0px);
+        transform: translateX(0px);
+        opacity: 1;
+    }
+}
+
+@keyframes animateTextSubIn {
+    0% {
+        -webkit-transform: translateX(-50px);
+        transform: translateX(-50px);
+        opacity: 0;
+    }
+    90% {
+        opacity: 1;
+    }
+    100% {
+        -webkit-transform: translateX(0px);
+        transform: translateX(0px);
+        opacity: 1;
+    }
+}
+
+.animateTextSubIn {
+    -webkit-animation: animateTextSubIn 0.6s;
+    animation: animateTextSubIn 0.6s;
+    -webkit-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
+    -webkit-animation-timing-function: ease;
+    animation-timing-function: ease;
+}
+
+@-webkit-keyframes animateTextTitleOut {
+    0% {
+        -webkit-transform: translateX(0px);
+        transform: translateX(0px);
+        opacity: 1;
+    }
+    90% {
+        opacity: 0;
+    }
+    100% {
+        -webkit-transform: translateX(-50px);
+        transform: translateX(-50px);
+        opacity: 0;
+    }
+}
+
+@keyframes animateTextTitleOut {
+    0% {
+        -webkit-transform: translateX(0px);
+        transform: translateX(0px);
+        opacity: 1;
+    }
+    90% {
+        opacity: 0;
+    }
+    100% {
+        -webkit-transform: translateX(-50px);
+        transform: translateX(-50px);
+        opacity: 0;
+    }
+}
+
+.animateTextTitleOut {
+    -webkit-animation: animateTextTitleOut 0.4s;
+    animation: animateTextTitleOut 0.4s;
+    -webkit-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
+    -webkit-animation-timing-function: ease;
+    animation-timing-function: ease;
+}
+
+@-webkit-keyframes animateTextSubOut {
+    0% {
+        -webkit-transform: translateX(0px);
+        transform: translateX(0px);
+        opacity: 1;
+    }
+    90% {
+        opacity: 0;
+    }
+    100% {
+        -webkit-transform: translateX(-50px);
+        transform: translateX(-50px);
+        opacity: 0;
+    }
+}
+
+@keyframes animateTextSubOut {
+    0% {
+        -webkit-transform: translateX(0px);
+        transform: translateX(0px);
+        opacity: 1;
+    }
+    90% {
+        opacity: 0;
+    }
+    100% {
+        -webkit-transform: translateX(-50px);
+        transform: translateX(-50px);
+        opacity: 0;
+    }
+}
+
+.animateTextSubOut {
+    -webkit-animation: animateTextSubOut 0.4s;
+    animation: animateTextSubOut 0.4s;
+    -webkit-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
+    -webkit-animation-timing-function: ease;
+    animation-timing-function: ease;
+}
+
+@-webkit-keyframes animateMobileTextIn {
+    0% {
+        -webkit-transform: scale(1.2, 1.2);
+        transform: scale(1.2, 1.2);
+        opacity: 0;
+    }
+    90% {
+        opacity: 1;
+    }
+    100% {
+        -webkit-transform: scale(1, 1);
+        transform: scale(1, 1);
+        opacity: 1;
+    }
+}
+
+@keyframes animateMobileTextIn {
+    0% {
+        -webkit-transform: scale(1.2, 1.2);
+        transform: scale(1.2, 1.2);
+        opacity: 0;
+    }
+    90% {
+        opacity: 1;
+    }
+    100% {
+        -webkit-transform: scale(1, 1);
+        transform: scale(1, 1);
+        opacity: 1;
+    }
+}
+
+.animateMobileTextIn {
+    -webkit-animation: animateMobileTextIn 0.4s;
+    animation: animateMobileTextIn 0.4s;
+    -webkit-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
+    -webkit-animation-timing-function: ease;
+    animation-timing-function: ease;
+}
+
+@-webkit-keyframes animateMobileTextOut {
+    0% {
+        -webkit-transform: scale(1, 1);
+        transform: scale(1, 1);
+        opacity: 1;
+    }
+    90% {
+        opacity: 0;
+    }
+    100% {
+        -webkit-transform: scale(1.2, 1.2);
+        transform: scale(1.2, 1.2);
+        opacity: 0;
+    }
+}
+
+@keyframes animateMobileTextOut {
+    0% {
+        -webkit-transform: scale(1, 1);
+        transform: scale(1, 1);
+        opacity: 1;
+    }
+    90% {
+        opacity: 0;
+    }
+    100% {
+        -webkit-transform: scale(1.2, 1.2);
+        transform: scale(1.2, 1.2);
+        opacity: 0;
+    }
+}
+
+.animateMobileTextOut {
+    -webkit-animation: animateMobileTextOut 0.4s;
+    animation: animateMobileTextOut 0.4s;
+    -webkit-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
+    -webkit-animation-timing-function: ease;
+    animation-timing-function: ease;
+}

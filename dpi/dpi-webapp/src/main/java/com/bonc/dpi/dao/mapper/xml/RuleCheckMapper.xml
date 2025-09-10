@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bonc.dpi.dao.mapper.RuleCheckMapper">
+	<resultMap id="BaseResultMap"
+		type="com.bonc.dpi.dao.entity.RuleCheck">
+		<result column="ID" jdbcType="VARCHAR" property="id" />
+		<result column="URL" jdbcType="VARCHAR" property="url" />
+		<result column="KEYWORD" jdbcType="VARCHAR" property="keyWord" />
+		<result column="NUM_TOTAL" jdbcType="VARCHAR" property="numTatal" />
+		<result column="DATE_ID" jdbcType="VARCHAR" property="dateId" />
+	</resultMap>
+	<select id="selectList" resultMap="BaseResultMap">
+		select ID,URL,KEYWORD,sum(NUM_TOTAL) NUM_TOTAL from
+			(select ID,URL,KEYWORD,NUM_TOTAL from DM_D_EV_NSL_HTTP_KEYWORD_RULE
+			where 1=1
+			<if test="dateId == null or dateId == ''">
+				and DATE_ID=(select max(DATE_ID) from DM_D_EV_NSL_HTTP_KEYWORD_RULE)
+			</if>
+			<if test="dateId != null and dateId != ''">
+				and DATE_ID=#{dateId}
+			</if>	
+			<if test="id != null and id != ''">
+				<bind name="id" value="'%' + _parameter.getId() + '%'" />
+				and ID like #{id}
+			</if>
+			<if test="url != null and url != ''">
+				<bind name="url" value="'%' + _parameter.getUrl() + '%'" />
+				and URL like #{url}
+			</if>
+			union all	
+			select ID,URL,KEYWORD,NUM_TOTAL from DM_D_EV_NSL_KEYWORD_URL_RULE
+			where 1=1
+			<if test="dateId == null or dateId == ''">
+				and DATE_ID=(select max(DATE_ID) from DM_D_EV_NSL_KEYWORD_URL_RULE)
+			</if>
+			<if test="dateId != null and dateId != ''">
+				and DATE_ID=#{dateId}
+			</if>
+			<if test="id != null and id != ''">
+				<bind name="id" value="'%' + _parameter.getId() + '%'" />
+				and ID like #{id}
+			</if>
+			<if test="url != null and url != ''">
+				<bind name="url" value="'%' + _parameter.getUrl() + '%'" />
+				and URL like #{url}
+			</if>
+			) t
+		group by ID,URL,KEYWORD
+		<if test="sidx != null and sidx != ''">
+			order by ${sidx} ${sord}
+		</if>
+		
+	</select>
+</mapper>

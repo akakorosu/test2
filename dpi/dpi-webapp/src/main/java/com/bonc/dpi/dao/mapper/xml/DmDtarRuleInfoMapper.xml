@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bonc.dpi.dao.mapper.DmDtarRuleInfoMapper">
+
+	<select id="selectList" 
+		parameterType="com.bonc.dpi.dao.entity.DmDtarRuleInfo" 
+		resultType="com.bonc.dpi.dao.entity.DmDtarRuleInfo">
+		select 
+			t.id,
+			t.tar_name tarName, 
+			t.tar_code tarCode, 
+			t.tar_type tarType, 
+			t.tar_sign tarSign, 
+			t.tar_value tarValue,
+			t.tar_and_or tarAndOr, 
+			t.tar_order tarOrder, 
+			t.tar_base_id tarBaseId, 
+			t.tar_quota tarQuota,
+			t.tar_type_text tarTypeText
+		from 
+			DM_D_TAR_RULE_INFO t 
+		where 1 = 1
+		<if test="tarBaseId != null and tarBaseId != ''">
+			and t.tar_base_id = #{tarBaseId}
+		</if>	
+		order by t.tar_order
+	</select>
+	
+	<insert id="insert" 
+		parameterType="com.bonc.dpi.dao.entity.DmDtarRuleBase">
+		INSERT INTO dm_d_tar_rule_info(
+			id,
+			TAR_NAME, 
+			TAR_CODE, 
+			TAR_TYPE, 
+			TAR_SIGN, 
+			TAR_VALUE,
+			TAR_AND_OR,
+			TAR_ORDER,
+			TAR_BASE_ID,
+			TAR_QUOTA,
+			TAR_TYPE_TEXT) 
+		VALUES(
+			#{id},
+			#{tarName},
+			#{tarCode},
+			#{tarType},
+			#{tarSign},
+			#{tarValue},
+			#{tarAndOr},
+			#{tarOrder},
+			#{tarBaseId},
+			#{tarQuota},
+			#{tarTypeText})
+	</insert>
+	
+	<delete id="deleteById" parameterType="java.lang.String">
+		delete from dm_d_tar_rule_info where id = #{id}
+	</delete>
+</mapper>
