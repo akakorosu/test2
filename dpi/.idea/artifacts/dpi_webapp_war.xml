@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="dpi-webapp:war">
+    <output-path>$PROJECT_DIR$/dpi-webapp/target</output-path>
+    <properties id="maven-jee-properties">
+      <options>
+        <module>dpi-webapp</module>
+        <packaging>war</packaging>
+      </options>
+    </properties>
+    <root id="archive" name="dpi.war">
+      <element id="artifact" artifact-name="dpi-webapp:war exploded" />
+    </root>
+  </artifact>
+</component>

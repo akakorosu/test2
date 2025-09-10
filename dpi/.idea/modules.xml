@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/activiti/activiti.iml" filepath="$PROJECT_DIR$/activiti/activiti.iml" />
+      <module fileurl="file://$PROJECT_DIR$/commonLib/commonLib.iml" filepath="$PROJECT_DIR$/commonLib/commonLib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/dpi-webapp/dpi-webapp.iml" filepath="$PROJECT_DIR$/dpi-webapp/dpi-webapp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/mobile-unit-dpi.iml" filepath="$PROJECT_DIR$/mobile-unit-dpi.iml" />
+    </modules>
+  </component>
+</project>

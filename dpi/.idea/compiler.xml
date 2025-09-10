@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="activiti" />
+        <module name="commonLib" />
+        <module name="dpi-webapp" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="activiti" target="1.7" />
+      <module name="commonLib" target="1.7" />
+      <module name="dpi-webapp" target="1.8" />
+      <module name="mobile-unit-dpi" target="1.7" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="activiti" options="-extdirs project-webapp/src/main/webapp/WEB-INF/lib" />
+      <module name="commonLib" options="-extdirs project-webapp/src/main/webapp/WEB-INF/lib" />
+      <module name="dpi-webapp" options="-extdirs project-webapp/src/main/webapp/WEB-INF/lib" />
+    </option>
+  </component>
+</project>
